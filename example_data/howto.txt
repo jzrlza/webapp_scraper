@@ -4,3 +4,4 @@ Input Config URL :
    -by card (title or price keyword)
    -title and paragraph list
 - from first one, some pages may require selenium's clicking automation to further advance
+- some may have data in "terms and conditions", be sure to check that
