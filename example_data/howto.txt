@@ -1,0 +1,6 @@
+Input Config URL :
+- URL have multiple keywords (2nd column of the assigned xlsx file)
+- each keywords may have detection type :
+   -by card (title or price keyword)
+   -title and paragraph list
+- from first one, some pages may require selenium's clicking automation to further advance
