@@ -8,7 +8,11 @@ from fastapi_utils.tasks import repeat_every
 import csv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
 import re
+import time
 
 def distinctStringSet(list_string) :
 	auxiliaryList = []
@@ -73,14 +77,19 @@ def on_startup():
 
 operators = ["AIS", "DTAC", "TRUE"]
 operator_card_classes = { #where the title is inside each cards
-	"AIS" : "package-card-generic",
-	"DTAC" : "wrapPackages",
-	"TRUE" : "x-1iqxi85"
+	"AIS" : ["package-card-generic", "MuiCardContent-root"],
+	"DTAC" : ["innerWrap", None, "card-promotion"],
+	"TRUE" : ["x-1iqxi85"]
 }
-container_classes = { #where it has title as header
-	"AIS" : "cmp-container",
-	"DTAC" : "cardPackages",
-	"TRUE" : "my-5"
+operator_cards_header_title_classes = { 
+	"AIS" : ["cmp-container", "search-tab-btn"],
+	"DTAC" : ["tCaption", "txt-h-2", "title-card"], # *** title-card adds one layer
+	"TRUE" : ["x-34ioum"] # now uses x-4ll1o9
+}
+operator_cards_container_classes = {
+	"AIS" : ["cmp-container"],
+	"DTAC" : ["cardPackages", None, "card-container"],
+	"TRUE" : ["my-5"]
 }
 
 
@@ -101,25 +110,95 @@ async def scrape_web(request: Request):
 
 		driver = webdriver.Chrome()
 		driver.implicitly_wait(webdriver_timeout)
+		action = ActionChains(driver)
 
 		driver.get(url["url_link"])
 
-		operator = operators[url["operator_id"]]
+		operator_id = url["operator_id"]
+		operator_name = operators[url["operator_id"]]
+
+		need_to_scroll = False
+		scrolled = False
 
 		for plan in url["plans"] :
 			#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
 			target_string = price_keywords[0]
-
+			plan_name = plan["plan_name"]
+			capture_mode_id = plan["capture_mode"]
 			#title_finder_lambda = lambda title_is_at_header : container_classes[operator] if title_is_at_header == True else operator_card_classes[operator]
-			target_class = plan["css_item_class_name"]
+			target_class = ""#plan["css_item_class_name"]
+			requires_click = False
+			target_click_class = ""
+			menu_to_click_class = ""
+			disabled_mode = False #temp value
+			clicked = False
+
+			#if-else structured like this on purpose for ease of re-readability
+			if operator_id == 0 :
+				if capture_mode_id == 0 :
+					target_class = "//*[@class='package-card-generic']"
+				elif capture_mode_id == 1 :
+					requires_click = True
+					target_click_class = "//*[contains(@class, 'search-tab-btn') and contains(@class, 'MuiTab-textColorPrimary') and contains(@class, 'MuiButtonBase-root')]"
+					target_class = "//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
+					need_to_scroll = True
+			elif operator_id == 1 :
+				if capture_mode_id == 0 :
+					target_class = "//*[@class='innerWrap']"
+				elif capture_mode_id == 1 :
+					requires_click = True
+					disabled_mode = True #temp
+					#target_class = operator_cards_header_title_classes[operator_name][0]
+				elif capture_mode_id == 2 :
+					target_class = "//*[@class='card-promotion']"
+			elif operator_id == 2 :
+				if capture_mode_id == 0 :
+					target_class = "//*[@class='x-1iqxi85']"
 
 			#init_web_contents_lambda = lambda title_is_at_header : driver.find_elements(By.CSS_SELECTOR, f".{target_class}")[0].find_elements(By.XPATH, f'./div[contains(@class, "{operator_card_classes[operator]}")]') if title_is_at_header == True else driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
-			init_web_contents = driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
+			if not disabled_mode :
+				if requires_click :
+					time.sleep(1)
+					click_targets = driver.find_elements(By.XPATH, f"{target_click_class}")
+					for i in range(len(click_targets)):
+						target = click_targets[i]
+						menu_target = target.find_element(By.XPATH, "..")
+						##print(target.get_attribute('class'), target.get_attribute('innerHTML'))
+						if plan_name in target.get_attribute('innerHTML') :
+							#print(target.get_attribute('class'), target.get_attribute('innerHTML'))
+							if need_to_scroll and not scrolled :
+								driver.execute_script("""
+									window.scrollTo({
+										top: arguments[0].getBoundingClientRect().top-50,
+										behavior: "instant"
+										});
+									""", target)
+								scrolled = True
+							time.sleep(1)
+							driver.execute_script("""
+									let target = arguments[0]
+									let menu_targets = arguments[1].children
+									for (let i = 0; i <= menu_targets.length; i++) {
+										if (target === menu_targets[i]) {
+											target.click()
+										}
+									}
+									""", target, menu_target)
+							time.sleep(1)
+							##print(target.get_attribute('class'))
+							clicked = True
+							break
+				else :
+					clicked = True
 
-			for i in range(len(init_web_contents)) :
-				web_content = init_web_contents[i]
-				#web_contents_ = driver.find_elements(By.XPATH,"//*[text()[contains(., '"+target_string+"')]]")
-				list_of_rows.append(web_content.get_attribute('class'))
+				if clicked :
+					init_web_contents = driver.find_elements(By.XPATH, f"{target_class}")
+
+					for i in range(len(init_web_contents)) :
+						web_content = init_web_contents[i]
+						#web_contents_ = driver.find_elements(By.XPATH,"//*[text()[contains(., '"+target_string+"')]]")
+						print(web_content.get_attribute('class'))
+						list_of_rows.append(web_content.get_attribute('class'))
 
 		driver.close()
 

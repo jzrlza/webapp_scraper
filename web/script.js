@@ -30,9 +30,26 @@ button__scrape.onclick = function() {
 					plan_name: "5G Max Professionals​", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
-				}
+				},
 			], // plan_obj[]
 		},
+		{
+			url_link: "https://www.ais.th/consumers/package/postpaid/postpaid-plans", //str
+			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			plans: [
+				{
+					plan_name: "แพ็กเกจมหามงคล", //str
+					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
+				{
+					plan_name: "5G Serenade", //str
+					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
+			], // plan_obj[]
+		},
+		/*
 		{
 			url_link: "https://www.dtac.co.th/postpaid/products/package.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
@@ -41,7 +58,18 @@ button__scrape.onclick = function() {
 					plan_name: "dtac 5G Better+", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
-				}
+				},
+			], // plan_obj[]
+		},
+		{
+			url_link: "https://www.dtac.co.th/postpaid/products/net.html", //str
+			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
+			plans: [
+				{
+					plan_name: "dtac 5G Better+", //str
+					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
 			], // plan_obj[]
 		},
 		{
@@ -52,9 +80,14 @@ button__scrape.onclick = function() {
 					plan_name: "5G Together+", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
-				}
+				},
+				{
+					plan_name: "5G Net Ultra Max Speed", //str
+					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
 			], // plan_obj[]
-		},
+		},*/
 
 	]
 
