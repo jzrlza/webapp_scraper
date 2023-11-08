@@ -47,6 +47,16 @@ button__scrape.onclick = function() {
 					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
 				},
+				{
+					plan_name: "Online MAX", //str
+					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
+				{
+					plan_name: "Other", //str
+					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
 			], // plan_obj[]
 		},
 		/*
