@@ -1,0 +1,36 @@
+let x = a == 1 ? b : c
+
+x
+is b if a == 1
+else is c
+
+try {
+
+} catch (e) {
+ console.log(e)
+}
+
+that's JS
+in Python we do
+
+a is already known bool, separate from a_condi
+get_x = lambda a_condi : b if a_condi == 1 else c
+x = get_x(a)
+
+try :
+  ...
+except (Exception e) :
+  print(e)
+
+
+
+
+ui ==> minimal and simple, use modes for each type of visuals (non-programmer users)
+   each url has each algorithm predefined (update each month)
+
+---> urls are addable : each sub-mode must have picture example
+
+---> evaluate by excel results (table in website display first at bottom of website)
+
+
+
