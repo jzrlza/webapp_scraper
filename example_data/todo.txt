@@ -1,0 +1,6 @@
+ui ==> minimal and simple, use modes for each type of visuals (non-programmer users)
+   each url has each algorithm predefined (update each month)
+
+---> urls are addable : each sub-mode must have picture example
+
+---> evaluate by excel results (table in website display first at bottom of website)
