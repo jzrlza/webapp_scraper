@@ -34,6 +34,17 @@ button__scrape.onclick = function() {
 			], // plan_obj[]
 		},
 		{
+			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-max-experience", //str
+			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			plans: [
+				{
+					plan_name: "AIS 5G Max Experience", //str
+					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
+			], // plan_obj[]
+		},
+		{
 			url_link: "https://www.ais.th/consumers/package/postpaid/postpaid-plans", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
 			plans: [

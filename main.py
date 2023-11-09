@@ -21,6 +21,20 @@ def distinctStringSet(list_string) :
 			auxiliaryList.append(word)
 	return auxiliaryList
 
+def getNumbersWithCommaFromString(raw_txt) :
+	pattern = r'\d{1,3}(?:,\d{3})*(?:\.\d+)?'
+
+	matches = re.findall(pattern, raw_txt)
+
+	numbers = [float(match.replace(',', '')) for match in matches]
+
+	return numbers
+
+def checkSystemGetEnum(raw_txt) :
+	if "ต่อเดือน" in raw_txt :
+		return 1
+	return 0
+
 def modifyMainDictArrayByPrice(main_arr, price, field_edit, field_value) :
 	for i in range(len(main_arr)) :
 		dict_member = main_arr[i]
@@ -197,12 +211,24 @@ async def scrape_web(request: Request):
 						web_content = init_web_contents[i]
 						#web_contents_ = driver.find_elements(By.XPATH,"//*[text()[contains(., '"+target_string+"')]]")
 						print(web_content.get_attribute('class'))
-						list_of_rows.append(web_content.get_attribute('class'))
+						new_row = row_obj_template.copy()
+						new_row["operator_id"] = operator_id
+						new_row["plan"] = plan_name
+						
 						if operator_id == 0 :
 							if capture_mode_id == 0 :
-								pass
+								first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
+								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
+								print(first_block__price)
+								new_row["price"] = first_block__price
+								#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
+								new_row["system"] = 1
 							elif capture_mode_id == 1 :
-								pass
+								first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
+								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
+								new_row["price"] = first_block__price
+								print(first_block__price)
+								new_row["system"] = 1
 						elif operator_id == 1 :
 							if capture_mode_id == 0 :
 								pass
@@ -213,6 +239,8 @@ async def scrape_web(request: Request):
 						elif operator_id == 2 :
 							if capture_mode_id == 0 :
 								pass
+
+						list_of_rows.append(new_row)
 
 		driver.close()
 
