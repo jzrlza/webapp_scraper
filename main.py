@@ -117,6 +117,11 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		if target_str != "" :
 			new_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, target_str, "GB")
 
+	#entertainment zone
+	if re.search('netflix', list_item_icon_img, re.IGNORECASE) :
+		new_row["entertainment"] = True
+		new_row["entertainment_package"] = list_item_infos_body
+	#There's viu as well, in ZEEN packages... To be continued...
 
 def modifyMainDictArrayByPrice(main_arr, price, field_edit, field_value) :
 	for i in range(len(main_arr)) :
