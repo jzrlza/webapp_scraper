@@ -215,7 +215,7 @@ async def scrape_web(request: Request):
 						new_row["operator_id"] = operator_id
 						new_row["plan"] = plan_name
 						
-						if operator_id == 0 :
+						if operator_id == 0 : #start at "package-card-generic"
 							if capture_mode_id == 0 :
 								first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
 								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
@@ -223,12 +223,32 @@ async def scrape_web(request: Request):
 								new_row["price"] = first_block__price
 								#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
 								new_row["system"] = 1
+
+								second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
+								second_block__list_items = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+								for list_item in second_block__list_items :
+									list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+									list_item_infos_head = list_item_infos[0]
+									list_item_infos_body = list_item_infos[1]
+									list_item_infos_footer = list_item_infos[2]
+									print(list_item_infos_head.get_attribute('innerHTML').strip(), list_item_infos_body.get_attribute('innerHTML').strip())
 							elif capture_mode_id == 1 :
 								first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
 								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
 								new_row["price"] = first_block__price
 								print(first_block__price)
 								new_row["system"] = 1
+
+								second_block_list_items = web_content.find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')
+								footer_item = None
+								for list_item in second_block_list_items :
+									if "line-panel" in list_item.get_attribute('class') :
+										footer_item = list_item
+										break
+									list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+									list_item_infos_head = list_item_infos[0]
+									list_item_infos_body = list_item_infos[1]
+									print(list_item_infos_head.get_attribute('innerHTML').strip(), list_item_infos_body.get_attribute('innerHTML').strip())
 						elif operator_id == 1 :
 							if capture_mode_id == 0 :
 								pass
