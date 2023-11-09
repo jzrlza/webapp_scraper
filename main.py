@@ -14,14 +14,14 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 import time
 
-def distinctStringSet(list_string) :
+def distinctStringSet(list_string) : #returns str[]
 	auxiliaryList = []
 	for word in list_string:
 		if word not in auxiliaryList:
 			auxiliaryList.append(word)
 	return auxiliaryList
 
-def getNumbersWithCommaFromString(raw_txt) :
+def getNumbersWithCommaFromString(raw_txt) : #returns float[]
 	pattern = r'\d{1,3}(?:,\d{3})*(?:\.\d+)?'
 
 	matches = re.findall(pattern, raw_txt)
@@ -35,30 +35,44 @@ def checkSystemGetEnum(raw_txt) :
 		return 1
 	return 0
 
+def checkIsLikelyGSystemIcon(txt) :
+	return re.search('3g', txt, re.IGNORECASE) or re.search('4g', txt, re.IGNORECASE) or re.search('5g', txt, re.IGNORECASE)
+
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer) : #void function
 	#XG zone
-	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or "3g" in list_item_icon_img :
+	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or re.search('3g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
 			new_row["g_no"] = "3G"
-		else :
+		elif not "3G" in new_row["g_no"] :
 			new_row["g_no"] += "/3G"
-	if "4G" in list_item_infos_head or "4G" in list_item_infos_body or "4g" in list_item_icon_img :
+	if "4G" in list_item_infos_head or "4G" in list_item_infos_body or re.search('4g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
 			new_row["g_no"] = "4G"
-		else :
+		elif not "4G" in new_row["g_no"] :
 			new_row["g_no"] += "/4G"
-	if "5G" in list_item_infos_head or "5G" in list_item_infos_body or "5g" in list_item_icon_img :
+	if "5G" in list_item_infos_head or "5G" in list_item_infos_body or re.search('5g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
 			new_row["g_no"] = "5G"
-		else :
+		elif not "5G" in new_row["g_no"] :
 			new_row["g_no"] += "/5G"
 
-	#internet GB zone
-	#if "เน็ต" in list_item_infos_head :
-	#	if "GB" in list_item_infos_body :
-	#
-	#	elif "" :
+	#WiFi boolean zone
+	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
+		new_row["wifi"] = True
 
+	#internet GB zone
+	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
+		if 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
+			split_spaces = list_item_infos_body.split(" ")
+			for split_i in range(len(split_spaces)) :
+				splitted = split_spaces[split_i]
+				if splitted == 'GB' : #X GB
+					new_row["internet_gbs"] = getNumbersWithCommaFromString(split_spaces[split_i-1])[0]
+				elif 'GB' in splitted and not ('Gbps' in splitted) : #XGB
+					new_row["internet_gbs"] = getNumbersWithCommaFromString(splitted)[0]
+					break
+		elif "ไม่จำกัด" in list_item_infos_body or re.search('unlimited', list_item_infos_body, re.IGNORECASE):
+			new_row["internet_gbs"] = "∞"
 
 def modifyMainDictArrayByPrice(main_arr, price, field_edit, field_value) :
 	for i in range(len(main_arr)) :
