@@ -19,6 +19,11 @@ def normalizeStringForNoneTypeToString(raw_str) :
 		return ""
 	return raw_str
 
+def normalizeStringEmptyToNoneType(raw_str) :
+	if raw_str == "" :
+		return None
+	return raw_str
+
 def distinctStringSet(list_string) : #returns str[]
 	auxiliaryList = []
 	for word in list_string:
@@ -36,13 +41,22 @@ def getNumbersWithCommaFromString(raw_txt) : #returns float[]
 	return numbers
 
 def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
-	split_spaces = raw_txt.split(" ")
+	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
 			return getNumbersWithCommaFromString(split_spaces[split_i-1])[0]
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
 			return getNumbersWithCommaFromString(splitted)[0]
+
+def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&") :
+	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').split(" ")
+	for split_i in range(len(split_spaces)) :
+		splitted = split_spaces[split_i]
+		if splitted == unit : #X GB
+			return f"{getNumbersWithCommaFromString(split_spaces[split_i-1])[0]:.0f}{unit}"
+		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
+			return f"{getNumbersWithCommaFromString(splitted)[0]:.0f}{unit}"
 
 def checkSystemGetEnum(raw_txt) :
 	if "ต่อเดือน" in raw_txt :
@@ -52,7 +66,8 @@ def checkSystemGetEnum(raw_txt) :
 def checkIsLikelyGSystemIcon(txt) :
 	return re.search('3g', txt, re.IGNORECASE) or re.search('4g', txt, re.IGNORECASE) or re.search('5g', txt, re.IGNORECASE)
 
-def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer) : #void function
+possible_fup_units = ['Gbps', 'Mbps']
+def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
 	#XG zone
 	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or re.search('3g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
@@ -90,6 +105,18 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["call_minutes"] = getNumbersWithCommaFromString(list_item_infos_body)[0] #predefined unit in header, here should be pure number
 		else :
 			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_infos_body, 'ชม')
+
+	#fair usage policy zone
+	for fup_unit in possible_fup_units :
+		target_str = ""
+		if fup_unit in normalizeStringForNoneTypeToString(list_item_infos_footer) :
+			target_str = list_item_infos_footer
+		elif fup_unit in normalizeStringForNoneTypeToString(list_item_infos_body) :
+			target_str = list_item_infos_body
+
+		if target_str != "" :
+			new_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, target_str, "GB")
+
 
 def modifyMainDictArrayByPrice(main_arr, price, field_edit, field_value) :
 	for i in range(len(main_arr)) :
