@@ -102,7 +102,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
 		print("CALL TIME : "+list_item_infos_body)
 		if "(นาที)" in list_item_infos_head :
-			new_row["call_minutes"] = getNumbersWithCommaFromString(list_item_infos_body)[0] #predefined unit in header, here should be pure number
+			new_row["call_minutes"] = float(list_item_infos_body.replace('<b>', '').replace('</b>', '')) #predefined unit in header, here should be pure number
 		else :
 			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_infos_body, 'ชม')
 
