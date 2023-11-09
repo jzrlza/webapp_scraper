@@ -35,20 +35,30 @@ def checkSystemGetEnum(raw_txt) :
 		return 1
 	return 0
 
-def insertRowInfoForAISCards(new_row, list_item_infos_head, list_item_infos_body, list_item_infos_footer) : #void function
+def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer) : #void function
 	#XG zone
-	if "3G" in list_item_infos_head or "3G" in list_item_infos_body :
-		new_row["g_no"] = "3G"
-	if "4G" in list_item_infos_head or "4G" in list_item_infos_body :
+	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or "3g" in list_item_icon_img :
+		if new_row["g_no"] == None :
+			new_row["g_no"] = "3G"
+		else :
+			new_row["g_no"] += "/3G"
+	if "4G" in list_item_infos_head or "4G" in list_item_infos_body or "4g" in list_item_icon_img :
 		if new_row["g_no"] == None :
 			new_row["g_no"] = "4G"
 		else :
 			new_row["g_no"] += "/4G"
-	if "5G" in list_item_infos_head or "5G" in list_item_infos_body :
+	if "5G" in list_item_infos_head or "5G" in list_item_infos_body or "5g" in list_item_icon_img :
 		if new_row["g_no"] == None :
 			new_row["g_no"] = "5G"
 		else :
 			new_row["g_no"] += "/5G"
+
+	#internet GB zone
+	#if "เน็ต" in list_item_infos_head :
+	#	if "GB" in list_item_infos_body :
+	#
+	#	elif "" :
+
 
 def modifyMainDictArrayByPrice(main_arr, price, field_edit, field_value) :
 	for i in range(len(main_arr)) :
@@ -242,12 +252,13 @@ async def scrape_web(request: Request):
 								second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
 								second_block__list_items = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 								for list_item in second_block__list_items :
+									list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 									list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 									list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 									list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
 									print(list_item_infos_head, list_item_infos_body)
-									insertRowInfoForAISCards(new_row, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
+									insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 							elif capture_mode_id == 1 :
 								first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
 								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
@@ -261,11 +272,12 @@ async def scrape_web(request: Request):
 									if "line-panel" in list_item.get_attribute('class') :
 										footer_item = list_item
 										break
+									list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 									list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 									list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 									print(list_item_infos_head, list_item_infos_body)
-									insertRowInfoForAISCards(new_row, list_item_infos_head, list_item_infos_body, None)
+									insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
 						elif operator_id == 1 :
 							if capture_mode_id == 0 :
 								pass

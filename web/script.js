@@ -22,7 +22,7 @@ button__scrape.onclick = function() {
 	}
 
 	let planned_inputs = [
-		{
+		/*{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
 			plans: [
@@ -66,6 +66,39 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "Other", //str
 					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
+			], // plan_obj[]
+		},*/
+		{
+			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-netflix", //str
+			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			plans: [
+				{
+					plan_name: "แพ็กเกจ 5G Netflix", //str
+					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
+			], // plan_obj[]
+		},
+		{
+			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-smart-share", //str
+			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			plans: [
+				{
+					plan_name: "แพ็กเกจ 5G SMART SHARE", //str
+					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
+			], // plan_obj[]
+		},
+		{
+			url_link: "https://www.ais.th/consumers/package/exclusive-plan/zeed-5g/5g-postpaid", //str
+			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			plans: [
+				{
+					plan_name: "แพ็กเกจ AIS ZEED 5G รายเดือน", //str
+					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
