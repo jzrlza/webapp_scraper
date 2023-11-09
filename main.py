@@ -31,30 +31,46 @@ def modifyMainDictArrayByPrice(main_arr, price, field_edit, field_value) :
 
 app = FastAPI()
 
-field_names = [
-	"operator_id",
-	"plan",
-	"price",
-	"system",
-	"unlimited_call",
-	"call_minutes",
-	"capture_in_seconds",
-	"unlimited_internet_mode",
-	"internet_gbs",
-	"fair_usage_policy",
-	"wifi",
-	"g_no",
-	"sms",
-	"mms",
-	"entertainment",
-	"entertainment_package",
-	"entertainment_contract",
-	"priviledge",
-	"priviledge_exclusive",
-	"contract",
-	"extra",
-	"notes"
-]
+operators = ["AIS", "DTAC", "TRUE"]
+operator_card_classes = { #where the title is inside each cards
+	"AIS" : ["package-card-generic", "MuiCardContent-root"],
+	"DTAC" : ["innerWrap", None, "card-promotion"],
+	"TRUE" : ["x-1iqxi85"]
+}
+operator_cards_header_title_classes = { 
+	"AIS" : ["cmp-container", "search-tab-btn"],
+	"DTAC" : ["tCaption", "txt-h-2", "title-card"], # *** title-card adds one layer
+	"TRUE" : ["x-34ioum"] # now uses x-4ll1o9
+}
+operator_cards_container_classes = {
+	"AIS" : ["cmp-container"],
+	"DTAC" : ["cardPackages", None, "card-container"],
+	"TRUE" : ["my-5"]
+}
+row_obj_template = {
+	"operator_id": -1,
+	"plan": "",
+	"price": 0.0,
+	"system": -1,
+	"unlimited_call": False,
+	"call_minutes": 0.0,
+	"capture_in_seconds": False,
+	"unlimited_internet_mode": 0,
+	"internet_gbs": 0.0,
+	"fair_usage_policy": None,
+	"wifi": False,
+	"g_no": None,
+	"sms": False,
+	"mms": False,
+	"entertainment": False,
+	"entertainment_package": None,
+	"entertainment_contract": 0,
+	"priviledge": False,
+	"priviledge_exclusive": None,
+	"contract": 0,
+	"extra": None,
+	"notes": None
+}
 
 #config_file = "config.yaml"
 #sql_file = "test.sqlite"
@@ -74,23 +90,6 @@ def on_startup():
 
 
     #initialize_databases(sql_file, config)
-
-operators = ["AIS", "DTAC", "TRUE"]
-operator_card_classes = { #where the title is inside each cards
-	"AIS" : ["package-card-generic", "MuiCardContent-root"],
-	"DTAC" : ["innerWrap", None, "card-promotion"],
-	"TRUE" : ["x-1iqxi85"]
-}
-operator_cards_header_title_classes = { 
-	"AIS" : ["cmp-container", "search-tab-btn"],
-	"DTAC" : ["tCaption", "txt-h-2", "title-card"], # *** title-card adds one layer
-	"TRUE" : ["x-34ioum"] # now uses x-4ll1o9
-}
-operator_cards_container_classes = {
-	"AIS" : ["cmp-container"],
-	"DTAC" : ["cardPackages", None, "card-container"],
-	"TRUE" : ["my-5"]
-}
 
 
 @app.post("/scrape_web")
@@ -199,6 +198,21 @@ async def scrape_web(request: Request):
 						#web_contents_ = driver.find_elements(By.XPATH,"//*[text()[contains(., '"+target_string+"')]]")
 						print(web_content.get_attribute('class'))
 						list_of_rows.append(web_content.get_attribute('class'))
+						if operator_id == 0 :
+							if capture_mode_id == 0 :
+								pass
+							elif capture_mode_id == 1 :
+								pass
+						elif operator_id == 1 :
+							if capture_mode_id == 0 :
+								pass
+							elif capture_mode_id == 1 :
+								pass
+							elif capture_mode_id == 2 :
+								pass
+						elif operator_id == 2 :
+							if capture_mode_id == 0 :
+								pass
 
 		driver.close()
 
