@@ -73,6 +73,8 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	#WiFi boolean zone
 	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
 		new_row["wifi"] = True
+		if "ไม่จำกัด" in list_item_infos_body :
+			new_row["unlimited_internet_mode"] = 1
 
 	#internet GB zone
 	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
