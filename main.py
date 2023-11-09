@@ -14,6 +14,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 import time
 
+def normalizeStringForNoneTypeToString(raw_str) :
+	if raw_str == None :
+		return ""
+	return raw_str
+
 def distinctStringSet(list_string) : #returns str[]
 	auxiliaryList = []
 	for word in list_string:
@@ -29,6 +34,15 @@ def getNumbersWithCommaFromString(raw_txt) : #returns float[]
 	numbers = [float(match.replace(',', '')) for match in matches]
 
 	return numbers
+
+def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
+	split_spaces = raw_txt.split(" ")
+	for split_i in range(len(split_spaces)) :
+		splitted = split_spaces[split_i]
+		if splitted == unit : #X GB
+			return getNumbersWithCommaFromString(split_spaces[split_i-1])[0]
+		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
+			return getNumbersWithCommaFromString(splitted)[0]
 
 def checkSystemGetEnum(raw_txt) :
 	if "ต่อเดือน" in raw_txt :
@@ -63,16 +77,17 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	#internet GB zone
 	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
 		if 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
-			split_spaces = list_item_infos_body.split(" ")
-			for split_i in range(len(split_spaces)) :
-				splitted = split_spaces[split_i]
-				if splitted == 'GB' : #X GB
-					new_row["internet_gbs"] = getNumbersWithCommaFromString(split_spaces[split_i-1])[0]
-				elif 'GB' in splitted and not ('Gbps' in splitted) : #XGB
-					new_row["internet_gbs"] = getNumbersWithCommaFromString(splitted)[0]
-					break
+			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_infos_body, 'Gbps')
 		elif "ไม่จำกัด" in list_item_infos_body or re.search('unlimited', list_item_infos_body, re.IGNORECASE):
 			new_row["internet_gbs"] = "∞"
+
+	#call in minutes time zone
+	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
+		print("CALL TIME : "+list_item_infos_body)
+		if "(นาที)" in list_item_infos_head :
+			new_row["call_minutes"] = getNumbersWithCommaFromString(list_item_infos_body) #predefined unit in header, here should be pure number
+		else :
+			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_infos_body, 'ชม')
 
 def modifyMainDictArrayByPrice(main_arr, price, field_edit, field_value) :
 	for i in range(len(main_arr)) :
@@ -271,7 +286,7 @@ async def scrape_web(request: Request):
 									list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 									list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 									list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
-									print(list_item_infos_head, list_item_infos_body)
+									print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 									insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 							elif capture_mode_id == 1 :
 								first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
@@ -286,7 +301,8 @@ async def scrape_web(request: Request):
 									if "line-panel" in list_item.get_attribute('class') :
 										footer_item = list_item
 										break
-									list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									list_item_icon_img = normalizeStringForNoneTypeToString(list_item.find_elements(By.XPATH, '*')[0].get_attribute('src')).strip()
+									print("MODE2 IMAGE: "+str(list_item_icon_img))
 									list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 									list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 									list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
