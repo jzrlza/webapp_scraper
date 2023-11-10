@@ -123,14 +123,6 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		new_row["entertainment_package"] = list_item_infos_body
 	#There's viu as well, in ZEEN packages... To be continued...
 
-def modifyMainDictArrayByPrice(main_arr, price, field_edit, field_value) :
-	for i in range(len(main_arr)) :
-		dict_member = main_arr[i]
-		#print(dict_member, field_edit, field_value)
-		if dict_member["Price per Month"] == price :
-			main_arr[i][field_edit] = field_value
-			break
-
 app = FastAPI()
 
 operators = ["AIS", "DTAC", "TRUE"]
@@ -313,6 +305,8 @@ async def scrape_web(request: Request):
 								new_row["system"] = 1
 
 								second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
+								second_block_raw_list = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')
+								second_block_has_footer = len(second_block_raw_list) > 1
 								second_block__list_items = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 								for list_item in second_block__list_items :
 									list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
@@ -322,6 +316,13 @@ async def scrape_web(request: Request):
 									list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
 									print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 									insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
+									#entertainment zone in case it is in footer
+									if second_block_has_footer :
+										for i in range(len(second_block_raw_list)) :
+											target_item = second_block_raw_list[i]
+											if i == 0 or "separator" in target_item.get_attribute('class') or "data-speed" in target_item.get_attribute('class') :
+												continue
+
 							elif capture_mode_id == 1 :
 								first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
 								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
