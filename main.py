@@ -430,6 +430,16 @@ async def scrape_web(request: Request):
 								print(new_row["price"])
 
 								second_block = root_block.find_elements(By.XPATH, '*')[1]
+								second_block__center = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+								second_block__center_items = second_block__center.find_elements(By.XPATH, '*')
+
+								for center_item in second_block__center_items :
+									center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
+									if "</i>" in center_item_raw_txt :
+										center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
+									print(center_item_raw_txt)
+
+								second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
 
 							elif capture_mode_id == 1 :
 								new_row["system"] = pricing_type_id
