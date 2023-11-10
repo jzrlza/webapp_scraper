@@ -234,6 +234,25 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 
 	#priviledge zone
 	if re.search('member', list_item_full_text, re.IGNORECASE) :
+		priv_str = None
+		priv_str_chunks = list_item_full_text.split(">")[1].split("<")[0].split(" ")
+		for priv_str_chunk in priv_str_chunks :
+			if "สิทธิ์" in priv_str_chunk or re.search('member', priv_str_chunk, re.IGNORECASE) :
+				continue
+			else :
+				if priv_str == None :
+					priv_str = priv_str_chunk
+				else :
+					priv_str += " "+priv_str_chunk
+		new_row["priviledge"] = True
+		new_row["priviledge_exclusive"] = priv_str
+		is_extra = False
+
+	#wifi zone
+	if re.search('WiFi', list_item_full_text, re.IGNORECASE) :
+		new_row["wifi"] = True
+		if "ไม่จำกัด" in list_item_full_text :
+			new_row["unlimited_internet_mode"] = 1
 		is_extra = False
 
 app = FastAPI()
