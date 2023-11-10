@@ -23,6 +23,7 @@ button__scrape.onclick = function() {
 	}
 
 	let planned_inputs = [
+		//AIS TEST ZONE
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
@@ -110,6 +111,8 @@ button__scrape.onclick = function() {
 				},
 			], // plan_obj[]
 		},
+
+		//DTAC TEST ZONE
 		/*
 		{
 			url_link: "https://www.dtac.co.th/postpaid/products/package.html", //str
@@ -133,6 +136,8 @@ button__scrape.onclick = function() {
 				},
 			], // plan_obj[]
 		},
+
+		//TRUE TEST ZONE
 		{
 			url_link: "https://web.archive.org/web/20230322124658/https://www.true.th/truemoveh/postpaid/mass", //str
 			operator_id: 2, //enum, ais = 0, dtac = 1, true = 2
