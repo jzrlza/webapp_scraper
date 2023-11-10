@@ -132,7 +132,7 @@ button__scrape.onclick = function() {
 			plans: [
 				{
 					plan_name: "dtac GO+", //str
-					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -143,12 +143,12 @@ button__scrape.onclick = function() {
 			plans: [
 				{
 					plan_name: "Tablet Net Non-Stop", //str
-					capture_mode: 2, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: true, //bool
 				},
 				{
 					plan_name: "SMP Entry 240", //str
-					capture_mode: 3, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					capture_mode: 2, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]

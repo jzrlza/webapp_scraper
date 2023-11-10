@@ -280,11 +280,12 @@ async def scrape_web(request: Request):
 					need_to_scroll = True
 			elif operator_id == 1 :
 				if capture_mode_id == 0 :
-					target_class = "//*[@class='innerWrap']"
+					target_class = "//*[@class='wrapPackages']"
 				elif capture_mode_id == 1 :
 					requires_click = True
-					disabled_mode = True #temp
-					#target_class = operator_cards_header_title_classes[operator_name][0]
+					target_click_class = "//*[contains(@class, 'content')]"
+					target_class = "//li"
+					need_to_scroll = True
 				elif capture_mode_id == 2 :
 					target_class = "//*[@class='card-promotion']"
 			elif operator_id == 2 :
