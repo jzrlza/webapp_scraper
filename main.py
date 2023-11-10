@@ -68,28 +68,37 @@ def checkIsLikelyGSystemIcon(txt) :
 
 possible_fup_units = ['Gbps', 'Mbps']
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
+	is_extra = True
+
 	#XG zone
 	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or re.search('3g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
 			new_row["g_no"] = "3G"
+			is_extra = False
 		elif not "3G" in new_row["g_no"] :
 			new_row["g_no"] += "/3G"
+			is_extra = False
 	if "4G" in list_item_infos_head or "4G" in list_item_infos_body or re.search('4g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
 			new_row["g_no"] = "4G"
+			is_extra = False
 		elif not "4G" in new_row["g_no"] :
 			new_row["g_no"] += "/4G"
+			is_extra = False
 	if "5G" in list_item_infos_head or "5G" in list_item_infos_body or re.search('5g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
 			new_row["g_no"] = "5G"
+			is_extra = False
 		elif not "5G" in new_row["g_no"] :
 			new_row["g_no"] += "/5G"
+			is_extra = False
 
 	#WiFi boolean zone
 	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
 		new_row["wifi"] = True
 		if "ไม่จำกัด" in list_item_infos_body :
 			new_row["unlimited_internet_mode"] = 1
+		is_extra = False
 
 	#internet GB zone
 	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
@@ -97,6 +106,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_infos_body, 'Gbps')
 		elif "ไม่จำกัด" in list_item_infos_body or re.search('unlimited', list_item_infos_body, re.IGNORECASE):
 			new_row["internet_gbs"] = "∞"
+		is_extra = False
 
 	#call in minutes time zone
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
@@ -105,6 +115,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["call_minutes"] = float(list_item_infos_body.replace('<b>', '').replace('</b>', '')) #predefined unit in header, here should be pure number
 		else :
 			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_infos_body, 'ชม')
+		is_extra = False
 
 	#fair usage policy zone
 	for fup_unit in possible_fup_units :
@@ -116,12 +127,40 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 
 		if target_str != "" :
 			new_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, target_str, "GB")
+			is_extra = False
 
 	#entertainment zone
+	entertainments = []
 	if re.search('netflix', list_item_icon_img, re.IGNORECASE) :
 		new_row["entertainment"] = True
-		new_row["entertainment_package"] = list_item_infos_body
-	#There's viu as well, in ZEEN packages... To be continued...
+		new_row["entertainment_package"] = ""
+		entertainments.append(list_item_infos_body)
+		is_extra = False
+	if re.search('PLAY Premium Plus', list_item_infos_head, re.IGNORECASE) :
+		new_row["entertainment"] = True
+		new_row["entertainment_package"] = ""
+		entertainments.append(list_item_infos_head)
+		new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_infos_body)
+		is_extra = False
+	for i in range(len(entertainments)) :
+		new_row["entertainment_package"] += entertainments[i]
+		if i < len(entertainments) - 1 :
+			new_row["entertainment_package"] += ", "
+
+	#prilivedge zone
+	if "เซเรเนด" in list_item_infos_head or re.search('Serenade', list_item_infos_head, re.IGNORECASE) :
+		if list_item_infos_body != "-" :
+			new_row["priviledge"] = True
+			new_row["priviledge_exclusive"] = list_item_infos_body
+		is_extra = False
+
+	print(is_extra)
+	#extra zone
+	if is_extra :
+		if new_row["extra"] == None :
+			new_row["extra"] = list_item_infos_head+" "+list_item_infos_body
+		else :
+			new_row["extra"] += ", "+list_item_infos_head+" "+list_item_infos_body
 
 app = FastAPI()
 
@@ -302,10 +341,10 @@ async def scrape_web(request: Request):
 								print(first_block__price)
 								new_row["price"] = first_block__price
 								#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
-								new_row["system"] = 1
+								new_row["system"] = plan["pricing_type"]
 
 								second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
-								second_block_raw_list = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')
+								second_block_raw_list = second_block.find_elements(By.XPATH, '*')
 								second_block_has_footer = len(second_block_raw_list) > 1
 								second_block__list_items = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 								for list_item in second_block__list_items :
@@ -317,11 +356,24 @@ async def scrape_web(request: Request):
 									print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 									insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 									#entertainment zone in case it is in footer
-									if second_block_has_footer :
-										for i in range(len(second_block_raw_list)) :
-											target_item = second_block_raw_list[i]
-											if i == 0 or "separator" in target_item.get_attribute('class') or "data-speed" in target_item.get_attribute('class') :
-												continue
+								if second_block_has_footer :
+									for i in range(len(second_block_raw_list)) :
+										target_item = second_block_raw_list[i]
+										print(target_item.get_attribute('class'))
+										if i == 0 or "separator" in target_item.get_attribute('class') or "data-speed" in target_item.get_attribute('class') :
+											continue
+										
+										raw_str_item = target_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML')
+										if re.search('viu', raw_str_item, re.IGNORECASE) :
+											new_row["entertainment"] = True
+											raw_str_item_title = raw_str_item.strip().split(" ฟรี")[0]
+											raw_str_item_duration = getNumberByUnit("เดือน", raw_str_item)
+											print(raw_str_item_title, raw_str_item_duration)
+											if new_row["entertainment_package"] == None :
+												new_row["entertainment_package"] = raw_str_item_title
+											else :
+												new_row["entertainment_package"] += ", "+raw_str_item_title
+											new_row["entertainment_contract"] = raw_str_item_duration
 
 							elif capture_mode_id == 1 :
 								first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]

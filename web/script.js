@@ -12,6 +12,7 @@ button__scrape.onclick = function() {
 	let url_obj = {
 		url_link: "", //str
 		operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+		pricing_type: 1,
 		plans: [], // plan_obj[]
 	}
 
@@ -25,6 +26,7 @@ button__scrape.onclick = function() {
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "5G Max Professionals​", //str
@@ -36,6 +38,7 @@ button__scrape.onclick = function() {
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-max-experience", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "AIS 5G Max Experience", //str
@@ -47,6 +50,7 @@ button__scrape.onclick = function() {
 		{
 			url_link: "https://www.ais.th/consumers/package/postpaid/postpaid-plans", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "แพ็กเกจมหามงคล", //str
@@ -73,6 +77,7 @@ button__scrape.onclick = function() {
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-netflix", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "แพ็กเกจ 5G Netflix", //str
@@ -84,6 +89,7 @@ button__scrape.onclick = function() {
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-smart-share", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "แพ็กเกจ 5G SMART SHARE", //str
@@ -95,6 +101,7 @@ button__scrape.onclick = function() {
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/zeed-5g/5g-postpaid", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "แพ็กเกจ AIS ZEED 5G รายเดือน", //str
