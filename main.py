@@ -40,7 +40,16 @@ def getNumbersWithCommaFromString(raw_txt) : #returns float[]
 
 	return numbers
 
-numberCheckLambda = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))
+def getNumbersWithNoCommaFromString(raw_txt) :
+	pattern = r"[+-]?\d+(?:\.\d+)?"
+
+	matches = re.findall(pattern, raw_txt)
+
+	numbers = [float(match) for match in matches]
+
+	return numbers
+
+numberCheckLambda = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else getNumbersWithNoCommaFromString(raw_num_txt)[0])
 
 def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').split(" ")
@@ -118,7 +127,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 
 	#call in minutes time zone
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
-		print("CALL TIME : "+list_item_infos_body)
+		#print("CALL TIME : "+list_item_infos_body)
 		if "(นาที)" in list_item_infos_head :
 			new_row["call_minutes"] = float(list_item_infos_body.replace('<b>', '').replace('</b>', '')) #predefined unit in header, here should be pure number
 		else :
@@ -162,7 +171,6 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["priviledge_exclusive"] = list_item_infos_body
 		is_extra = False
 
-	print(is_extra)
 	#extra zone
 	if is_extra :
 		if new_row["extra"] == None :
@@ -347,7 +355,7 @@ async def scrape_web(request: Request):
 						if operator_id == 0 : #start at "package-card-generic"
 							if capture_mode_id == 0 :
 								first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
-								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
+								first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 								#print(first_block__price)
 								new_row["price"] = first_block__price
 								#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
@@ -387,7 +395,7 @@ async def scrape_web(request: Request):
 
 							elif capture_mode_id == 1 :
 								first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
-								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
+								first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 								new_row["price"] = first_block__price
 								#print(first_block__price)
 								new_row["system"] = pricing_type_id
