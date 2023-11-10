@@ -104,6 +104,10 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
 		if 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
 			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_infos_body, 'Gbps')
+		elif 'MB' in list_item_infos_body and not ('Mbps' in list_item_infos_body) :
+			new_row["internet_gbs"] = getNumberByUnit("MB", list_item_infos_body, 'Mbps')/1000.0
+		elif 'TB' in list_item_infos_body and not ('Tbps' in list_item_infos_body) :
+			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_infos_body, 'Tbps')*1000.0
 		elif "ไม่จำกัด" in list_item_infos_body or re.search('unlimited', list_item_infos_body, re.IGNORECASE):
 			new_row["internet_gbs"] = "∞"
 		is_extra = False
