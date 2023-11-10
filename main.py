@@ -267,6 +267,9 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 			new_row["entertainment_package"] += ", "+entertainment_str
 		is_extra = False
 
+	#extra zone
+	#to be continued...
+
 app = FastAPI()
 
 operators = ["AIS", "DTAC", "TRUE"]
