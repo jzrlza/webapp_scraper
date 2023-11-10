@@ -40,24 +40,26 @@ def getNumbersWithCommaFromString(raw_txt) : #returns float[]
 
 	return numbers
 
+numberCheckLambda = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))
+
 def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
-			return (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))(split_spaces[split_i-1])
+			return numberCheckLambda(split_spaces[split_i-1])
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
-			return (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))(splitted)
+			return numberCheckLambda(splitted)
 
 def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
-			float_num = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))(split_spaces[split_i-1])
+			float_num = numberCheckLambda(split_spaces[split_i-1])
 			return f"{float_num:.0f}{unit}"
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
-			float_num = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))(splitted)
+			float_num = numberCheckLambda(splitted)
 			return f"{float_num:.0f}{unit}"
 
 def checkSystemGetEnum(raw_txt) :
@@ -416,7 +418,7 @@ async def scrape_web(request: Request):
 								first_block__spans_list = first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 								if target_string in first_block__spans_list[1].get_attribute('innerHTML').strip() :
 									raw_price_txt = first_block__spans_list[0].get_attribute('innerHTML').strip()
-									new_row["price"] = (lambda price_txt : getNumbersWithCommaFromString(price_txt)[0] if "," in price_txt else float(price_txt))(raw_price_txt)
+									new_row["price"] = numberCheckLambda(raw_price_txt)
 								print(new_row["price"])
 
 								second_block = root_block.find_elements(By.XPATH, '*')[1]
