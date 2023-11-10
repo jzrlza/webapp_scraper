@@ -79,7 +79,9 @@ def checkSystemGetEnum(raw_txt) :
 def checkIsLikelyGSystemIcon(txt) :
 	return re.search('3g', txt, re.IGNORECASE) or re.search('4g', txt, re.IGNORECASE) or re.search('5g', txt, re.IGNORECASE)
 
-def checkIsInfiniteText(txt) :
+def checkIsInfiniteText(txt, internet_specific = False) :
+	if internet_specific :
+		return "เน็ตไม่จำกัด" in txt or "เน็ตไม่อั้น" in txt or (re.search('internet', txt, re.IGNORECASE) and re.search('unlimited', txt, re.IGNORECASE))
 	return "ไม่จำกัด" in txt or 'ไม่อั้น' in txt or re.search('unlimited', txt, re.IGNORECASE)
 
 possible_fup_units = ['Gbps', 'Mbps']
@@ -114,7 +116,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	#WiFi boolean zone
 	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
 		new_row["wifi"] = True
-		if "ไม่จำกัด" in list_item_infos_body :
+		if checkIsInfiniteText(list_item_infos_body) :
 			new_row["unlimited_internet_mode"] = 1
 		is_extra = False
 
@@ -251,8 +253,18 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 	#wifi zone
 	if re.search('WiFi', list_item_full_text, re.IGNORECASE) :
 		new_row["wifi"] = True
-		if "ไม่จำกัด" in list_item_full_text :
+		if checkIsInfiniteText(list_item_full_text) :
 			new_row["unlimited_internet_mode"] = 1
+		is_extra = False
+
+	#entertainment zone
+	if 'ชมฟรี' in list_item_full_text :
+		new_row["entertainment"] = True
+		entertainment_str = list_item_full_text.split(">")[1].split("<")[0]
+		if new_row["entertainment_package"] == None :
+			new_row["entertainment_package"] = entertainment_str
+		else :
+			new_row["entertainment_package"] += ", "+entertainment_str
 		is_extra = False
 
 app = FastAPI()
@@ -524,9 +536,28 @@ async def scrape_web(request: Request):
 								if re.search(target_string, raw_li, re.IGNORECASE) :
 									#li with price tag
 									if "promotion-wrapper" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
+										#price zone
 										new_row["price"] = getNumberByUnit(target_string, raw_li.replace('/', ' '))
 										print(new_row["price"])
+
+										#gb zone
+										if checkIsInfiniteText(raw_li, internet_specific=True) :
+											new_row["internet_gbs"] = "∞"
+										elif 'GB' in raw_li :
+											new_row["internet_gbs"] = getNumberByUnit("GB", raw_li, 'Gbps')
+										elif 'MB' in raw_li :
+											new_row["internet_gbs"] = getNumberByUnit("MB", raw_li, 'Mbps')/1000.0
+										elif 'TB' in raw_li :
+											new_row["internet_gbs"] = getNumberByUnit("TB", raw_li, 'Tbps')*1000.0
+
+										#wifi zone
+										if re.search('WiFi', raw_li, re.IGNORECASE) :
+											new_row["wifi"] = True
+											if checkIsInfiniteText(raw_li.split("dtac")[1]) :
+												new_row["unlimited_internet_mode"] = 1
+
 									else :
+										#the privacy policy part
 										continue
 
 							elif capture_mode_id == 2 :
