@@ -118,6 +118,7 @@ button__scrape.onclick = function() {
 		{
 			url_link: "https://www.dtac.co.th/postpaid/products/package.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "dtac 5G Better+", //str
@@ -129,6 +130,7 @@ button__scrape.onclick = function() {
 		{
 			url_link: "https://www.dtac.co.th/dtac-go-plus", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "dtac GO+", //str
@@ -137,9 +139,10 @@ button__scrape.onclick = function() {
 				},
 			], // plan_obj[]
 		},
-		/*{
+		{
 			url_link: "https://www.dtac.co.th/postpaid/products/net.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "Tablet Net Non-Stop", //str
@@ -152,13 +155,14 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},*/
+		},
 
 		/*
 		//TRUE TEST ZONE
 		{
 			url_link: "https://web.archive.org/web/20230322124658/https://www.true.th/truemoveh/postpaid/mass", //str
 			operator_id: 2, //enum, ais = 0, dtac = 1, true = 2
+			pricing_type: 1,
 			plans: [
 				{
 					plan_name: "5G Together+", //str

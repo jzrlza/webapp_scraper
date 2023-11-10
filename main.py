@@ -45,18 +45,20 @@ def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
-			return getNumbersWithCommaFromString(split_spaces[split_i-1])[0]
+			return (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))(split_spaces[split_i-1])
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
-			return getNumbersWithCommaFromString(splitted)[0]
+			return (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))(splitted)
 
 def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
-			return f"{getNumbersWithCommaFromString(split_spaces[split_i-1])[0]:.0f}{unit}"
+			float_num = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))(split_spaces[split_i-1])
+			return f"{float_num:.0f}{unit}"
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
-			return f"{getNumbersWithCommaFromString(splitted)[0]:.0f}{unit}"
+			float_num = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else float(raw_num_txt))(splitted)
+			return f"{float_num:.0f}{unit}"
 
 def checkSystemGetEnum(raw_txt) :
 	if "ต่อเดือน" in raw_txt :
@@ -252,6 +254,7 @@ async def scrape_web(request: Request):
 
 		operator_id = url["operator_id"]
 		operator_name = operators[url["operator_id"]]
+		pricing_type_id = url["pricing_type"]
 
 		need_to_scroll = False
 		scrolled = False
@@ -284,7 +287,7 @@ async def scrape_web(request: Request):
 				elif capture_mode_id == 1 :
 					requires_click = True
 					target_click_class = "//*[contains(@class, 'content')]"
-					target_class = "//li"
+					target_class = "//li[text()[contains(., '"+target_string+"')]]"
 					need_to_scroll = True
 				elif capture_mode_id == 2 :
 					target_class = "//*[@class='card-promotion']"
@@ -346,7 +349,7 @@ async def scrape_web(request: Request):
 								#print(first_block__price)
 								new_row["price"] = first_block__price
 								#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
-								new_row["system"] = plan["pricing_type"]
+								new_row["system"] = pricing_type_id
 
 								second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
 								second_block_raw_list = second_block.find_elements(By.XPATH, '*')
@@ -385,7 +388,7 @@ async def scrape_web(request: Request):
 								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
 								new_row["price"] = first_block__price
 								#print(first_block__price)
-								new_row["system"] = plan["pricing_type"]
+								new_row["system"] = pricing_type_id
 
 								second_block_list_items = web_content.find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')
 								footer_item = None
@@ -400,10 +403,11 @@ async def scrape_web(request: Request):
 									list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 									#print(list_item_infos_head, list_item_infos_body)
 									insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
+						
 						elif operator_id == 1 :
 							if capture_mode_id == 0 :
-								new_row["system"] = plan["pricing_type"]
-								
+								new_row["system"] = pricing_type_id
+
 								root_block = web_content.find_elements(By.XPATH, '*')[0]
 								first_block = root_block.find_elements(By.XPATH, '*')[0]
 								first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
@@ -414,12 +418,23 @@ async def scrape_web(request: Request):
 									raw_price_txt = first_block__spans_list[0].get_attribute('innerHTML').strip()
 									new_row["price"] = (lambda price_txt : getNumbersWithCommaFromString(price_txt)[0] if "," in price_txt else float(price_txt))(raw_price_txt)
 								print(new_row["price"])
+
 								second_block = root_block.find_elements(By.XPATH, '*')[1]
 
 							elif capture_mode_id == 1 :
-								pass
+								new_row["system"] = pricing_type_id
+								raw_li = web_content.get_attribute('innerHTML').strip()
+								if re.search(target_string, raw_li, re.IGNORECASE) :
+									#li with price tag
+									if "promotion-wrapper" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
+										new_row["price"] = getNumberByUnit(target_string, raw_li.replace('/', ' '))
+										print(new_row["price"])
+									else :
+										continue
+
 							elif capture_mode_id == 2 :
 								pass
+
 						elif operator_id == 2 :
 							if capture_mode_id == 0 :
 								pass
