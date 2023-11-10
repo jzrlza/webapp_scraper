@@ -52,7 +52,7 @@ def getNumbersWithNoCommaFromString(raw_txt) :
 numberCheckLambda = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else getNumbersWithNoCommaFromString(raw_num_txt)[0])
 
 def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
-	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').split(" ")
+	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
@@ -61,7 +61,7 @@ def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 			return numberCheckLambda(splitted)
 
 def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&") :
-	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').split(" ")
+	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
@@ -79,7 +79,12 @@ def checkSystemGetEnum(raw_txt) :
 def checkIsLikelyGSystemIcon(txt) :
 	return re.search('3g', txt, re.IGNORECASE) or re.search('4g', txt, re.IGNORECASE) or re.search('5g', txt, re.IGNORECASE)
 
+def checkIsInfiniteText(txt) :
+	return "ไม่จำกัด" in txt or 'ไม่อั้น' in txt or re.search('unlimited', txt, re.IGNORECASE)
+
 possible_fup_units = ['Gbps', 'Mbps']
+
+#AIS --------------
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
 	is_extra = True
 
@@ -115,23 +120,26 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 
 	#internet GB zone
 	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
-		if 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
+		if checkIsInfiniteText(list_item_infos_body):
+			new_row["internet_gbs"] = "∞"
+		elif 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
 			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_infos_body, 'Gbps')
 		elif 'MB' in list_item_infos_body and not ('Mbps' in list_item_infos_body) :
 			new_row["internet_gbs"] = getNumberByUnit("MB", list_item_infos_body, 'Mbps')/1000.0
 		elif 'TB' in list_item_infos_body and not ('Tbps' in list_item_infos_body) :
 			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_infos_body, 'Tbps')*1000.0
-		elif "ไม่จำกัด" in list_item_infos_body or re.search('unlimited', list_item_infos_body, re.IGNORECASE):
-			new_row["internet_gbs"] = "∞"
 		is_extra = False
 
 	#call in minutes time zone
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
 		#print("CALL TIME : "+list_item_infos_body)
-		if "(นาที)" in list_item_infos_head :
-			new_row["call_minutes"] = float(list_item_infos_body.replace('<b>', '').replace('</b>', '')) #predefined unit in header, here should be pure number
+		if checkIsInfiniteText(list_item_infos_body):
+			new_row["call_minutes"] = "∞"
 		else :
-			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_infos_body, 'ชม')
+			if "(นาที)" in list_item_infos_head :
+				new_row["call_minutes"] = float(list_item_infos_body.replace('<b>', '').replace('</b>', '')) #predefined unit in header, here should be pure number
+			else :
+				new_row["call_minutes"] = getNumberByUnit("นาที", list_item_infos_body, 'ชม')
 		is_extra = False
 
 	#fair usage policy zone
@@ -177,6 +185,56 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["extra"] = list_item_infos_head+" "+list_item_infos_body
 		else :
 			new_row["extra"] += ", "+list_item_infos_head+" "+list_item_infos_body
+
+#DTAC -----------
+def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
+	is_extra = True
+
+	#internet, g, fup, and gb zone
+	if 'เน็ต' in list_item_full_text :
+		if checkIsInfiniteText(list_item_full_text) :
+			new_row["internet_gbs"] = "∞"
+		elif 'GB' in list_item_full_text :
+			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_full_text, 'Gbps')
+		elif 'MB' in list_item_full_text :
+			new_row["internet_gbs"] = getNumberByUnit("MB", list_item_full_text, 'Mbps')/1000.0
+		elif 'TB' in list_item_full_text :
+			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_full_text, 'Tbps')*1000.0
+
+		if "3G" in list_item_full_text :
+			if new_row["g_no"] == None :
+				new_row["g_no"] = "3G"
+			elif not "3G" in new_row["g_no"] :
+				new_row["g_no"] += "/3G"
+		if "4G" in list_item_full_text :
+			if new_row["g_no"] == None :
+				new_row["g_no"] = "4G"
+			elif not "4G" in new_row["g_no"] :
+				new_row["g_no"] += "/4G"
+		if "5G" in list_item_full_text :
+			if new_row["g_no"] == None :
+				new_row["g_no"] = "5G"
+			elif not "5G" in new_row["g_no"] :
+				new_row["g_no"] += "/5G"
+
+		for fup_unit in possible_fup_units :
+			if fup_unit in list_item_full_text :
+				new_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, list_item_full_text, "GB")
+				break
+
+		is_extra = False
+
+	#call zone
+	if 'โทร' in list_item_full_text :
+		if checkIsInfiniteText(list_item_full_text) :
+			new_row["call_minutes"] = "∞"
+		else :
+			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_full_text, 'ชม')
+		is_extra = False
+
+	#priviledge zone
+	if re.search('member', list_item_full_text, re.IGNORECASE) :
+		is_extra = False
 
 app = FastAPI()
 
@@ -437,7 +495,7 @@ async def scrape_web(request: Request):
 									center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
 									if "</i>" in center_item_raw_txt :
 										center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
-									print(center_item_raw_txt)
+									insertRowInfoForDTACCards(new_row, capture_mode_id, center_item_raw_txt)
 
 								second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
 
