@@ -24,6 +24,7 @@ button__scrape.onclick = function() {
 
 	let planned_inputs = [
 		//AIS TEST ZONE
+		/*
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
@@ -110,10 +111,10 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},
+		},*/
 
 		//DTAC TEST ZONE
-		/*
+		
 		{
 			url_link: "https://www.dtac.co.th/postpaid/products/package.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
@@ -126,17 +127,34 @@ button__scrape.onclick = function() {
 			], // plan_obj[]
 		},
 		{
-			url_link: "https://www.dtac.co.th/postpaid/products/net.html", //str
+			url_link: "https://www.dtac.co.th/dtac-go-plus", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
 			plans: [
 				{
-					plan_name: "dtac 5G Better+", //str
+					plan_name: "dtac GO+", //str
 					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
 		},
+		{
+			url_link: "https://www.dtac.co.th/postpaid/products/net.html", //str
+			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
+			plans: [
+				{
+					plan_name: "Tablet Net Non-Stop", //str
+					capture_mode: 2, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: true, //bool
+				},
+				{
+					plan_name: "SMP Entry 240", //str
+					capture_mode: 3, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_term_and_condition: false, //bool
+				},
+			], // plan_obj[]
+		},
 
+		/*
 		//TRUE TEST ZONE
 		{
 			url_link: "https://web.archive.org/web/20230322124658/https://www.true.th/truemoveh/postpaid/mass", //str
