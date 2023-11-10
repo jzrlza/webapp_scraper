@@ -343,7 +343,7 @@ async def scrape_web(request: Request):
 							if capture_mode_id == 0 :
 								first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
 								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
-								print(first_block__price)
+								#print(first_block__price)
 								new_row["price"] = first_block__price
 								#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
 								new_row["system"] = plan["pricing_type"]
@@ -358,13 +358,13 @@ async def scrape_web(request: Request):
 									list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 									list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 									list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
-									print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
+									#print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 									insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 									#entertainment zone in case it is in footer
 								if second_block_has_footer :
 									for i in range(len(second_block_raw_list)) :
 										target_item = second_block_raw_list[i]
-										print(target_item.get_attribute('class'))
+										#print(target_item.get_attribute('class'))
 										if i == 0 or "separator" in target_item.get_attribute('class') or "data-speed" in target_item.get_attribute('class') :
 											continue
 										
@@ -373,7 +373,7 @@ async def scrape_web(request: Request):
 											new_row["entertainment"] = True
 											raw_str_item_title = raw_str_item.strip().split(" ฟรี")[0]
 											raw_str_item_duration = getNumberByUnit("เดือน", raw_str_item)
-											print(raw_str_item_title, raw_str_item_duration)
+											#print(raw_str_item_title, raw_str_item_duration)
 											if new_row["entertainment_package"] == None :
 												new_row["entertainment_package"] = raw_str_item_title
 											else :
@@ -384,8 +384,8 @@ async def scrape_web(request: Request):
 								first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
 								first_block__price = getNumbersWithCommaFromString(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())[0]
 								new_row["price"] = first_block__price
-								print(first_block__price)
-								new_row["system"] = 1
+								#print(first_block__price)
+								new_row["system"] = plan["pricing_type"]
 
 								second_block_list_items = web_content.find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')
 								footer_item = None
@@ -394,15 +394,28 @@ async def scrape_web(request: Request):
 										footer_item = list_item
 										break
 									list_item_icon_img = normalizeStringForNoneTypeToString(list_item.find_elements(By.XPATH, '*')[0].get_attribute('src')).strip()
-									print("MODE2 IMAGE: "+str(list_item_icon_img))
+									#print("MODE2 IMAGE: "+str(list_item_icon_img))
 									list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 									list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 									list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
-									print(list_item_infos_head, list_item_infos_body)
+									#print(list_item_infos_head, list_item_infos_body)
 									insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
 						elif operator_id == 1 :
 							if capture_mode_id == 0 :
-								pass
+								new_row["system"] = plan["pricing_type"]
+								
+								root_block = web_content.find_elements(By.XPATH, '*')[0]
+								first_block = root_block.find_elements(By.XPATH, '*')[0]
+								first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
+								if not first_block__verify_plan :
+									continue
+								first_block__spans_list = first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+								if target_string in first_block__spans_list[1].get_attribute('innerHTML').strip() :
+									raw_price_txt = first_block__spans_list[0].get_attribute('innerHTML').strip()
+									new_row["price"] = (lambda price_txt : getNumbersWithCommaFromString(price_txt)[0] if "," in price_txt else float(price_txt))(raw_price_txt)
+								print(new_row["price"])
+								second_block = root_block.find_elements(By.XPATH, '*')[1]
+
 							elif capture_mode_id == 1 :
 								pass
 							elif capture_mode_id == 2 :

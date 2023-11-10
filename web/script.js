@@ -137,7 +137,7 @@ button__scrape.onclick = function() {
 				},
 			], // plan_obj[]
 		},
-		{
+		/*{
 			url_link: "https://www.dtac.co.th/postpaid/products/net.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
 			plans: [
@@ -152,7 +152,7 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},
+		},*/
 
 		/*
 		//TRUE TEST ZONE
