@@ -228,8 +228,9 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 		is_extra = False
 
 	#call zone
-	if 'โทร' in list_item_full_text :
-		if checkIsInfiniteText(list_item_full_text) :
+	if 'โทรฟรีทุกเครือข่าย' in list_item_full_text :
+		print(list_item_full_text)
+		if checkIsInfiniteText(list_item_full_text.strip().split(">")[1].split("<")[0]) :
 			new_row["call_minutes"] = "∞"
 			new_row["unlimited_call"] = True
 		else :
@@ -560,12 +561,13 @@ async def scrape_web(request: Request):
 								first_block = root_block.find_elements(By.XPATH, '*')[0]
 								first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
 								if not first_block__verify_plan :
+									#print("pass out")
 									continue
 								first_block__spans_list = first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 								if target_string in first_block__spans_list[1].get_attribute('innerHTML').strip() :
 									raw_price_txt = first_block__spans_list[0].get_attribute('innerHTML').strip()
 									new_row["price"] = numberCheckLambda(raw_price_txt)
-								print(new_row["price"])
+								#print(new_row["price"])
 
 								second_block = root_block.find_elements(By.XPATH, '*')[1]
 								second_block__center = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
@@ -575,7 +577,7 @@ async def scrape_web(request: Request):
 									#if not "scListSocial" in center_item.get_attribute('class') :
 									#	center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
 									#else :
-									center_item_raw_txt = center_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
 
 									if "</i>" in center_item_raw_txt :
 										center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
@@ -591,7 +593,7 @@ async def scrape_web(request: Request):
 									if "promotion-wrapper" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
 										#price zone
 										new_row["price"] = getNumberByUnit(target_string, raw_li.replace('/', ' '))
-										print(new_row["price"])
+										#print(new_row["price"])
 
 										#gb zone
 										if checkIsInfiniteText(raw_li, internet_specific=True) :
@@ -612,7 +614,7 @@ async def scrape_web(request: Request):
 									else :
 										#the privacy policy part
 										if not re.search('call center', raw_li, re.IGNORECASE) and not "นาที" in raw_li and "content" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
-											print(raw_li)
+											#print(raw_li)
 											target_price = getNumberByUnit(target_string, raw_li.replace('/', ' '))
 											target_row = None
 											for row_obj in list_of_rows : #capture the existing
