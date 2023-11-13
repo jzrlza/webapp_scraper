@@ -129,7 +129,7 @@ button__scrape.onclick = function() {
 		},
 		*/
 		//DTAC TEST ZONE
-		/*
+		
 		{
 			url_link: "https://www.dtac.co.th/postpaid/products/package.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
@@ -170,9 +170,9 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},*/
+		},
 
-		
+		/*
 		//TRUE TEST ZONE
 		{
 			url_link: "https://web.archive.org/web/20230322124658/https://www.true.th/truemoveh/postpaid/mass", //str
@@ -190,7 +190,7 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},
+		},*/
 
 	]
 
