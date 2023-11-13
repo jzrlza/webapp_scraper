@@ -609,6 +609,7 @@ async def scrape_web(request: Request):
 										continue
 
 							elif capture_mode_id == 2 :
+								new_row["system"] = pricing_type_id
 								root_block = web_content.find_elements(By.XPATH, '*')[0]
 								first_block = root_block.find_elements(By.XPATH, '*')[0]
 								first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
