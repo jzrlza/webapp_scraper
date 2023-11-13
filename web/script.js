@@ -4,6 +4,21 @@ let input__keyword = document.getElementById("input__keyword")
 //let input__mode = document.getElementById("input__mode")
 let button__scrape = document.getElementById("button__scrape")
 
+function CSV(array, delimeter=";") {
+    // Use first element to choose the keys and the order
+    let keys = Object.keys(array[0]);
+    console.log(keys)
+    // Build header
+    let result = keys.join(delimeter) + "\n";
+
+    // Add the rows
+    array.forEach(function(obj){
+        result += keys.map(k => obj[k]).join(delimeter) + "\n";
+    });
+
+    return result;
+}
+
 button__scrape.onclick = function() {
 	//console.log(input__keyword.value)
 
@@ -112,7 +127,7 @@ button__scrape.onclick = function() {
 				},
 			], // plan_obj[]
 		},
-
+		
 		//DTAC TEST ZONE
 		
 		{
@@ -196,7 +211,20 @@ button__scrape.onclick = function() {
 		})
    .then(response => response.json())
    .then(json => {
-   	console.log(json)
+   	console.log(json.result)
+
+   	let csvContent = CSV(json.result, ";")
+   	console.log(csvContent)
+
+   	//let encodedUri = encodeURI(csvContent);
+   	//console.log(encodedUri)
+   	//window.open(encodedUri, '_blank')
+	//let link = document.getElementById("stealth_downloader");
+	//link.setAttribute("href", encodedUri);
+	//link.setAttribute("download", "my_data.csv");
+	//document.body.appendChild(link); // Required for FF
+
+	//link.click();
    }).catch(e => {
    	console.error(e)
    })

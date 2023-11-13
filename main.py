@@ -230,8 +230,13 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 	if 'โทร' in list_item_full_text :
 		if checkIsInfiniteText(list_item_full_text) :
 			new_row["call_minutes"] = "∞"
+			new_row["unlimited_call"] = True
 		else :
 			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_full_text, 'ชม')
+		is_extra = False
+
+	if "เบอร์ดีแทค" in list_item_full_text and "โทรฟรี" in list_item_full_text :
+		new_row["unlimited_call"] = True
 		is_extra = False
 
 	#priviledge zone
@@ -561,6 +566,38 @@ async def scrape_web(request: Request):
 
 									else :
 										#the privacy policy part
+										if not re.search('call center', raw_li, re.IGNORECASE) and not "นาที" in raw_li and "content" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
+											print(raw_li)
+											target_price = getNumberByUnit(target_string, raw_li.replace('/', ' '))
+											target_row = None
+											for row_obj in list_of_rows : #capture the existing
+												if row_obj["price"] == target_price :
+													target_row = row_obj
+													break
+											all_li_objs = web_content.find_element(By.XPATH, "..").find_elements(By.XPATH, '*')
+											for li_obj in all_li_objs :
+												raw_li_each = li_obj.get_attribute('innerHTML').strip()
+
+												if "3G" in raw_li_each :
+													if target_row["g_no"] == None :
+														target_row["g_no"] = "3G"
+													elif not "3G" in target_row["g_no"] :
+														target_row["g_no"] += "/3G"
+												if "4G" in raw_li_each :
+													if target_row["g_no"] == None :
+														target_row["g_no"] = "4G"
+													elif not "4G" in target_row["g_no"] :
+														target_row["g_no"] += "/4G"
+												if "5G" in raw_li_each :
+													if target_row["g_no"] == None :
+														target_row["g_no"] = "5G"
+													elif not "5G" in target_row["g_no"] :
+														target_row["g_no"] += "/5G"
+
+												for fup_unit in possible_fup_units :
+													if fup_unit in raw_li_each :
+														target_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, raw_li_each, "GB")
+														break
 										continue
 
 							elif capture_mode_id == 2 :
