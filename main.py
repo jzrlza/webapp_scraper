@@ -276,6 +276,40 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 	#extra zone
 	#to be continued...
 
+def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
+	if "สิทธิ์" in list_item_full_text and re.search('card', list_item_full_text, re.IGNORECASE) and re.search('true', list_item_full_text, re.IGNORECASE) :
+		
+		priv_str = None
+		priv_str_chunks = list_item_full_text.split(" ")
+		for priv_str_chunk_i in range(len(priv_str_chunks)) :
+			priv_str_chunk = priv_str_chunks[priv_str_chunk_i]
+			if priv_str_chunk_i == 0 :
+				continue
+			else :
+				if re.search('true', priv_str_chunks[priv_str_chunk_i-1], re.IGNORECASE) and re.search('card', priv_str_chunks[priv_str_chunk_i+1], re.IGNORECASE) :
+					priv_str = priv_str_chunk
+					break
+
+		new_row["priviledge"] = True
+		new_row["priviledge_exclusive"] = priv_str
+
+		if "เดือน" in list_item_full_text :
+			new_row["contract"] = getNumberByUnit("เดือน", list_item_full_text)
+
+	elif "ความบันเทิง" in list_item_full_text or "รับชม" in list_item_full_text or "ดูหนัง" in list_item_full_text or "ฟังเพลง" in list_item_full_text :
+		new_row["entertainment"] = True
+		if new_row["entertainment_package"] == None :
+			new_row["entertainment_package"] = list_item_full_text
+		else :
+			new_row["entertainment_package"] += ", "+list_item_full_text
+		if "เดือน" in list_item_full_text :
+			new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_full_text)
+	else :
+		if new_row["extra"] == None :
+			new_row["extra"] = list_item_full_text
+		else :
+			new_row["extra"] += ", "+list_item_full_text
+
 app = FastAPI()
 
 operators = ["AIS", "DTAC", "TRUE"]
@@ -656,9 +690,9 @@ async def scrape_web(request: Request):
 									continue
 								price_block = web_content.find_elements(By.XPATH, '*')[0]
 								basic_info_block_infos = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-								wifi_block = web_content.find_elements(By.XPATH, '*')[3]
+								wifi_content = web_content.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
 								g_block = web_content.find_elements(By.XPATH, '*')[4]
-								misc_block = web_content.find_elements(By.XPATH, '*')[4]
+								misc_blocks = web_content.find_elements(By.XPATH, '*')[5].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 
 								new_row["price"] = numberCheckLambda(price_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 
@@ -701,7 +735,18 @@ async def scrape_web(request: Request):
 										else :
 											value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
 											new_row["call_minutes"] = value_num
-									
+
+								if re.search('wifi', wifi_content, re.IGNORECASE) :
+									new_row["wifi"] = True
+									if checkIsInfiniteText(wifi_content) :
+										new_row["unlimited_internet_mode"] = 1
+
+								for misc_block in misc_blocks :
+									for sub_misc_block in misc_block.find_elements(By.XPATH, '*') :
+										if "<img" in sub_misc_block.get_attribute('innerHTML').strip() :
+											continue
+										misc_block_raw_text = sub_misc_block.get_attribute('innerHTML').strip()
+										insertRowInfoForTrueCards(new_row, capture_mode_id, misc_block_raw_text)
 
 						print(new_row)
 						list_of_rows.append(new_row)
