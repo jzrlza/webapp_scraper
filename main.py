@@ -397,7 +397,7 @@ async def scrape_web(request: Request):
 					target_class = "//li[text()[contains(., '"+target_string+"')]]"
 					need_to_scroll = True
 				elif capture_mode_id == 2 :
-					target_class = "//*[@class='card-promotion']"
+					target_class = "//*[contains(@class, 'card-promotion')]"
 			elif operator_id == 2 :
 				if capture_mode_id == 0 :
 					target_class = "//*[@class='x-1iqxi85']"
@@ -609,7 +609,40 @@ async def scrape_web(request: Request):
 										continue
 
 							elif capture_mode_id == 2 :
-								pass
+								root_block = web_content.find_elements(By.XPATH, '*')[0]
+								first_block = root_block.find_elements(By.XPATH, '*')[0]
+								first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
+								if not first_block__verify_plan :
+									continue
+								second_block = root_block.find_elements(By.XPATH, '*')[1]
+								second_block_contents = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+
+								if "คิดค่าบริการเป็นวินาที" in first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip() :
+									target_row["capture_in_seconds"] = True
+
+								details = second_block_contents[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+								for detail in details :
+									raw_str_each = detail.get_attribute('innerHTML').strip()
+
+									if "ico-net-2" in raw_str_each :
+										if checkIsInfiniteText(raw_str_each) :
+											new_row["internet_gbs"] = "∞"
+										elif 'GB' in raw_str_each :
+											new_row["internet_gbs"] = getNumberByUnit("GB", raw_str_each, 'Gbps')
+										elif 'MB' in raw_str_each :
+											new_row["internet_gbs"] = getNumberByUnit("MB", raw_str_each, 'Mbps')/1000.0
+										elif 'TB' in raw_str_each :
+											new_row["internet_gbs"] = getNumberByUnit("TB", raw_str_each, 'Tbps')*1000.0
+
+									elif "ico-call-all" in raw_str_each :
+										if checkIsInfiniteText(raw_str_each):
+											new_row["call_minutes"] = "∞"
+										else :
+											new_row["call_minutes"] = getNumberByUnit("นาที", raw_str_each, 'ชม')
+
+								price_box = second_block_contents[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+								price_box_str = price_box.get_attribute('innerHTML').strip().replace('<span>', '').replace('</span>', '')
+								new_row["price"] = getNumberByUnit(target_string, price_box_str)
 
 						elif operator_id == 2 :
 							if capture_mode_id == 0 :
