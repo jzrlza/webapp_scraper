@@ -616,7 +616,7 @@ async def scrape_web(request: Request):
 											target_price = getNumberByUnit(target_string, raw_li.replace('/', ' '))
 											target_row = None
 											for row_obj in list_of_rows : #capture the existing
-												if row_obj["price"] == target_price :
+												if row_obj["price"] == target_price and row_obj["plan"] == plan_name :
 													target_row = row_obj
 													break
 											all_li_objs = web_content.find_element(By.XPATH, "..").find_elements(By.XPATH, '*')
@@ -762,6 +762,14 @@ async def scrape_web(request: Request):
 						list_of_rows.append(new_row)
 
 		driver.close()
+
+	#with open('csv_result.csv', 'w', encoding='UTF8', newline='') as f:
+	#    writer = csv.writer(f, delimiter=';')
+
+	#    writer = csv.DictWriter(f, fieldnames = row_obj_template.keys())
+	#    writer.writeheader()
+	#   for i in range(len(list_of_rows)) :
+	#    	writer.writerow(list_of_rows[i])
 
 	return {"result" : list_of_rows}
 
