@@ -84,7 +84,7 @@ def checkIsInfiniteText(txt, internet_specific = False) :
 		return "เน็ตไม่จำกัด" in txt or "เน็ตไม่อั้น" in txt or (re.search('internet', txt, re.IGNORECASE) and re.search('unlimited', txt, re.IGNORECASE))
 	return "ไม่จำกัด" in txt or 'ไม่อั้น' in txt or re.search('unlimited', txt, re.IGNORECASE)
 
-possible_fup_units = ['Gbps', 'Mbps']
+possible_fup_units = ['Gbps', 'Mbps', 'kbps']
 
 #AIS --------------
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
@@ -578,24 +578,32 @@ async def scrape_web(request: Request):
 											for li_obj in all_li_objs :
 												raw_li_each = li_obj.get_attribute('innerHTML').strip()
 
+												is_g_zone = False
+
 												if "3G" in raw_li_each :
 													if target_row["g_no"] == None :
 														target_row["g_no"] = "3G"
+														is_g_zone = True
 													elif not "3G" in target_row["g_no"] :
 														target_row["g_no"] += "/3G"
+														is_g_zone = True
 												if "4G" in raw_li_each :
 													if target_row["g_no"] == None :
 														target_row["g_no"] = "4G"
+														is_g_zone = True
 													elif not "4G" in target_row["g_no"] :
 														target_row["g_no"] += "/4G"
+														is_g_zone = True
 												if "5G" in raw_li_each :
 													if target_row["g_no"] == None :
 														target_row["g_no"] = "5G"
+														is_g_zone = True
 													elif not "5G" in target_row["g_no"] :
 														target_row["g_no"] += "/5G"
+														is_g_zone = True
 
 												for fup_unit in possible_fup_units :
-													if fup_unit in raw_li_each :
+													if fup_unit in raw_li_each and not is_g_zone :
 														target_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, raw_li_each, "GB")
 														break
 										continue
