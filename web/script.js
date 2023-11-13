@@ -39,7 +39,7 @@ button__scrape.onclick = function() {
 
 	let planned_inputs = [
 		//AIS TEST ZONE
-		
+		/*
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
@@ -127,9 +127,9 @@ button__scrape.onclick = function() {
 				},
 			], // plan_obj[]
 		},
-		
+		*/
 		//DTAC TEST ZONE
-		
+		/*
 		{
 			url_link: "https://www.dtac.co.th/postpaid/products/package.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
@@ -170,9 +170,9 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},
+		},*/
 
-		/*
+		
 		//TRUE TEST ZONE
 		{
 			url_link: "https://web.archive.org/web/20230322124658/https://www.true.th/truemoveh/postpaid/mass", //str
@@ -180,7 +180,7 @@ button__scrape.onclick = function() {
 			pricing_type: 1,
 			plans: [
 				{
-					plan_name: "5G Together+", //str
+					plan_name: "5G Together", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
 					has_term_and_condition: false, //bool
 				},
@@ -190,7 +190,7 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},*/
+		},
 
 	]
 
