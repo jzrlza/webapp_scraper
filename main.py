@@ -137,6 +137,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		#print("CALL TIME : "+list_item_infos_body)
 		if checkIsInfiniteText(list_item_infos_body):
 			new_row["call_minutes"] = "∞"
+			new_row["unlimited_call"] = True
 		else :
 			if "(นาที)" in list_item_infos_head :
 				new_row["call_minutes"] = float(list_item_infos_body.replace('<b>', '').replace('</b>', '')) #predefined unit in header, here should be pure number
@@ -638,6 +639,7 @@ async def scrape_web(request: Request):
 									elif "ico-call-all" in raw_str_each :
 										if checkIsInfiniteText(raw_str_each):
 											new_row["call_minutes"] = "∞"
+											new_row["unlimited_call"] = True
 										else :
 											new_row["call_minutes"] = getNumberByUnit("นาที", raw_str_each, 'ชม')
 
@@ -653,12 +655,54 @@ async def scrape_web(request: Request):
 								if not re.search(plan_name, title, re.IGNORECASE) :
 									continue
 								price_block = web_content.find_elements(By.XPATH, '*')[0]
-								basic_info_block = web_content.find_elements(By.XPATH, '*')[1]
+								basic_info_block_infos = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 								wifi_block = web_content.find_elements(By.XPATH, '*')[3]
 								g_block = web_content.find_elements(By.XPATH, '*')[4]
 								misc_block = web_content.find_elements(By.XPATH, '*')[4]
 
 								new_row["price"] = numberCheckLambda(price_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
+
+								for basic_info_block in basic_info_block_infos :
+									top_sub_block_content = basic_info_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									bottom_sub_block_divs = basic_info_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+									if "เน็ต" in top_sub_block_content :
+										if re.search('true-3g', top_sub_block_content, re.IGNORECASE) :
+											if new_row["g_no"] == None :
+												new_row["g_no"] = "3G"
+											elif not "3G" in new_row["g_no"] :
+												new_row["g_no"] += "/3G"
+										if re.search('true-4g', top_sub_block_content, re.IGNORECASE) :
+											if new_row["g_no"] == None :
+												new_row["g_no"] = "4G"
+											elif not "4G" in new_row["g_no"] :
+												new_row["g_no"] += "/4G"
+										if re.search('true-5g', top_sub_block_content, re.IGNORECASE) :
+											if new_row["g_no"] == None :
+												new_row["g_no"] = "5G"
+											elif not "5G" in new_row["g_no"] :
+												new_row["g_no"] += "/5G"
+										unit = bottom_sub_block_divs[1].get_attribute('innerHTML').strip()
+										if checkIsInfiniteText(unit):
+											new_row["internet_gbs"] = "∞"
+										else :
+											value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
+											if 'GB' in unit and not ('Gbps' in unit) :
+												new_row["internet_gbs"] = value_num
+											elif 'MB' in unit and not ('Mbps' in unit) :
+												new_row["internet_gbs"] = value_num/1000.0
+											elif 'TB' in unit and not ('Tbps' in list_item_infos_body) :
+												new_row["internet_gbs"] = value_num*1000.0
+
+									elif "โทร" in top_sub_block_content :
+										unit = bottom_sub_block_divs[1].get_attribute('innerHTML').strip()
+										if checkIsInfiniteText(unit):
+											new_row["call_minutes"] = "∞"
+											new_row["unlimited_call"] = True
+										else :
+											value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
+											new_row["call_minutes"] = value_num
+									
+
 						print(new_row)
 						list_of_rows.append(new_row)
 
