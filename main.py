@@ -664,7 +664,7 @@ async def scrape_web(request: Request):
 								second_block_contents = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 
 								if "คิดค่าบริการเป็นวินาที" in first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip() :
-									target_row["capture_in_seconds"] = True
+									new_row["capture_in_seconds"] = True
 
 								details = second_block_contents[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 								for detail in details :
