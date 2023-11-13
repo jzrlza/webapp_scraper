@@ -647,8 +647,11 @@ async def scrape_web(request: Request):
 
 						elif operator_id == 2 :
 							if capture_mode_id == 0 :
-								pass
-
+								mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+								title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+								if not re.search(plan_name, title, re.IGNORECASE) :
+									continue
+								print(title)
 						print(new_row)
 						list_of_rows.append(new_row)
 
