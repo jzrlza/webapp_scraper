@@ -273,13 +273,14 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 			new_row["entertainment_package"] += ", "+entertainment_str
 		is_extra = False
 
-	#extra zone
+	#extra zone : this one isb too evil
 	if is_extra :
-		raw_str_cleaned = list_item_full_text.replace('<br>', ' ').strip().split(">")[1].split("<")[0]
-		if new_row["extra"] == None :
-			new_row["extra"] = raw_str_cleaned
-		else :
-			new_row["extra"] += ", "+raw_str_cleaned
+		pass
+		#raw_str_cleaned = list_item_full_text.replace('<br>', ' ').strip().split(">")[1].split("<")[0]
+		#if new_row["extra"] == None :
+		#	new_row["extra"] = raw_str_cleaned
+		#else :
+		#	new_row["extra"] += ", "+raw_str_cleaned
 
 def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
 	if "สิทธิ์" in list_item_full_text and re.search('card', list_item_full_text, re.IGNORECASE) and re.search('true', list_item_full_text, re.IGNORECASE) :
@@ -571,10 +572,10 @@ async def scrape_web(request: Request):
 								second_block__center_items = second_block__center.find_elements(By.XPATH, '*')
 
 								for center_item in second_block__center_items :
-									if not "scListSocial" in center_item.get_attribute('class') :
-										center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
-									else :
-										center_item_raw_txt = center_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									#if not "scListSocial" in center_item.get_attribute('class') :
+									#	center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
+									#else :
+									center_item_raw_txt = center_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 
 									if "</i>" in center_item_raw_txt :
 										center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
