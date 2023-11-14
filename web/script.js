@@ -138,7 +138,7 @@ button__scrape.onclick = function() {
 		},*/
 		
 		//DTAC TEST ZONE
-		
+		/*
 		{
 			url_link: "https://www.dtac.co.th/postpaid/products/package.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
@@ -151,7 +151,7 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},/*
+		},*/
 		{
 			url_link: "https://www.dtac.co.th/dtac-go-plus", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2
@@ -164,7 +164,7 @@ button__scrape.onclick = function() {
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
-		},
+		},/*
 		{
 			url_link: "https://www.dtac.co.th/postpaid/products/net.html", //str
 			operator_id: 1, //enum, ais = 0, dtac = 1, true = 2

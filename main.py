@@ -665,14 +665,31 @@ async def scrape_web(request: Request):
 										center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
 									insertRowInfoForDTACCards(new_row, capture_mode_id, center_item_raw_txt)
 
-								#second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
-								for table_item in table_temp_arr :
-									if new_row["price"] == table_item["price"] :
-										for extra_item_str in table_item["extra_raw_arr"] :
-											if new_row["extra"] == None :
-												new_row["extra"] = extra_item_str
-											else :
-												new_row["extra"] += ", "+extra_item_str
+								if plan["has_extra_table"] :
+									for table_item in table_temp_arr :
+										if new_row["price"] == table_item["price"] :
+											for extra_item_str in table_item["extra_raw_arr"] :
+												if new_row["extra"] == None :
+													new_row["extra"] = extra_item_str
+												else :
+													new_row["extra"] += ", "+extra_item_str
+								else :
+									second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
+									second_block__footer_items = second_block__footer.find_elements(By.XPATH, '*')
+									second_block__footer_exists = len(second_block__footer_items) > 1
+									if second_block__footer_exists :
+										if second_block__footer_items[1].get_attribute('innerHTML').strip() != "" :
+											print(str(new_row["price"])+", HIDDENS: ")
+											li_block = second_block__footer_items[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+											li_text = li_block.get_attribute('innerHTML').strip()
+											if li_text != "" :
+												li_text = li_text.split("<div")[0].strip()
+												print(li_text+"!")
+												specific_bonuses_list = li_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+												for specific_bonus in specific_bonuses_list :
+													if not "หรือ" in specific_bonus.get_attribute('innerHTML').strip() :
+														specific_item_txt = specific_bonus.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
+														print(specific_item_txt)
 
 							elif capture_mode_id == 1 :
 								new_row["system"] = pricing_type_id
