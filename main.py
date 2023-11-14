@@ -116,9 +116,6 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	#WiFi boolean zone
 	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
 		new_row["wifi"] = True
-		if checkIsInfiniteText(list_item_infos_body) :
-			new_row["unlimited_internet_mode"] = 1
-		is_extra = False
 
 	#internet GB zone
 	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
@@ -184,10 +181,11 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 
 	#extra zone
 	if is_extra :
+		trim_txt = list_item_infos_head.replace('<b>', '').replace('</b>', '')+" "+list_item_infos_body.replace('<b>', '').replace('</b>', '')
 		if new_row["extra"] == None :
-			new_row["extra"] = list_item_infos_head+" "+list_item_infos_body
+			new_row["extra"] = trim_txt
 		else :
-			new_row["extra"] += ", "+list_item_infos_head+" "+list_item_infos_body
+			new_row["extra"] += ", "+trim_txt
 
 #DTAC -----------
 def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
@@ -260,8 +258,6 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 	#wifi zone
 	if re.search('WiFi', list_item_full_text, re.IGNORECASE) :
 		new_row["wifi"] = True
-		if checkIsInfiniteText(list_item_full_text) :
-			new_row["unlimited_internet_mode"] = 1
 		is_extra = False
 
 	#entertainment zone
@@ -269,19 +265,14 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 		new_row["entertainment"] = True
 		entertainment_str = list_item_full_text.replace('<br>', ' ').replace('\n                                ', '').strip().split(">")[1].split("<")[0]
 		if new_row["entertainment_package"] == None :
-			new_row["entertainment_package"] = entertainment_str
+			new_row["entertainment_package"] = entertainment_str.replace('<b>', '').replace('</b>', '')
 		else :
-			new_row["entertainment_package"] += ", "+entertainment_str
+			new_row["entertainment_package"] += ", "+entertainment_str.replace('<b>', '').replace('</b>', '')
 		is_extra = False
 
 	#extra zone : this one isb too evil
 	if is_extra :
 		pass
-		#raw_str_cleaned = list_item_full_text.replace('<br>', ' ').strip().split(">")[1].split("<")[0]
-		#if new_row["extra"] == None :
-		#	new_row["extra"] = raw_str_cleaned
-		#else :
-		#	new_row["extra"] += ", "+raw_str_cleaned
 
 def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
 	if "สิทธิ์" in list_item_full_text and re.search('card', list_item_full_text, re.IGNORECASE) and re.search('true', list_item_full_text, re.IGNORECASE) :
@@ -306,16 +297,16 @@ def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
 	elif "ความบันเทิง" in list_item_full_text or "รับชม" in list_item_full_text or "ดูหนัง" in list_item_full_text or "ฟังเพลง" in list_item_full_text :
 		new_row["entertainment"] = True
 		if new_row["entertainment_package"] == None :
-			new_row["entertainment_package"] = list_item_full_text
+			new_row["entertainment_package"] = list_item_full_text.replace('<b>', '').replace('</b>', '')
 		else :
-			new_row["entertainment_package"] += ", "+list_item_full_text
+			new_row["entertainment_package"] += ", "+list_item_full_text.replace('<b>', '').replace('</b>', '')
 		if "เดือน" in list_item_full_text :
-			new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_full_text)
+			new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_full_text.replace('<b>', '').replace('</b>', ''))
 	else :
 		if new_row["extra"] == None :
-			new_row["extra"] = list_item_full_text
+			new_row["extra"] = list_item_full_text.replace('<b>', '').replace('</b>', '')
 		else :
-			new_row["extra"] += ", "+list_item_full_text
+			new_row["extra"] += ", "+list_item_full_text.replace('<b>', '').replace('</b>', '')
 
 app = FastAPI()
 
@@ -876,8 +867,6 @@ async def scrape_web(request: Request):
 
 								if re.search('wifi', wifi_content, re.IGNORECASE) :
 									new_row["wifi"] = True
-									if checkIsInfiniteText(wifi_content) :
-										new_row["unlimited_internet_mode"] = 1
 
 								for misc_block in misc_blocks :
 									for sub_misc_block in misc_block.find_elements(By.XPATH, '*') :
@@ -885,6 +874,16 @@ async def scrape_web(request: Request):
 											continue
 										misc_block_raw_text = sub_misc_block.get_attribute('innerHTML').strip()
 										insertRowInfoForTrueCards(new_row, capture_mode_id, misc_block_raw_text)
+
+						#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
+						if new_row["internet_gbs"] == "∞" :
+							new_row["unlimited_internet_mode"] = 1
+						elif new_row["fair_usage_policy"] != None and new_row["internet_gbs"] > 0.0 :
+							new_row["unlimited_internet_mode"] = 2
+						elif new_row["fair_usage_policy"] == None and new_row["internet_gbs"] > 0.0 :
+							new_row["unlimited_internet_mode"] = 3
+						elif new_row["internet_gbs"] == 0.0 :
+							new_row["unlimited_internet_mode"] = 0
 
 						print(new_row)
 						list_of_rows.append(new_row)
