@@ -48,6 +48,7 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "5G Max Professionals​", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -60,6 +61,7 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "AIS 5G Max Experience", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -72,21 +74,25 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "แพ็กเกจมหามงคล", //str
 					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 				{
 					plan_name: "5G Serenade", //str
 					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 				{
 					plan_name: "Online MAX", //str
 					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 				{
 					plan_name: "Other", //str
 					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -99,6 +105,7 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "แพ็กเกจ 5G Netflix", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -111,6 +118,7 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "แพ็กเกจ 5G SMART SHARE", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -123,6 +131,7 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "แพ็กเกจ AIS ZEED 5G รายเดือน", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -138,6 +147,7 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "dtac 5G Better+", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: true, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -150,6 +160,7 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "dtac GO+", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -162,11 +173,13 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "Tablet Net Non-Stop", //str
 					capture_mode: 1, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: true, //bool
 				},
 				{
 					plan_name: "SMP Entry 240", //str
 					capture_mode: 2, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]
@@ -182,11 +195,13 @@ button__scrape.onclick = function() {
 				{
 					plan_name: "5G Together", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 				{
 					plan_name: "5G Net Ultra Max Speed", //str
 					capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
+					has_extra_table: false, //bool
 					has_term_and_condition: false, //bool
 				},
 			], // plan_obj[]

@@ -418,6 +418,8 @@ async def scrape_web(request: Request):
 			requires_click = False
 			target_click_class = ""
 			menu_to_click_class = ""
+			table_target_class = ""
+			table_temp_arr = []
 			disabled_mode = False #temp value
 			clicked = False
 
@@ -433,9 +435,12 @@ async def scrape_web(request: Request):
 			elif operator_id == 1 :
 				if capture_mode_id == 0 :
 					target_class = "//*[@class='wrapPackages']"
+					if plan["has_extra_table"] :
+						table_target_class = "//tbody[contains(@class, 'table-package') and contains(@class, 'fBetterReg')]"
 				elif capture_mode_id == 1 :
 					requires_click = True
-					target_click_class = "//*[contains(@class, 'content')]"
+					if plan["has_term_and_condition"] :
+						target_click_class = "//*[contains(@class, 'content')]"
 					target_class = "//li[text()[contains(., '"+target_string+"')]]"
 					need_to_scroll = True
 				elif capture_mode_id == 2 :
@@ -446,6 +451,81 @@ async def scrape_web(request: Request):
 
 			#init_web_contents_lambda = lambda title_is_at_header : driver.find_elements(By.CSS_SELECTOR, f".{target_class}")[0].find_elements(By.XPATH, f'./div[contains(@class, "{operator_card_classes[operator]}")]') if title_is_at_header == True else driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
 			if not disabled_mode :
+				if plan["has_extra_table"] :
+					tables = driver.find_elements(By.XPATH, f"{table_target_class}")
+
+					if operator_id == 1 and capture_mode_id == 0 :
+						table_body_target = None
+						for i in range(len(tables)) :
+							if "responsive" in tables[i].find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
+								table_body_target = tables[i]
+								break
+						print(table_body_target.get_attribute('class'))
+						hunt_keyword_1 = "คุ้มครอง"
+						hunt_keyword_1_field = "ประกันชีวิตและอุบัติเหตุ"
+						hunt_keyword_2 = "แอปดัง"
+						hunt_keyword_2_field = "ความบันเทิง 3 แอปดัง"
+						td_array = table_body_target.find_elements(By.XPATH, '*')
+						row_span_1 = 0
+						row_span_info_1 = ""
+						row_span_2 = 0
+						row_span_info_2 = ""
+						for tr_i in range(len(td_array)) :
+							trow = td_array[tr_i]
+							trows_tds = trow.find_elements(By.XPATH, '*')
+							table_temp_arr_sub_item = {
+								"price": 0.0,
+								"extra_raw_arr": [],
+							}
+							trow_price = 0.0
+							for td_i in range(len(trows_tds)) :
+								td_elem = trows_tds[td_i]
+								td_elem_txt = td_elem.get_attribute('innerHTML').strip()
+								if td_i == 0 : #price
+									if "แนะนำ" in td_elem_txt :
+										trow_price = float(td_elem.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
+									else :
+										trow_price = float(td_elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
+									table_temp_arr_sub_item["price"] = trow_price
+
+								elif hunt_keyword_1 in td_elem_txt :
+									row_span_1 = td_elem.get_attribute('rowspan')
+									if td_elem.get_attribute('rowspan') == None :
+										row_span_1 = 1
+									else :
+										row_span_1 = int(row_span_1)
+									print("fetching info 1... maximum "+str(webdriver_timeout)+" seconds")
+									row_span_info_1 = td_elem.find_elements(By.XPATH,"descendant::*[text()[contains(., '"+hunt_keyword_1+"')]]")
+									if row_span_info_1 != None :
+										if len(row_span_info_1) > 0 :
+											row_span_info_1 = row_span_info_1[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
+											table_temp_arr_sub_item["extra_raw_arr"].append(row_span_info_1)
+									
+								elif hunt_keyword_2 in td_elem_txt :
+									row_span_2 = td_elem.get_attribute('rowspan')
+									if td_elem.get_attribute('rowspan') == None :
+										row_span_2 = 1
+									else :
+										row_span_2 = int(row_span_2)
+									print("fetching info 2... maximum "+str(webdriver_timeout)+" seconds")
+									row_span_info_2 = td_elem.find_elements(By.XPATH,"descendant::*[text()[contains(., '"+hunt_keyword_2+"')]]")
+									if row_span_info_2 != None :
+										if len(row_span_info_2) > 0 :
+											row_span_info_2 = row_span_info_2[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
+											table_temp_arr_sub_item["extra_raw_arr"].append(row_span_info_2)
+
+							if row_span_1 > 0 :
+								#print(row_span_info_1)
+								table_temp_arr_sub_item["extra_raw_arr"].append(row_span_info_1)
+								row_span_1 -= 1
+							if row_span_2 > 0 :
+								#print(row_span_info_2)
+								if row_span_info_2 != None :
+									table_temp_arr_sub_item["extra_raw_arr"].append(row_span_info_2)
+								row_span_2 -= 1
+							table_temp_arr.append(table_temp_arr_sub_item)
+
+				print(table_temp_arr)	
 				if requires_click :
 					time.sleep(1)
 					click_targets = driver.find_elements(By.XPATH, f"{target_click_class}")
@@ -611,7 +691,7 @@ async def scrape_web(request: Request):
 											if checkIsInfiniteText(raw_li.split("dtac")[1]) :
 												new_row["unlimited_internet_mode"] = 1
 
-									else :
+									elif plan["has_term_and_condition"] :
 										#the privacy policy part
 										if not re.search('call center', raw_li, re.IGNORECASE) and not "นาที" in raw_li and "content" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
 											#print(raw_li)
