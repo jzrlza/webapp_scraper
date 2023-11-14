@@ -1,4 +1,6 @@
 let button__scrape = document.getElementById("button__scrape")
+let button__scrape_original_str = button__scrape.innerHTML
+let button__scrape_loading_str = "Scraping..."
 let button__export = document.getElementById("button__export")
 
 let data_displayer_table = document.getElementById("data_displayer_table")
@@ -224,6 +226,7 @@ button__scrape.onclick = function() {
 	//console.log(input__keyword.value)
 	isScraping = true
 	button__scrape.disabled = true
+	button__scrape.innerHTML = button__scrape_loading_str
 	//'?&keyword='+input__keyword.value+'&input_url='+input__url.value+'&file_output_name='+input__csv_file.value+'&mode='+input__mode.value
 
 	fetch('scrape_web',{
@@ -268,6 +271,7 @@ button__scrape.onclick = function() {
 
 	isScraping = false
 	button__scrape.disabled = false
+	button__scrape.innerHTML = button__scrape_original_str
 
    	let csvContent = CSV(json.result, ";")
    	console.log(csvContent)

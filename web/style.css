@@ -37,6 +37,12 @@
 	margin-left: auto;
 	margin-right: auto;
 }
+#button__scrape:disabled {
+	cursor: wait;
+}
+#button__export:disabled {
+	cursor: not-allowed;
+}
 
 #table_container {
 	margin-top: 50px;
