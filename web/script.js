@@ -1,8 +1,12 @@
 let button__scrape = document.getElementById("button__scrape")
+let button__export = document.getElementById("button__export")
 
 let data_displayer_table = document.getElementById("data_displayer_table")
 
 let urls = []
+
+let isScraping = false
+let hasScraped = false
 
 let url_obj = {
 		url_link: "", //str
@@ -218,8 +222,8 @@ const operators_color_map = {
 
 button__scrape.onclick = function() {
 	//console.log(input__keyword.value)
-
-	
+	isScraping = true
+	button__scrape.disabled = true
 	//'?&keyword='+input__keyword.value+'&input_url='+input__url.value+'&file_output_name='+input__csv_file.value+'&mode='+input__mode.value
 
 	fetch('scrape_web',{
@@ -262,8 +266,14 @@ button__scrape.onclick = function() {
 	    }
 	  }
 
+	isScraping = false
+	button__scrape.disabled = false
+
    	let csvContent = CSV(json.result, ";")
    	console.log(csvContent)
+
+   	hasScraped = true
+   	button__export.disabled = false
 
    	//let encodedUri = encodeURI(csvContent);
    	//console.log(encodedUri)
