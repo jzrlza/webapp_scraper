@@ -30,3 +30,49 @@
 	margin-right: auto;
 	margin-top: 40px;
 }
+
+#table_container {
+	margin-top: 50px;
+	width: 100%;
+	max-height: 400px;
+	overflow-x: auto;
+	overflow-y: auto;
+}
+table { 
+  width: 100%; 
+  border-collapse: collapse; 
+}
+/* Zebra striping */
+tr:nth-of-type(odd) { 
+  background: #eee; 
+}
+th { 
+  background: #333; 
+  color: white; 
+  font-weight: bold; 
+  position: sticky;
+  top: 0;
+}
+td, th { 
+  padding: 6px; 
+  border: 1px solid #ccc; 
+  text-align: left; 
+}
+.tr_row__green {
+	background-color: #b7fa87;
+}
+.tr_row__green:nth-of-type(odd) { 
+  	background-color: #6eff81; 
+}
+.tr_row__blue {
+	background-color: #78e2ff;
+}
+.tr_row__blue:nth-of-type(odd) { 
+  	background-color: #6eadff; 
+}
+.tr_row__red {
+	background-color: #ffc9d5;
+}
+.tr_row__red:nth-of-type(odd) { 
+  	background-color: #ffb8e2; 
+}

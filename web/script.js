@@ -1,8 +1,6 @@
-let input__keyword = document.getElementById("input__keyword")
-//let input__url = document.getElementById("input__url")
-//let input__csv_file = document.getElementById("input__csv_file")
-//let input__mode = document.getElementById("input__mode")
 let button__scrape = document.getElementById("button__scrape")
+
+let data_displayer_table = document.getElementById("data_displayer_table")
 
 let urls = []
 
@@ -212,6 +210,12 @@ function CSV(array, delimeter=";") {
     return result;
 }
 
+const operators_color_map = {
+	"AIS": "green",
+	"DTAC": "blue",
+	"TRUE": "red",
+}
+
 button__scrape.onclick = function() {
 	//console.log(input__keyword.value)
 
@@ -229,6 +233,32 @@ button__scrape.onclick = function() {
    .then(response => response.json())
    .then(json => {
    	console.log(json.result)
+   	let data = json.result
+   	/*for (let data_each of data) {
+   		data_each["operator"] = operators_map[data_each["operator_id"]]
+   		delete data_each['operator_id']
+   	}*/
+   	let keys = Object.keys(data[0]);
+
+   	let thead = data_displayer_table.createTHead();
+	let row = thead.insertRow();
+	for (let key of keys) {
+		    let th = document.createElement("th");
+		    let text = document.createTextNode(key);
+		    th.appendChild(text);
+		    row.appendChild(th);
+		  }
+
+	for (let element of data) {
+	    let elem_row = data_displayer_table.insertRow();
+	    elem_row.classList.add('tr_row');
+	    elem_row.classList.add('tr_row__'+operators_color_map[element["operator"]]);
+	    for (let akey in element) {
+	      let cell = elem_row.insertCell();
+	      let text = document.createTextNode(element[akey]);
+	      cell.appendChild(text);
+	    }
+	  }
 
    	let csvContent = CSV(json.result, ";")
    	console.log(csvContent)

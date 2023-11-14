@@ -336,7 +336,7 @@ operator_cards_container_classes = {
 	"TRUE" : ["my-5"]
 }
 row_obj_template = {
-	"operator_id": -1,
+	"operator": "",
 	"plan": "",
 	"price": 0.0,
 	"system": -1,
@@ -526,7 +526,7 @@ async def scrape_web(request: Request):
 							table_temp_arr_sub_item["extra_raw_arr"] = list(set(table_temp_arr_sub_item["extra_raw_arr"]))
 							table_temp_arr.append(table_temp_arr_sub_item)
 
-					print(table_temp_arr)	
+					#print(table_temp_arr)	
 
 				if requires_click :
 					time.sleep(1)
@@ -570,7 +570,7 @@ async def scrape_web(request: Request):
 						#web_contents_ = driver.find_elements(By.XPATH,"//*[text()[contains(., '"+target_string+"')]]")
 						print(web_content.get_attribute('class'))
 						new_row = row_obj_template.copy()
-						new_row["operator_id"] = operator_id
+						new_row["operator"] = operator_name
 						new_row["plan"] = plan_name
 						
 						if operator_id == 0 : #start at "package-card-generic"
@@ -680,13 +680,13 @@ async def scrape_web(request: Request):
 									footerless = True
 									if second_block__footer_has_more_than_one_blocks :
 										if second_block__footer_items[1].get_attribute('innerHTML').strip() != "" :
-											print(str(new_row["price"])+", HIDDENS: ")
+											#print(str(new_row["price"])+", HIDDENS: ")
 											li_block = second_block__footer_items[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
 											li_text = li_block.get_attribute('innerHTML').strip()
 											if li_text != "" :
 												footerless = False
 												li_text = li_text.split("<div")[0].strip()
-												print(li_text+"!")
+												#print(li_text+"!")
 												specific_bonuses_list = li_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 												for specific_bonus in specific_bonuses_list :
 													if not "หรือ" in specific_bonus.get_attribute('innerHTML').strip() :
