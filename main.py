@@ -676,13 +676,15 @@ async def scrape_web(request: Request):
 								else :
 									second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
 									second_block__footer_items = second_block__footer.find_elements(By.XPATH, '*')
-									second_block__footer_exists = len(second_block__footer_items) > 1
-									if second_block__footer_exists :
+									second_block__footer_has_more_than_one_blocks = len(second_block__footer_items) > 1
+									footerless = True
+									if second_block__footer_has_more_than_one_blocks :
 										if second_block__footer_items[1].get_attribute('innerHTML').strip() != "" :
 											print(str(new_row["price"])+", HIDDENS: ")
 											li_block = second_block__footer_items[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
 											li_text = li_block.get_attribute('innerHTML').strip()
 											if li_text != "" :
+												footerless = False
 												li_text = li_text.split("<div")[0].strip()
 												print(li_text+"!")
 												specific_bonuses_list = li_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
@@ -690,7 +692,25 @@ async def scrape_web(request: Request):
 													if not "หรือ" in specific_bonus.get_attribute('innerHTML').strip() :
 														specific_item_txt = specific_bonus.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
 														print(specific_item_txt)
-
+														if "เกม" in specific_item_txt or re.search("entertainment", specific_item_txt, re.IGNORECASE) :
+															new_row["entertainment"] = True
+															if new_row["entertainment_package"] == None :
+																new_row["entertainment_package"] = f"{specific_item_txt} ({li_text})"
+															else :
+																new_row["entertainment_package"] += f", {specific_item_txt} ({li_text})"
+														else :
+															if new_row["extra"] == None :
+																new_row["extra"] = f"{specific_item_txt} ({li_text})"
+															else :
+																new_row["extra"] += f", {specific_item_txt} ({li_text})"
+									if footerless :
+										if "scListSocial" in second_block__center_items[len(second_block__center_items)-1].get_attribute('class') :
+											red_block = second_block__center_items[len(second_block__center_items)-1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
+											red_block_txt = red_block.get_attribute('innerHTML').strip().replace('<br>', ' ').replace('</span>', ' ').replace('<span class="fAktivB">', '').strip()
+											if new_row["extra"] == None :
+												new_row["extra"] = f"{red_block_txt}"
+											else :
+												new_row["extra"] += f", {red_block_txt}"
 							elif capture_mode_id == 1 :
 								new_row["system"] = pricing_type_id
 								raw_li = web_content.get_attribute('innerHTML').strip()
