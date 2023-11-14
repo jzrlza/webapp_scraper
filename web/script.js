@@ -233,6 +233,8 @@ button__scrape.onclick = function() {
    .then(response => response.json())
    .then(json => {
    	console.log(json.result)
+   	data_displayer_table.innerHTML = "" //reset
+
    	let data = json.result
    	/*for (let data_each of data) {
    		data_each["operator"] = operators_map[data_each["operator_id"]]
