@@ -170,7 +170,7 @@ let planned_inputs = [
 		
 		//TRUE TEST ZONE
 		{
-			url_link: "https://web.archive.org/web/20230322124658/https://www.true.th/truemoveh/postpaid/mass", //str
+			url_link: "https://www.true.th/truemoveh/postpaid/mass",//"https://web.archive.org/web/20230322124658/https://www.true.th/truemoveh/postpaid/mass", //str
 			operator_id: 2, //enum, ais = 0, dtac = 1, true = 2
 			pricing_type: 1,
 			plans: [
