@@ -464,7 +464,7 @@ async def scrape_web(request: Request):
 						hunt_keyword_1 = "คุ้มครอง"
 						hunt_keyword_1_field = "ประกันชีวิตและอุบัติเหตุ"
 						hunt_keyword_2 = "แอปดัง"
-						hunt_keyword_2_field = "ความบันเทิง 3 แอปดัง"
+						hunt_keyword_2_field = "ความบันเทิง viu + iQIYI + WeTV"
 						td_array = table_body_target.find_elements(By.XPATH, '*')
 						row_span_1 = 0
 						row_span_info_1 = ""
@@ -499,7 +499,7 @@ async def scrape_web(request: Request):
 									if row_span_info_1 != None :
 										if len(row_span_info_1) > 0 :
 											row_span_info_1 = row_span_info_1[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
-											table_temp_arr_sub_item["extra_raw_arr"].append(row_span_info_1)
+											table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_1_field+" "+row_span_info_1)
 									
 								elif hunt_keyword_2 in td_elem_txt :
 									row_span_2 = td_elem.get_attribute('rowspan')
@@ -512,20 +512,22 @@ async def scrape_web(request: Request):
 									if row_span_info_2 != None :
 										if len(row_span_info_2) > 0 :
 											row_span_info_2 = row_span_info_2[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
-											table_temp_arr_sub_item["extra_raw_arr"].append(row_span_info_2)
+											table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_2_field+" "+row_span_info_2)
 
 							if row_span_1 > 0 :
 								#print(row_span_info_1)
-								table_temp_arr_sub_item["extra_raw_arr"].append(row_span_info_1)
+								table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_1_field+" "+row_span_info_1)
 								row_span_1 -= 1
 							if row_span_2 > 0 :
 								#print(row_span_info_2)
 								if row_span_info_2 != None :
-									table_temp_arr_sub_item["extra_raw_arr"].append(row_span_info_2)
+									table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_2_field+" "+row_span_info_2)
 								row_span_2 -= 1
+							table_temp_arr_sub_item["extra_raw_arr"] = list(set(table_temp_arr_sub_item["extra_raw_arr"]))
 							table_temp_arr.append(table_temp_arr_sub_item)
 
-				print(table_temp_arr)	
+					print(table_temp_arr)	
+
 				if requires_click :
 					time.sleep(1)
 					click_targets = driver.find_elements(By.XPATH, f"{target_click_class}")
@@ -663,7 +665,14 @@ async def scrape_web(request: Request):
 										center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
 									insertRowInfoForDTACCards(new_row, capture_mode_id, center_item_raw_txt)
 
-								second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
+								#second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
+								for table_item in table_temp_arr :
+									if new_row["price"] == table_item["price"] :
+										for extra_item_str in table_item["extra_raw_arr"] :
+											if new_row["extra"] == None :
+												new_row["extra"] = extra_item_str
+											else :
+												new_row["extra"] += ", "+extra_item_str
 
 							elif capture_mode_id == 1 :
 								new_row["system"] = pricing_type_id
