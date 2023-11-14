@@ -14,6 +14,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 import time
 
+INFINITY = "∞"
+
 def normalizeStringForNoneTypeToString(raw_str) :
 	if raw_str == None :
 		return ""
@@ -120,7 +122,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	#internet GB zone
 	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
 		if checkIsInfiniteText(list_item_infos_body):
-			new_row["internet_gbs"] = "∞"
+			new_row["internet_gbs"] = INFINITY
 		elif 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
 			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_infos_body, 'Gbps')
 		elif 'MB' in list_item_infos_body and not ('Mbps' in list_item_infos_body) :
@@ -133,7 +135,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
 		#print("CALL TIME : "+list_item_infos_body)
 		if checkIsInfiniteText(list_item_infos_body):
-			new_row["call_minutes"] = "∞"
+			new_row["call_minutes"] = INFINITY
 			new_row["unlimited_call"] = True
 		else :
 			if "(นาที)" in list_item_infos_head :
@@ -194,7 +196,7 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 	#internet, g, fup, and gb zone
 	if 'เน็ต' in list_item_full_text :
 		if checkIsInfiniteText(list_item_full_text) :
-			new_row["internet_gbs"] = "∞"
+			new_row["internet_gbs"] = INFINITY
 		elif 'GB' in list_item_full_text :
 			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_full_text, 'Gbps')
 		elif 'MB' in list_item_full_text :
@@ -229,7 +231,7 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 	if 'โทรฟรีทุกเครือข่าย' in list_item_full_text :
 		print(list_item_full_text)
 		if checkIsInfiniteText(list_item_full_text.strip().split(">")[1].split("<")[0]) :
-			new_row["call_minutes"] = "∞"
+			new_row["call_minutes"] = INFINITY
 			new_row["unlimited_call"] = True
 		else :
 			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_full_text, 'ชม')
@@ -714,7 +716,7 @@ async def scrape_web(request: Request):
 
 										#gb zone
 										if checkIsInfiniteText(raw_li, internet_specific=True) :
-											new_row["internet_gbs"] = "∞"
+											new_row["internet_gbs"] = INFINITY
 										elif 'GB' in raw_li :
 											new_row["internet_gbs"] = getNumberByUnit("GB", raw_li, 'Gbps')
 										elif 'MB' in raw_li :
@@ -791,7 +793,7 @@ async def scrape_web(request: Request):
 
 									if "ico-net-2" in raw_str_each :
 										if checkIsInfiniteText(raw_str_each) :
-											new_row["internet_gbs"] = "∞"
+											new_row["internet_gbs"] = INFINITY
 										elif 'GB' in raw_str_each :
 											new_row["internet_gbs"] = getNumberByUnit("GB", raw_str_each, 'Gbps')
 										elif 'MB' in raw_str_each :
@@ -801,7 +803,7 @@ async def scrape_web(request: Request):
 
 									elif "ico-call-all" in raw_str_each :
 										if checkIsInfiniteText(raw_str_each):
-											new_row["call_minutes"] = "∞"
+											new_row["call_minutes"] = INFINITY
 											new_row["unlimited_call"] = True
 										else :
 											new_row["call_minutes"] = getNumberByUnit("นาที", raw_str_each, 'ชม')
@@ -846,7 +848,7 @@ async def scrape_web(request: Request):
 												new_row["g_no"] += "/5G"
 										unit = bottom_sub_block_divs[1].get_attribute('innerHTML').strip()
 										if checkIsInfiniteText(unit):
-											new_row["internet_gbs"] = "∞"
+											new_row["internet_gbs"] = INFINITY
 										else :
 											value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
 											if 'GB' in unit and not ('Gbps' in unit) :
@@ -859,7 +861,7 @@ async def scrape_web(request: Request):
 									elif "โทร" in top_sub_block_content :
 										unit = bottom_sub_block_divs[1].get_attribute('innerHTML').strip()
 										if checkIsInfiniteText(unit):
-											new_row["call_minutes"] = "∞"
+											new_row["call_minutes"] = INFINITY
 											new_row["unlimited_call"] = True
 										else :
 											value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
@@ -876,7 +878,7 @@ async def scrape_web(request: Request):
 										insertRowInfoForTrueCards(new_row, capture_mode_id, misc_block_raw_text)
 
 						#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
-						if new_row["internet_gbs"] == "∞" :
+						if new_row["internet_gbs"] == INFINITY :
 							new_row["unlimited_internet_mode"] = 1
 						elif new_row["fair_usage_policy"] != None and new_row["internet_gbs"] > 0.0 :
 							new_row["unlimited_internet_mode"] = 2
