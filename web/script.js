@@ -4,40 +4,22 @@ let input__keyword = document.getElementById("input__keyword")
 //let input__mode = document.getElementById("input__mode")
 let button__scrape = document.getElementById("button__scrape")
 
-function CSV(array, delimeter=";") {
-    // Use first element to choose the keys and the order
-    let keys = Object.keys(array[0]);
-    console.log(keys)
-    // Build header
-    let result = keys.join(delimeter) + "\n";
+let urls = []
 
-    // Add the rows
-    array.forEach(function(obj){
-        result += keys.map(k => obj[k]).join(delimeter) + "\n";
-    });
-
-    return result;
-}
-
-button__scrape.onclick = function() {
-	//console.log(input__keyword.value)
-
-	let urls = []
-
-	let url_obj = {
+let url_obj = {
 		url_link: "", //str
 		operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
 		pricing_type: 1,
 		plans: [], // plan_obj[]
 	}
 
-	let plan_obj = {
+let plan_obj = {
 		plan_name: "", //str
 		capture_mode: 0, //enum, 0 = card, 1 = ul list, 2, numerical capture
 		has_term_and_condition: false, //bool
 	}
 
-	let planned_inputs = [
+let planned_inputs = [
 		//AIS TEST ZONE
 		
 		{
@@ -209,11 +191,31 @@ button__scrape.onclick = function() {
 
 	]
 
-	let query = {
+let query = {
 		price_keywords: ["บาท", ".-", "Baht", "THB", "฿"],
 		urls: planned_inputs,
 		webdriver_timeout: 15,
 	}
+
+function CSV(array, delimeter=";") {
+    // Use first element to choose the keys and the order
+    let keys = Object.keys(array[0]);
+    console.log(keys)
+    // Build header
+    let result = keys.join(delimeter) + "\n";
+
+    // Add the rows
+    array.forEach(function(obj){
+        result += keys.map(k => obj[k]).join(delimeter) + "\n";
+    });
+
+    return result;
+}
+
+button__scrape.onclick = function() {
+	//console.log(input__keyword.value)
+
+	
 	//'?&keyword='+input__keyword.value+'&input_url='+input__url.value+'&file_output_name='+input__csv_file.value+'&mode='+input__mode.value
 
 	fetch('scrape_web',{
