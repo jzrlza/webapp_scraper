@@ -5,6 +5,10 @@
 	margin-bottom: 20px;
 }
 
+.hidden {
+	display: none;
+}
+
 .input_label {
 	display: flex;
 	width: 100%;

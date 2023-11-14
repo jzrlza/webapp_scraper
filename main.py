@@ -15,6 +15,7 @@ import re
 import time
 
 INFINITY = "∞"
+micro_delimeter = " + "
 
 def normalizeStringForNoneTypeToString(raw_str) :
 	if raw_str == None :
@@ -170,9 +171,9 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_infos_body)
 		is_extra = False
 	for i in range(len(entertainments)) :
-		new_row["entertainment_package"] += entertainments[i]
+		new_row["entertainment_package"] += entertainments[i].replace(',', '')
 		if i < len(entertainments) - 1 :
-			new_row["entertainment_package"] += ", "
+			new_row["entertainment_package"] += micro_delimeter
 
 	#prilivedge zone
 	if "เซเรเนด" in list_item_infos_head or re.search('Serenade', list_item_infos_head, re.IGNORECASE) :
@@ -185,9 +186,9 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	if is_extra :
 		trim_txt = list_item_infos_head.replace('<b>', '').replace('</b>', '')+" "+list_item_infos_body.replace('<b>', '').replace('</b>', '')
 		if new_row["extra"] == None :
-			new_row["extra"] = trim_txt
+			new_row["extra"] = trim_txt.replace(',', '')
 		else :
-			new_row["extra"] += ", "+trim_txt
+			new_row["extra"] += micro_delimeter+trim_txt.replace(',', '')
 
 #DTAC -----------
 def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
@@ -267,9 +268,9 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 		new_row["entertainment"] = True
 		entertainment_str = list_item_full_text.replace('<br>', ' ').replace('\n                                ', '').strip().split(">")[1].split("<")[0]
 		if new_row["entertainment_package"] == None :
-			new_row["entertainment_package"] = entertainment_str.replace('<b>', '').replace('</b>', '')
+			new_row["entertainment_package"] = entertainment_str.replace('<b>', '').replace('</b>', '').replace(',', '')
 		else :
-			new_row["entertainment_package"] += ", "+entertainment_str.replace('<b>', '').replace('</b>', '')
+			new_row["entertainment_package"] += micro_delimeter+entertainment_str.replace('<b>', '').replace('</b>', '').replace(',', '')
 		is_extra = False
 
 	#extra zone : this one isb too evil
@@ -299,16 +300,16 @@ def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
 	elif "ความบันเทิง" in list_item_full_text or "รับชม" in list_item_full_text or "ดูหนัง" in list_item_full_text or "ฟังเพลง" in list_item_full_text :
 		new_row["entertainment"] = True
 		if new_row["entertainment_package"] == None :
-			new_row["entertainment_package"] = list_item_full_text.replace('<b>', '').replace('</b>', '')
+			new_row["entertainment_package"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(',', '')
 		else :
-			new_row["entertainment_package"] += ", "+list_item_full_text.replace('<b>', '').replace('</b>', '')
+			new_row["entertainment_package"] += micro_delimeter+list_item_full_text.replace('<b>', '').replace('</b>', '').replace(',', '')
 		if "เดือน" in list_item_full_text :
 			new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_full_text.replace('<b>', '').replace('</b>', ''))
 	else :
 		if new_row["extra"] == None :
-			new_row["extra"] = list_item_full_text.replace('<b>', '').replace('</b>', '')
+			new_row["extra"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(',', '')
 		else :
-			new_row["extra"] += ", "+list_item_full_text.replace('<b>', '').replace('</b>', '')
+			new_row["extra"] += micro_delimeter+list_item_full_text.replace('<b>', '').replace('</b>', '').replace(',', '')
 
 app = FastAPI()
 
@@ -457,7 +458,7 @@ async def scrape_web(request: Request):
 						hunt_keyword_1 = "คุ้มครอง"
 						hunt_keyword_1_field = "ประกันชีวิตและอุบัติเหตุ"
 						hunt_keyword_2 = "แอปดัง"
-						hunt_keyword_2_field = "ความบันเทิง viu + iQIYI + WeTV"
+						hunt_keyword_2_field = "ความบันเทิง viu iQIYI WeTV"
 						td_array = table_body_target.find_elements(By.XPATH, '*')
 						row_span_1 = 0
 						row_span_info_1 = ""
@@ -602,9 +603,9 @@ async def scrape_web(request: Request):
 											raw_str_item_duration = getNumberByUnit("เดือน", raw_str_item)
 											#print(raw_str_item_title, raw_str_item_duration)
 											if new_row["entertainment_package"] == None :
-												new_row["entertainment_package"] = raw_str_item_title
+												new_row["entertainment_package"] = raw_str_item_title.replace(',', '')
 											else :
-												new_row["entertainment_package"] += ", "+raw_str_item_title
+												new_row["entertainment_package"] += micro_delimeter+raw_str_item_title.replace(',', '')
 											new_row["entertainment_contract"] = raw_str_item_duration
 
 							elif capture_mode_id == 1 :
@@ -663,9 +664,9 @@ async def scrape_web(request: Request):
 										if new_row["price"] == table_item["price"] :
 											for extra_item_str in table_item["extra_raw_arr"] :
 												if new_row["extra"] == None :
-													new_row["extra"] = extra_item_str
+													new_row["extra"] = extra_item_str.replace(',', '')
 												else :
-													new_row["extra"] += ", "+extra_item_str
+													new_row["extra"] += micro_delimeter+extra_item_str.replace(',', '')
 								else :
 									second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
 									second_block__footer_items = second_block__footer.find_elements(By.XPATH, '*')
@@ -688,22 +689,22 @@ async def scrape_web(request: Request):
 														if "เกม" in specific_item_txt or re.search("entertainment", specific_item_txt, re.IGNORECASE) :
 															new_row["entertainment"] = True
 															if new_row["entertainment_package"] == None :
-																new_row["entertainment_package"] = f"{specific_item_txt} ({li_text})"
+																new_row["entertainment_package"] = f"{specific_item_txt} ({li_text.replace(',', '').replace(',', '')})"
 															else :
-																new_row["entertainment_package"] += f", {specific_item_txt} ({li_text})"
+																new_row["entertainment_package"] += f", {specific_item_txt} ({li_text.replace(',', '')})"
 														else :
 															if new_row["extra"] == None :
-																new_row["extra"] = f"{specific_item_txt} ({li_text})"
+																new_row["extra"] = f"{specific_item_txt} ({li_text.replace(',', '')})"
 															else :
-																new_row["extra"] += f", {specific_item_txt} ({li_text})"
+																new_row["extra"] += f"{micro_delimeter}{specific_item_txt} ({li_text.replace(',', '')})"
 									if footerless :
 										if "scListSocial" in second_block__center_items[len(second_block__center_items)-1].get_attribute('class') :
 											red_block = second_block__center_items[len(second_block__center_items)-1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
 											red_block_txt = red_block.get_attribute('innerHTML').strip().replace('<br>', ' ').replace('</span>', ' ').replace('<span class="fAktivB">', '').strip()
 											if new_row["extra"] == None :
-												new_row["extra"] = f"{red_block_txt}"
+												new_row["extra"] = f"{red_block_txt.replace(',', '')}"
 											else :
-												new_row["extra"] += f", {red_block_txt}"
+												new_row["extra"] += f"{micro_delimeter}{red_block_txt.replace(',', '')}"
 							elif capture_mode_id == 1 :
 								new_row["system"] = pricing_type_id
 								raw_li = web_content.get_attribute('innerHTML').strip()

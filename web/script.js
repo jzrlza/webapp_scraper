@@ -2,6 +2,13 @@ let button__scrape = document.getElementById("button__scrape")
 let button__scrape_original_str = button__scrape.innerHTML
 let button__scrape_loading_str = "Scraping..."
 let button__export = document.getElementById("button__export")
+let stealth_downloader = document.getElementById("stealth_downloader")
+
+const universalBOM = "\uFEFF";
+
+button__export.onclick = function() {
+	stealth_downloader.click()
+}
 
 let data_displayer_table = document.getElementById("data_displayer_table")
 
@@ -9,6 +16,8 @@ let urls = []
 
 let isScraping = false
 let hasScraped = false
+
+let csvDelimeter = ","
 
 let url_obj = {
 		url_link: "", //str
@@ -25,7 +34,7 @@ let plan_obj = {
 
 let planned_inputs = [
 		//AIS TEST ZONE
-		
+
 		{
 			url_link: "https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals", //str
 			operator_id: 0, //enum, ais = 0, dtac = 1, true = 2
@@ -201,10 +210,14 @@ let query = {
 		webdriver_timeout: 15,
 	}
 
-function CSV(array, delimeter=";") {
+function CSV(array, delimeter) {
+	if (!delimeter) {
+		return ""
+	}
     // Use first element to choose the keys and the order
     let keys = Object.keys(array[0]);
-    console.log(keys)
+    //console.log(keys)
+
     // Build header
     let result = keys.join(delimeter) + "\n";
 
@@ -273,11 +286,8 @@ button__scrape.onclick = function() {
 	button__scrape.disabled = false
 	button__scrape.innerHTML = button__scrape_original_str
 
-   	let csvContent = CSV(json.result, ";")
-   	console.log(csvContent)
-
-   	hasScraped = true
-   	button__export.disabled = false
+   	let csvContent = CSV(json.result, csvDelimeter)
+   	return csvContent
 
    	//let encodedUri = encodeURI(csvContent);
    	//console.log(encodedUri)
@@ -288,6 +298,13 @@ button__scrape.onclick = function() {
 	//document.body.appendChild(link); // Required for FF
 
 	//link.click();
+   }).then(csvString => {
+   		//let new_url = URL.createObjectURL(blob);
+   		hasScraped = true
+   		button__export.disabled = false
+
+        stealth_downloader.setAttribute('href', 'data:text/csv; charset=utf-8,' + encodeURIComponent(universalBOM+csvString));
+        stealth_downloader.setAttribute('download', 'export.csv');
    }).catch(e => {
    	console.error(e)
    })
