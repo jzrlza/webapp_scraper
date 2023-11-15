@@ -1,10 +1,31 @@
+const universalBOM = "\uFEFF";
+
+const field_name_translate_normalization_dict = {
+
+}
+
+const operators_color_map = {
+	'AIS': "green",
+	'DTAC': "blue",
+	'TRUE': "red",
+}
+
+const system_mode_map = {
+	0: "เติมเงิน",
+	1: "รายเดือน",
+}
+
+const unlimited_internet_mode_map = {
+	1: "Unlimited",
+	2: "Limited by slowing after",
+	3: "Limited by stopping after",
+}
+
 let button__scrape = document.getElementById("button__scrape")
 let button__scrape_original_str = button__scrape.innerHTML
 let button__scrape_loading_str = "Scraping..."
 let button__export = document.getElementById("button__export")
 let stealth_downloader = document.getElementById("stealth_downloader")
-
-const universalBOM = "\uFEFF";
 
 button__export.onclick = function() {
 	stealth_downloader.click()
@@ -228,10 +249,17 @@ function CSV(array, delimeter) {
     return result;
 }
 
-const operators_color_map = {
-	'AIS': "green",
-	'DTAC': "blue",
-	'TRUE': "red",
+function fieldCellItemNormalization(field_item_key, field_item_value) {
+	let is_null = field_item_value === null || field_item_value === undefined
+	if (is_null) {
+		return "-"
+	}
+	/*if (field_item_key == "system") {
+		return system_mode_map[field_item_value]
+	} else if (field_item_key == "unlimited_internet_mode") {
+		return unlimited_internet_mode_map[field_item_value]
+	}*/
+	return field_item_value
 }
 
 button__scrape.onclick = function() {
@@ -275,10 +303,10 @@ button__scrape.onclick = function() {
 	    elem_row.classList.add('tr_row');
 	    elem_row.classList.add('tr_row__'+operators_color_map[element["operator"]]);
 	    for (let akey in element) {
-	      let is_null = element[akey] === null || element[akey] === undefined
-	      let elem_str = !is_null ? `"${element[akey]}"` : `"-"`
+	      let elem_normalized_str = fieldCellItemNormalization(akey, element[akey])
+	      let elem_str = `"${elem_normalized_str}"` //for excel reading
 	      let cell = elem_row.insertCell();
-	      let text = document.createTextNode(!is_null ? element[akey] : "-");
+	      let text = document.createTextNode(elem_normalized_str);
 	      element[akey] = elem_str
 	      cell.appendChild(text);
 	    }
