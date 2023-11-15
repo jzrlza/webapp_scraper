@@ -289,14 +289,6 @@ button__scrape.onclick = function() {
    	let csvContent = CSV(json.result, csvDelimeter)
    	return csvContent
 
-   	//let encodedUri = encodeURI(csvContent);
-   	//console.log(encodedUri)
-   	//window.open(encodedUri, '_blank')
-	//let link = document.getElementById("stealth_downloader");
-	//link.setAttribute("href", encodedUri);
-	//link.setAttribute("download", "my_data.csv");
-	//document.body.appendChild(link); // Required for FF
-
 	//link.click();
    }).then(csvString => {
    		//let new_url = URL.createObjectURL(blob);
