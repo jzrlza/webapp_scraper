@@ -296,7 +296,7 @@ button__scrape.onclick = function() {
    		button__export.disabled = false
 
    		let d = new Date()
-   		month = d.getMonth()+1
+   		let month = d.getMonth()+1
 
         stealth_downloader.setAttribute('href', 'data:text/csv; charset=utf-8,' + encodeURIComponent(universalBOM+csvString));
         stealth_downloader.setAttribute('download', `web_scrape_export-${d.getDate()}-${month}-${d.getFullYear()}__${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}.csv`);
