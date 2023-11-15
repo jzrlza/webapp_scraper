@@ -179,7 +179,6 @@ let planned_inputs = [
 				},
 			], // plan_obj[]
 		},
-
 		
 		//TRUE TEST ZONE
 		{
@@ -230,9 +229,9 @@ function CSV(array, delimeter) {
 }
 
 const operators_color_map = {
-	'"AIS"': "green",
-	'"DTAC"': "blue",
-	'"TRUE"': "red",
+	'AIS': "green",
+	'DTAC': "blue",
+	'TRUE': "red",
 }
 
 button__scrape.onclick = function() {
@@ -276,8 +275,11 @@ button__scrape.onclick = function() {
 	    elem_row.classList.add('tr_row');
 	    elem_row.classList.add('tr_row__'+operators_color_map[element["operator"]]);
 	    for (let akey in element) {
+	      let is_null = element[akey] === null || element[akey] === undefined
+	      let elem_str = !is_null ? `"${element[akey]}"` : `"-"`
 	      let cell = elem_row.insertCell();
-	      let text = document.createTextNode(element[akey]);
+	      let text = document.createTextNode(!is_null ? element[akey] : "-");
+	      element[akey] = elem_str
 	      cell.appendChild(text);
 	    }
 	  }
@@ -286,7 +288,7 @@ button__scrape.onclick = function() {
 	button__scrape.disabled = false
 	button__scrape.innerHTML = button__scrape_original_str
 
-   	let csvContent = CSV(json.result, csvDelimeter)
+   	let csvContent = CSV(data, csvDelimeter)
    	return csvContent
 
 	//link.click();
