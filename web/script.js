@@ -230,9 +230,9 @@ function CSV(array, delimeter) {
 }
 
 const operators_color_map = {
-	"AIS": "green",
-	"DTAC": "blue",
-	"TRUE": "red",
+	'"AIS"': "green",
+	'"DTAC"': "blue",
+	'"TRUE"': "red",
 }
 
 button__scrape.onclick = function() {
@@ -295,7 +295,7 @@ button__scrape.onclick = function() {
    		hasScraped = true
    		button__export.disabled = false
 
-   		d = new Date()
+   		let d = new Date()
    		month = d.getMonth()+1
 
         stealth_downloader.setAttribute('href', 'data:text/csv; charset=utf-8,' + encodeURIComponent(universalBOM+csvString));

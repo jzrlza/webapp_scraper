@@ -15,9 +15,10 @@ import re
 import time
 
 INFINITY = "∞"
-micro_delimeter = " + "
+quotation = '"'
+micro_delimeter = ", "
 comma_detection = "," 
-comma_replacer = "" #in case of numbers like 100,000 : this maybe sensitive
+comma_replacer = "," #in case of numbers like 100,000 : this maybe sensitive
 
 def normalizeStringForNoneTypeToString(raw_str) :
 	if raw_str == None :
@@ -740,41 +741,42 @@ async def scrape_web(request: Request):
 											target_price = getNumberByUnit(target_string, raw_li.replace('/', ' '))
 											target_row = None
 											for row_obj in list_of_rows : #capture the existing
-												if row_obj["price"] == target_price and row_obj["plan"] == plan_name :
+												if row_obj["price"] == f'{quotation}{str(target_price)}{quotation}' and row_obj["plan"] == f'{quotation}{plan_name}{quotation}' :
 													target_row = row_obj
 													break
-											all_li_objs = web_content.find_element(By.XPATH, "..").find_elements(By.XPATH, '*')
-											for li_obj in all_li_objs :
-												raw_li_each = li_obj.get_attribute('innerHTML').strip()
+											if target_row != None :
+												all_li_objs = web_content.find_element(By.XPATH, "..").find_elements(By.XPATH, '*')
+												for li_obj in all_li_objs :
+													raw_li_each = li_obj.get_attribute('innerHTML').strip()
 
-												is_g_zone = False
+													is_g_zone = False
 
-												if "3G" in raw_li_each :
-													if target_row["g_no"] == None :
-														target_row["g_no"] = "3G"
-														is_g_zone = True
-													elif not "3G" in target_row["g_no"] :
-														target_row["g_no"] += "/3G"
-														is_g_zone = True
-												if "4G" in raw_li_each :
-													if target_row["g_no"] == None :
-														target_row["g_no"] = "4G"
-														is_g_zone = True
-													elif not "4G" in target_row["g_no"] :
-														target_row["g_no"] += "/4G"
-														is_g_zone = True
-												if "5G" in raw_li_each :
-													if target_row["g_no"] == None :
-														target_row["g_no"] = "5G"
-														is_g_zone = True
-													elif not "5G" in target_row["g_no"] :
-														target_row["g_no"] += "/5G"
-														is_g_zone = True
+													if "3G" in raw_li_each :
+														if target_row["g_no"] == None :
+															target_row["g_no"] = "3G"
+															is_g_zone = True
+														elif not "3G" in target_row["g_no"] :
+															target_row["g_no"] += "/3G"
+															is_g_zone = True
+													if "4G" in raw_li_each :
+														if target_row["g_no"] == None :
+															target_row["g_no"] = "4G"
+															is_g_zone = True
+														elif not "4G" in target_row["g_no"] :
+															target_row["g_no"] += "/4G"
+															is_g_zone = True
+													if "5G" in raw_li_each :
+														if target_row["g_no"] == None :
+															target_row["g_no"] = "5G"
+															is_g_zone = True
+														elif not "5G" in target_row["g_no"] :
+															target_row["g_no"] += "/5G"
+															is_g_zone = True
 
-												for fup_unit in possible_fup_units :
-													if fup_unit in raw_li_each and not is_g_zone :
-														target_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, raw_li_each, "GB")
-														break
+													for fup_unit in possible_fup_units :
+														if fup_unit in raw_li_each and not is_g_zone :
+															target_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, raw_li_each, "GB")
+															break
 										continue
 
 							elif capture_mode_id == 2 :
@@ -889,6 +891,12 @@ async def scrape_web(request: Request):
 							new_row["unlimited_internet_mode"] = 3
 						elif new_row["internet_gbs"] == 0.0 :
 							new_row["unlimited_internet_mode"] = 0
+
+						for new_row_key in new_row:
+							if new_row[new_row_key] == None :
+								new_row[new_row_key] = f'{quotation}-{quotation}'
+							else :
+								new_row[new_row_key] = f'{quotation}{str(new_row[new_row_key])}{quotation}'
 
 						print(new_row)
 						list_of_rows.append(new_row)
