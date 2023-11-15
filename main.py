@@ -309,7 +309,7 @@ def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
 			new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_full_text.replace('<b>', '').replace('</b>', ''))
 	else :
 		if new_row["extra"] == None :
-			new_row["extra"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(',', '')
+			new_row["extra"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
 		else :
 			new_row["extra"] += micro_delimeter+list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
 
@@ -693,7 +693,7 @@ async def scrape_web(request: Request):
 															if new_row["entertainment_package"] == None :
 																new_row["entertainment_package"] = f"{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
 															else :
-																new_row["entertainment_package"] += f", {specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
+																new_row["entertainment_package"] += f"{micro_delimeter}{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
 														else :
 															if new_row["extra"] == None :
 																new_row["extra"] = f"{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
