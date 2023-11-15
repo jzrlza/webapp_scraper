@@ -4,3 +4,14 @@ ui ==> minimal and simple, use modes for each type of visuals (non-programmer us
 ---> urls are addable : each sub-mode must have picture example
 
 ---> evaluate by excel results (table in website display first at bottom of website)
+
+[done]
+
+NEXT tomorrow the day before present
+
+ui --->
+
+-tables make clean
+  -enum display text based on its number
+  -true or false may use other words to fit into "database policy" (and infinity...)
+  -field names normalization into thai
