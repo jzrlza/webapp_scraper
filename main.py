@@ -883,6 +883,7 @@ async def scrape_web(request: Request):
 						#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 						if new_row["internet_gbs"] == INFINITY :
 							new_row["unlimited_internet_mode"] = 1
+							new_row["fair_usage_policy"] = None
 						elif new_row["fair_usage_policy"] != None and new_row["internet_gbs"] > 0.0 :
 							new_row["unlimited_internet_mode"] = 2
 						elif new_row["fair_usage_policy"] == None and new_row["internet_gbs"] > 0.0 :
