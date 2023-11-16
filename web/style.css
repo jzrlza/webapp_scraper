@@ -40,24 +40,51 @@
 	justify-content: center;
 	margin-left: auto;
 	margin-right: auto;
+	border: 1px solid #ccc;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+.button:disabled {
+	border: 1px solid #7d0b0b;
+	opacity: 0.8;
+}
+#button__scrape {
+	background-color: #16910d;
+	color: #fff;
+}
+#button__scrape:hover {
+	background-color: #069649;
+}
+#button__export {
+	background-color: #1c1fb0;
+	color: #fff;
+}
+#button__export:hover {
+	background-color: #048bb8;
 }
 #button__scrape:disabled {
+	background-color: #568752;
 	cursor: wait;
 }
 #button__export:disabled {
+	background-color: #5a5b8c;
 	cursor: not-allowed;
 }
 
 #table_container {
 	margin-top: 50px;
-	width: 100%;
+	width: 90%;
 	max-height: 400px;
 	overflow-x: auto;
 	overflow-y: auto;
+	margin-left: auto;
+  	margin-right: auto;
 }
 table { 
   width: 100%; 
   border-collapse: collapse; 
+  margin-left: auto;
+  margin-right: auto;
 }
 /* Zebra striping */
 tr:nth-of-type(odd) { 
