@@ -93,3 +93,13 @@ td, th {
 .tr_row__red:nth-of-type(odd) { 
   	background-color: #ffb8e2; 
 }
+
+.th_0 {
+	min-width: 20px;
+}
+.th_1 {
+	min-width: 40px;
+}
+.th_2 {
+	min-width: 120px;
+}

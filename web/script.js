@@ -1,7 +1,53 @@
 const universalBOM = "\uFEFF";
 
 const field_name_translate_normalization_dict = {
+	"operator": "Operator",
+	"plan" : "Plan",
+	"price" : "Price",
+	"system" : "System",
+	"unlimited_call" : "Unlimited_Call",
+	"call_minutes" : "Call (Mins)",
+	"capture_in_seconds" : "Second",
+	"unlimited_internet_mode" : "Unlimited_Internet",
+	"internet_gbs" : "Internet (GBs)",
+	"fair_usage_policy" : "Fair usage policy (FUP)",
+	"wifi" : "Wifi",
+	"g_no" : "3G-4G-5G",
+	"sms" : "SMS",
+	"mms" : "MMS",
+	"entertainment" : "Entertainment",
+	"entertainment_package" : "Entertainment package",
+	"entertainment_contract" : "Entertainment contract (Month)",
+	"priviledge" : "Privilege",
+	"priviledge_exclusive" : "Exclusive privilege",
+	"contract" : "Contract",
+	"extra" : "Extra",
+	"notes" : "Notes",
+}
 
+const field_name_long_display_bool = { //0 short //1 mid //2 long
+	"operator": 0,
+	"plan" : 1,
+	"price" : 0,
+	"system" : 1,
+	"unlimited_call" : 0,
+	"call_minutes" : 0,
+	"capture_in_seconds" : 0,
+	"unlimited_internet_mode" : 1,
+	"internet_gbs" : 0,
+	"fair_usage_policy" : 1,
+	"wifi" : 0,
+	"g_no" : 0,
+	"sms" : 0,
+	"mms" : 0,
+	"entertainment" : 0,
+	"entertainment_package" : 2,
+	"entertainment_contract" : 0,
+	"priviledge" : 0,
+	"priviledge_exclusive" : 1,
+	"contract" : 0,
+	"extra" : 2,
+	"notes" : 2,
 }
 
 const operators_color_map = {
@@ -37,6 +83,10 @@ let urls = []
 
 let isScraping = false
 let hasScraped = false
+
+let normalizeTableHeadUponDisplay = true
+let normalizeDataUponDisplay = true
+let normalizeDataUponExport = false
 
 let csvDelimeter = ","
 
@@ -254,11 +304,11 @@ function fieldCellItemNormalization(field_item_key, field_item_value) {
 	if (is_null) {
 		return "-"
 	}
-	/*if (field_item_key == "system") {
+	if (field_item_key == "system") {
 		return system_mode_map[field_item_value]
 	} else if (field_item_key == "unlimited_internet_mode") {
 		return unlimited_internet_mode_map[field_item_value]
-	}*/
+	}
 	return field_item_value
 }
 
@@ -293,7 +343,8 @@ button__scrape.onclick = function() {
 	let row = thead.insertRow();
 	for (let key of keys) {
 		    let th = document.createElement("th");
-		    let text = document.createTextNode(key);
+		    th.classList.add('th_'+field_name_long_display_bool[key]);
+		    let text = document.createTextNode(normalizeTableHeadUponDisplay ? field_name_translate_normalization_dict[key] : key);
 		    th.appendChild(text);
 		    row.appendChild(th);
 		  }
@@ -303,11 +354,12 @@ button__scrape.onclick = function() {
 	    elem_row.classList.add('tr_row');
 	    elem_row.classList.add('tr_row__'+operators_color_map[element["operator"]]);
 	    for (let akey in element) {
+	       elem_row.classList.add('th_'+field_name_long_display_bool[akey]);
 	      let elem_normalized_str = fieldCellItemNormalization(akey, element[akey])
 	      let elem_str = `"${elem_normalized_str}"` //for excel reading
 	      let cell = elem_row.insertCell();
-	      let text = document.createTextNode(elem_normalized_str);
-	      element[akey] = elem_str
+	      let text = document.createTextNode(normalizeDataUponDisplay ? elem_normalized_str : element[akey]);
+	      element[akey] = normalizeDataUponExport ? elem_str : element[akey]
 	      cell.appendChild(text);
 	    }
 	  }
