@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 import time
 
-INFINITY = "∞"
+INFINITY = "Unlimited"
 micro_delimeter = ", "
 comma_detection = '"' 
 comma_replacer = "'" #in case of numbers like 100,000 : this maybe sensitive
