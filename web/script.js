@@ -305,9 +305,9 @@ function fieldCellItemNormalization(field_item_key, field_item_value) {
 		return "-"
 	}
 	if (field_item_key == "system") {
-		return system_mode_map[field_item_value]
+		return system_mode_map[field_item_value] + `(${field_item_value})`
 	} else if (field_item_key == "unlimited_internet_mode") {
-		return unlimited_internet_mode_map[field_item_value]
+		return unlimited_internet_mode_map[field_item_value] + `(${field_item_value})`
 	}
 	return field_item_value
 }
@@ -359,7 +359,7 @@ button__scrape.onclick = function() {
 	      let elem_str = `"${elem_normalized_str}"` //for excel reading
 	      let cell = elem_row.insertCell();
 	      let text = document.createTextNode(normalizeDataUponDisplay ? elem_normalized_str : element[akey]);
-	      element[akey] = normalizeDataUponExport ? elem_str : element[akey]
+	      element[akey] = normalizeDataUponExport ? elem_normalized_str : `"${element[akey]}"`
 	      cell.appendChild(text);
 	    }
 	  }
