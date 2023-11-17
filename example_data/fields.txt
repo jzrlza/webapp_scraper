@@ -1,6 +1,6 @@
 fields
 
-operator_id (enum)
+operator (enum str)
 plan (str)
 price (float)
 system (enum)
