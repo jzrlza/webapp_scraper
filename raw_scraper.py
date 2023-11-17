@@ -23,7 +23,7 @@ mock_request = """{
          "pricing_type":1,
          "plans":[
             {
-               "plan_name":"5G Max Professionals\u200b",
+               "plan_name":"5G Max Professionals",
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
