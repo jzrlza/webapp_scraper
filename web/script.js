@@ -354,12 +354,13 @@ button__scrape.onclick = function() {
 	    elem_row.classList.add('tr_row');
 	    elem_row.classList.add('tr_row__'+operators_color_map[element["operator"]]);
 	    for (let akey in element) {
-	       elem_row.classList.add('th_'+field_name_long_display_bool[akey]);
+	      let is_null = element[akey] === null || element[akey] === undefined
+	      elem_row.classList.add('th_'+field_name_long_display_bool[akey]);
 	      let elem_normalized_str = fieldCellItemNormalization(akey, element[akey])
 	      let elem_str = `"${elem_normalized_str}"` //for excel reading
 	      let cell = elem_row.insertCell();
-	      let text = document.createTextNode(normalizeDataUponDisplay ? elem_normalized_str : element[akey]);
-	      element[akey] = normalizeDataUponExport ? elem_normalized_str : `"${element[akey]}"`
+	      let text = document.createTextNode(normalizeDataUponDisplay ? elem_normalized_str : (!is_null ? element[akey] : "-"));
+	      element[akey] = normalizeDataUponExport ? elem_normalized_str : `"${(!is_null ? element[akey] : '-')}"`
 	      cell.appendChild(text);
 	    }
 	  }
