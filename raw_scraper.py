@@ -18,6 +18,147 @@ mock_request = """{
    ],
    "urls":[
       {
+         "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals",
+         "operator_id":0,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"5G Max Professionals",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-max-experience",
+         "operator_id":0,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"AIS 5G Max Experience",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/package/postpaid/postpaid-plans",
+         "operator_id":0,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"แพ็กเกจมหามงคล",
+               "capture_mode":1,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"5G Serenade",
+               "capture_mode":1,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"Online MAX",
+               "capture_mode":1,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"Other",
+               "capture_mode":1,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-netflix",
+         "operator_id":0,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"แพ็กเกจ 5G Netflix",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-smart-share",
+         "operator_id":0,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"แพ็กเกจ 5G SMART SHARE",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/package/exclusive-plan/zeed-5g/5g-postpaid",
+         "operator_id":0,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"แพ็กเกจ AIS ZEED 5G รายเดือน",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.dtac.co.th/postpaid/products/package.html",
+         "operator_id":1,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"dtac 5G Better+",
+               "capture_mode":0,
+               "has_extra_table":true,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.dtac.co.th/dtac-go-plus",
+         "operator_id":1,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"dtac GO+",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.dtac.co.th/postpaid/products/net.html",
+         "operator_id":1,
+         "pricing_type":1,
+         "plans":[
+            {
+               "plan_name":"Tablet Net Non-Stop",
+               "capture_mode":1,
+               "has_extra_table":false,
+               "has_term_and_condition":true
+            },
+            {
+               "plan_name":"SMP Entry 240",
+               "capture_mode":2,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
          "url_link":"https://www.true.th/truemoveh/postpaid/mass",
          "operator_id":2,
          "pricing_type":1,
