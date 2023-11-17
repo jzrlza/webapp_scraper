@@ -186,6 +186,7 @@ INFINITY = "Unlimited"
 micro_delimeter = ", "
 comma_detection = '"' 
 comma_replacer = "'" #in case of numbers like 100,000 : this maybe sensitive
+quotation = '"'
 
 def normalizeStringForNoneTypeToString(raw_str) :
 	if raw_str == None :
@@ -522,7 +523,7 @@ row_obj_template = {
 	"notes": None
 }
 
-def scrape_web(request):
+def scrape_web(request, normalize_result):
 	qr = json.loads(request)
 	price_keywords = qr['price_keywords']
 	urls = qr['urls']
@@ -1047,8 +1048,18 @@ def scrape_web(request):
 	#    writer.writeheader()
 	#   for i in range(len(list_of_rows)) :
 	#    	writer.writerow(list_of_rows[i])
+
+	if normalize_result :
+		for row in list_of_rows :
+			for row_key in row :
+				row_item = row[row_key]
+				if row_item == None :
+					row_item = f'{quotation}-{quotation}'
+				else :
+					row_item = f'{quotation}{row_item}{quotation}'
+
 	result = json.dumps({"result" : list_of_rows})
 	print(result)
 	return result
 
-scrape_web(mock_request)
+scrape_web(mock_request, False)
