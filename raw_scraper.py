@@ -1,5 +1,4 @@
 import os
-import csv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -1040,14 +1039,6 @@ def scrape_web(request, normalize_result = False):
 						list_of_rows.append(new_row)
 
 		driver.close()
-
-	#with open('csv_result.csv', 'w', encoding='UTF8', newline='') as f:
-	#    writer = csv.writer(f, delimiter=';')
-
-	#    writer = csv.DictWriter(f, fieldnames = row_obj_template.keys())
-	#    writer.writeheader()
-	#   for i in range(len(list_of_rows)) :
-	#    	writer.writerow(list_of_rows[i])
 
 	if normalize_result :
 		for row in list_of_rows :
