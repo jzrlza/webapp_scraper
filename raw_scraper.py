@@ -1047,7 +1047,8 @@ def scrape_web(request):
 	#    writer.writeheader()
 	#   for i in range(len(list_of_rows)) :
 	#    	writer.writerow(list_of_rows[i])
-	print({"result" : list_of_rows})
-	return {"result" : list_of_rows}
+	result = json.dumps({"result" : list_of_rows})
+	print(result)
+	return result
 
 scrape_web(mock_request)
