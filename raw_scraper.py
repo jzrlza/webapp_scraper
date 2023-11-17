@@ -831,7 +831,7 @@ def scrape_web(request, normalize_result = False):
 												for specific_bonus in specific_bonuses_list :
 													if not "หรือ" in specific_bonus.get_attribute('innerHTML').strip() :
 														specific_item_txt = specific_bonus.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
-														print(specific_item_txt)
+														#print(specific_item_txt)
 														if "เกม" in specific_item_txt or re.search("entertainment", specific_item_txt, re.IGNORECASE) :
 															new_row["entertainment"] = True
 															if new_row["entertainment_package"] == None :
