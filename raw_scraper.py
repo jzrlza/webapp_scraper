@@ -400,7 +400,7 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 
 	#call zone
 	if 'โทรฟรีทุกเครือข่าย' in list_item_full_text :
-		print(list_item_full_text)
+		#print(list_item_full_text)
 		if checkIsInfiniteText(list_item_full_text.strip().split(">")[1].split("<")[0]) :
 			new_row["call_minutes"] = INFINITY
 			new_row["unlimited_call"] = True
@@ -528,7 +528,7 @@ def scrape_web(request, normalize_result = False):
 	urls = qr['urls']
 	webdriver_timeout = qr['webdriver_timeout']
 
-	print(qr)
+	#print(qr)
 
 	list_of_rows = []
 
@@ -600,7 +600,7 @@ def scrape_web(request, normalize_result = False):
 							if "responsive" in tables[i].find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
 								table_body_target = tables[i]
 								break
-						print(table_body_target.get_attribute('class'))
+						#print(table_body_target.get_attribute('class'))
 						hunt_keyword_1 = "คุ้มครอง"
 						hunt_keyword_1_field = "ประกันชีวิตและอุบัติเหตุ"
 						hunt_keyword_2 = "แอปดัง"
@@ -634,7 +634,7 @@ def scrape_web(request, normalize_result = False):
 										row_span_1 = 1
 									else :
 										row_span_1 = int(row_span_1)
-									print("fetching info 1... maximum "+str(webdriver_timeout)+" seconds")
+									#print("fetching info 1... maximum "+str(webdriver_timeout)+" seconds")
 									row_span_info_1 = td_elem.find_elements(By.XPATH,"descendant::*[text()[contains(., '"+hunt_keyword_1+"')]]")
 									if row_span_info_1 != None :
 										if len(row_span_info_1) > 0 :
@@ -647,7 +647,7 @@ def scrape_web(request, normalize_result = False):
 										row_span_2 = 1
 									else :
 										row_span_2 = int(row_span_2)
-									print("fetching info 2... maximum "+str(webdriver_timeout)+" seconds")
+									#print("fetching info 2... maximum "+str(webdriver_timeout)+" seconds")
 									row_span_info_2 = td_elem.find_elements(By.XPATH,"descendant::*[text()[contains(., '"+hunt_keyword_2+"')]]")
 									if row_span_info_2 != None :
 										if len(row_span_info_2) > 0 :
@@ -708,7 +708,7 @@ def scrape_web(request, normalize_result = False):
 					for i in range(len(init_web_contents)) :
 						web_content = init_web_contents[i]
 						#web_contents_ = driver.find_elements(By.XPATH,"//*[text()[contains(., '"+target_string+"')]]")
-						print(web_content.get_attribute('class'))
+						#print(web_content.get_attribute('class'))
 						new_row = row_obj_template.copy()
 						new_row["operator"] = operator_name
 						new_row["plan"] = plan_name
@@ -1035,7 +1035,7 @@ def scrape_web(request, normalize_result = False):
 						elif new_row["internet_gbs"] == 0.0 :
 							new_row["unlimited_internet_mode"] = 0
 
-						print(new_row)
+						#print(new_row)
 						list_of_rows.append(new_row)
 
 		driver.close()
@@ -1049,8 +1049,8 @@ def scrape_web(request, normalize_result = False):
 				else :
 					row_item = f'{quotation}{row_item}{quotation}'
 
-	result = json.dumps({"result" : list_of_rows})
-	print(result)
+	result = json.dumps(list_of_rows)
+	#print(result)
 	return result
 
-scrape_web(mock_request, normalize_result=False)
+scrape_web(mock_request, normalize_result=True)
