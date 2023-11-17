@@ -17,7 +17,7 @@ mock_request = """{
       "฿"
    ],
    "urls":[
-      {
+   	  {
          "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals",
          "operator_id":0,
          "pricing_type":1,
@@ -1043,11 +1043,14 @@ def scrape_web(request, normalize_result = False):
 	if normalize_result :
 		for row in list_of_rows :
 			for row_key in row :
-				row_item = row[row_key]
-				if row_item == None :
-					row_item = f'{quotation}-{quotation}'
+				if row[row_key] == None :
+					row[row_key] = f'{quotation}-{quotation}'
 				else :
-					row_item = f'{quotation}{row_item}{quotation}'
+					if row[row_key] == True :
+						row[row_key] = 1
+					elif row[row_key] == False :
+						row[row_key] = 0
+					row[row_key] = f'{quotation}{row[row_key]}{quotation}'
 
 	result = json.dumps(list_of_rows)
 	#print(result)
