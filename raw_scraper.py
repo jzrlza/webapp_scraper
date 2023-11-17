@@ -523,7 +523,7 @@ row_obj_template = {
 	"notes": None
 }
 
-def scrape_web(request, normalize_result):
+def scrape_web(request, normalize_result = False):
 	qr = json.loads(request)
 	price_keywords = qr['price_keywords']
 	urls = qr['urls']
@@ -1062,4 +1062,4 @@ def scrape_web(request, normalize_result):
 	print(result)
 	return result
 
-scrape_web(mock_request, False)
+scrape_web(mock_request, normalize_result=False)
