@@ -1053,4 +1053,4 @@ def scrape_web(request, normalize_result = False):
 	#print(result)
 	return result
 
-scrape_web(mock_request, normalize_result=True)
+print(scrape_web(mock_request, normalize_result=True))
