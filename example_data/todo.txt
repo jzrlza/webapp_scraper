@@ -15,3 +15,11 @@ ui --->
   -enum display text based on its number
   -true or false may use other words to fit into "database policy" (and infinity...)
   -field names normalization into thai
+
+[done]
+
+NEXT
+
+-->
+ - Add datetime field for the sake of future database comparison query
+
