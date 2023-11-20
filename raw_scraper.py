@@ -1047,13 +1047,13 @@ def scrape_web(request, normalize_result = False):
 					row[row_key] = f'{quotation}-{quotation}'
 				else :
 					if row[row_key] == True :
-						row[row_key] = f'{quotation}{1}{quotation}'
+						row[row_key] = 1#f'{quotation}{1}{quotation}'
 					elif row[row_key] == False :
-						row[row_key] = f'{quotation}{0}{quotation}'
-					elif isinstance(row[row_key], float) :
-						row[row_key] = f'{quotation}{row[row_key]:.0f}{quotation}'
-					else :
-						row[row_key] = f'{quotation}{row[row_key]}{quotation}'#.encode(encoding='UTF-8',errors='strict')
+						row[row_key] = 0#f'{quotation}{0}{quotation}'
+					#elif isinstance(row[row_key], float) :
+					#	row[row_key] = row[row_key]f'{quotation}{row[row_key]:.2f}{quotation}'
+					#else :
+					#	row[row_key] = row[row_key]f'{quotation}{row[row_key]}{quotation}'#.encode(encoding='UTF-8',errors='strict')
 
 	result = json.dumps(list_of_rows)
 	#print(result)
