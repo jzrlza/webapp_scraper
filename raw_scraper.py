@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 import time
 import json
+from datetime import datetime
 
 mock_request = """{
    "price_keywords":[
@@ -519,7 +520,8 @@ row_obj_template = {
 	"priviledge_exclusive": None,
 	"contract": 0,
 	"extra": None,
-	"notes": None
+	"notes": None,
+	"datetime": None
 }
 
 def scrape_web(request, normalize_result = False):
@@ -1034,6 +1036,10 @@ def scrape_web(request, normalize_result = False):
 							new_row["unlimited_internet_mode"] = 3
 						elif new_row["internet_gbs"] == 0.0 :
 							new_row["unlimited_internet_mode"] = 0
+
+						now = datetime.now()
+						dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
+						new_row["datetime"] = dt_string
 
 						#print(new_row)
 						list_of_rows.append(new_row)
