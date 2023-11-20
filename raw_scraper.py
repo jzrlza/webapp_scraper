@@ -9,6 +9,32 @@ import time
 import json
 from datetime import datetime
 
+mock_request_0 = """{
+   "price_keywords":[
+      "บาท",
+      ".-",
+      "Baht",
+      "THB",
+      "฿"
+   ],
+   "urls":[
+      {
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
+         "operator_id":0,
+         "pricing_type":0,
+         "plans":[
+            {
+               "plan_name":"โปรแนะนำ",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      }
+   ],
+   "webdriver_timeout":15
+}"""
+
 mock_request = """{
    "price_keywords":[
       "บาท",
