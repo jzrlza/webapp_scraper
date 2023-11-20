@@ -185,7 +185,7 @@ INFINITY = "Unlimited"
 micro_delimeter = ", "
 comma_detection = '"' 
 comma_replacer = "'" #in case of numbers like 100,000 : this maybe sensitive
-quotation = '"'
+quotation = ''
 
 def normalizeStringForNoneTypeToString(raw_str) :
 	if raw_str == None :
