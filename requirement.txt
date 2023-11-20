@@ -2,5 +2,4 @@ fastapi
 fastapi_utils
 uvicorn
 selenium
-re
 pydantic
