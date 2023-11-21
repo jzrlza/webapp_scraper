@@ -20,7 +20,7 @@ mock_request = """{
    ],
    "urls":[
       {
-         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/old",
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
          "operator_id":0,
          "pricing_type":0,
          "plans":[
