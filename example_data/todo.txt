@@ -21,7 +21,9 @@ ui --->
 NEXT
 
 -->
- - Add datetime field for the sake of future database comparison query
+ - Add datetime field for the sake of future database comparison query [done]
 
  - เติมเงิน pages
    - this might take until Friday
+
+ - handle TRUE case in รายเดือน in case of increased plan, right now current plan input system cannot detect additional stuffs
