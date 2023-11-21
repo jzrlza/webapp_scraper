@@ -902,7 +902,7 @@ def scrape_web(request, normalize_result = False):
 		return result
 
 	except Exception as e :
-		return result = json.dumps([{
+		return json.dumps([{
 				"error": str(e)
 			}])
 
