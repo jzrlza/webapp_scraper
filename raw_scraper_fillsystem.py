@@ -20,7 +20,7 @@ mock_request = """{
    ],
    "urls":[
       {
-         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/old",
          "operator_id":0,
          "pricing_type":0,
          "plans":[
@@ -901,7 +901,7 @@ def scrape_web(request, normalize_result = False):
 		#print(result)
 		return result
 
-	except Exception e :
+	except Exception as e :
 		return result = json.dumps([{
 				"error": str(e)
 			}])
