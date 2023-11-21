@@ -9,6 +9,8 @@ import re
 import time
 import json
 from datetime import datetime
+import sys
+import os
 
 mock_request = """{
    "price_keywords":[
@@ -897,13 +899,26 @@ def scrape_web(request, normalize_result = False):
 						else :
 							row[row_key] = f'{quotation}{row[row_key]}{quotation}'#.encode(encoding='UTF-8',errors='strict')
 
+		if len(list_of_rows) <= 0 :
+			raise Exception("No data can be found.")
+
 		result = json.dumps(list_of_rows)
 		#print(result)
 		return result
 
 	except Exception as e :
+		e_type, e_object, e_traceback = sys.exc_info()
+
+		e_filename = os.path.split(e_traceback.tb_frame.f_code.co_filename)[1]
+
+		e_message = str(e)
+
+		e_line_number = e_traceback.tb_lineno
+
 		return json.dumps([{
-				"error": str(e)
+				"error": e_message,
+				"line_of_error": e_line_number,
+				"file_that_errored": e_filename
 			}])
 
 print(scrape_web(mock_request, normalize_result=True))
