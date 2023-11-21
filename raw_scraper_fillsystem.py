@@ -27,7 +27,33 @@ mock_request = """{
          "pricing_type":0,
          "plans":[
             {
-               "plan_name":"โปรแนะนำ",
+               "plan_name":"...",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.dtac.co.th/prepaid/simdtac.html",
+         "operator_id":1,
+         "pricing_type":0,
+         "plans":[
+            {
+               "plan_name":"...",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      },
+      {
+         "url_link":"https://www.true.th/truemoveh/prepaid/",
+         "operator_id":2,
+         "pricing_type":0,
+         "plans":[
+            {
+               "plan_name":"...",
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
@@ -118,6 +144,7 @@ possible_fup_units = ['Gbps', 'Mbps', 'kbps']
 
 #AIS --------------
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
+	"""
 	is_extra = True
 
 	#XG zone
@@ -216,9 +243,11 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["extra"] = trim_txt.replace(comma_detection, comma_replacer)
 		else :
 			new_row["extra"] += micro_delimeter+trim_txt.replace(comma_detection, comma_replacer)
+	"""
 
 #DTAC -----------
 def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
+	"""
 	is_extra = True
 
 	#internet, g, fup, and gb zone
@@ -303,8 +332,10 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 	#extra zone : this one isb too evil
 	if is_extra :
 		pass
+	"""
 
 def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
+	"""
 	if "สิทธิ์" in list_item_full_text and re.search('card', list_item_full_text, re.IGNORECASE) and re.search('true', list_item_full_text, re.IGNORECASE) :
 		
 		priv_str = None
@@ -337,6 +368,7 @@ def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
 			new_row["extra"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
 		else :
 			new_row["extra"] += micro_delimeter+list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+	"""
 
 operators = ["AIS", "DTAC", "TRUE"]
 operator_card_classes = { #where the title is inside each cards
@@ -428,7 +460,9 @@ def scrape_web(request, normalize_result = False):
 
 				#init_web_contents_lambda = lambda title_is_at_header : driver.find_elements(By.CSS_SELECTOR, f".{target_class}")[0].find_elements(By.XPATH, f'./div[contains(@class, "{operator_card_classes[operator]}")]') if title_is_at_header == True else driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
 				if not disabled_mode :
+
 					if plan["has_extra_table"] :
+						"""
 						tables = driver.find_elements(By.XPATH, f"{table_target_class}")
 
 						if operator_id == 1 and capture_mode_id == 0 :
@@ -504,6 +538,7 @@ def scrape_web(request, normalize_result = False):
 								table_temp_arr.append(table_temp_arr_sub_item)
 
 						#print(table_temp_arr)	
+						"""
 
 					if requires_click :
 						time.sleep(1)
@@ -552,6 +587,7 @@ def scrape_web(request, normalize_result = False):
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
+									"""
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
 									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 									#print(first_block__price)
@@ -590,8 +626,9 @@ def scrape_web(request, normalize_result = False):
 												else :
 													new_row["entertainment_package"] += micro_delimeter+raw_str_item_title.replace(comma_detection, comma_replacer)
 												new_row["entertainment_contract"] = raw_str_item_duration
-
+									"""
 								elif capture_mode_id == 1 :
+									"""
 									first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
 									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 									new_row["price"] = first_block__price
@@ -611,9 +648,11 @@ def scrape_web(request, normalize_result = False):
 										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 										#print(list_item_infos_head, list_item_infos_body)
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
-							
+									"""
+
 							elif operator_id == 1 :
 								if capture_mode_id == 0 :
+									"""
 									new_row["system"] = pricing_type_id
 
 									root_block = web_content.find_elements(By.XPATH, '*')[0]
@@ -688,7 +727,9 @@ def scrape_web(request, normalize_result = False):
 													new_row["extra"] = f"{red_block_txt.replace(comma_detection, comma_replacer)}"
 												else :
 													new_row["extra"] += f"{micro_delimeter}{red_block_txt.replace(comma_detection, comma_replacer)}"
+									"""
 								elif capture_mode_id == 1 :
+									"""
 									new_row["system"] = pricing_type_id
 									raw_li = web_content.get_attribute('innerHTML').strip()
 									if re.search(target_string, raw_li, re.IGNORECASE) :
@@ -757,8 +798,10 @@ def scrape_web(request, normalize_result = False):
 															target_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, raw_li_each, "GB")
 															break
 											continue
+									"""
 
 								elif capture_mode_id == 2 :
+									"""
 									new_row["system"] = pricing_type_id
 									root_block = web_content.find_elements(By.XPATH, '*')[0]
 									first_block = root_block.find_elements(By.XPATH, '*')[0]
@@ -795,9 +838,11 @@ def scrape_web(request, normalize_result = False):
 									price_box = second_block_contents[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
 									price_box_str = price_box.get_attribute('innerHTML').strip().replace('<span>', '').replace('</span>', '')
 									new_row["price"] = getNumberByUnit(target_string, price_box_str)
+									"""
 
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
+									"""
 									new_row["system"] = pricing_type_id
 									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
 									title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
@@ -860,8 +905,11 @@ def scrape_web(request, normalize_result = False):
 												continue
 											misc_block_raw_text = sub_misc_block.get_attribute('innerHTML').strip()
 											insertRowInfoForTrueCards(new_row, capture_mode_id, misc_block_raw_text)
+									"""
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
+
+							"""
 							if new_row["internet_gbs"] == INFINITY :
 								new_row["unlimited_internet_mode"] = 1
 								new_row["fair_usage_policy"] = None
@@ -871,6 +919,8 @@ def scrape_web(request, normalize_result = False):
 								new_row["unlimited_internet_mode"] = 3
 							elif new_row["internet_gbs"] == 0.0 :
 								new_row["unlimited_internet_mode"] = 0
+
+							"""
 
 							now = datetime.now()
 							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
