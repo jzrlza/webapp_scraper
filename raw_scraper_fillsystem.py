@@ -204,7 +204,8 @@ def checkIsInfiniteText(txt, internet_specific = False) :
 		return "เน็ตไม่จำกัด" in txt or "เน็ตไม่อั้น" in txt or (re.search('internet', txt, re.IGNORECASE) and re.search('unlimited', txt, re.IGNORECASE))
 	return "ไม่จำกัด" in txt or 'ไม่อั้น' in txt or re.search('unlimited', txt, re.IGNORECASE)
 
-possible_fup_units = ['Gbps', 'Mbps', 'kbps']
+possible_fup_units = ['Gbps', 'Mbps', 'kbps', 'Kbps']
+possible_time_limit_units = ['วัน', 'เดือน', 'สัปดาห์', 'ปี']
 
 #AIS --------------
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
@@ -236,15 +237,23 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["g_no"] += "/5G"
 			is_extra = False
 
-	"""
-	#WiFi boolean zone
-	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
-		new_row["wifi"] = True
-
 	#internet GB zone
-	if ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img)) and new_row["internet_gbs"] == 0.0 :
-		if checkIsInfiniteText(list_item_infos_body):
+	if (not "ฟรี" in list_item_infos_head) and (not "/" in list_item_infos_body) and ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or re.search('social', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img) or "โซเชียล" in list_item_infos_body) and new_row["internet_gbs"] == 0.0 :
+		if checkIsInfiniteText(list_item_infos_body) or checkIsInfiniteText(list_item_infos_head):
 			new_row["internet_gbs"] = INFINITY
+			#if so, there's also speed
+			for fup_unit in possible_fup_units :
+				target_str = ""
+				if fup_unit in normalizeStringForNoneTypeToString(list_item_infos_footer) :
+					target_str = list_item_infos_footer.replace('.', '')
+				elif fup_unit in normalizeStringForNoneTypeToString(list_item_infos_body) :
+					target_str = list_item_infos_body.replace('.', '')
+				elif fup_unit in normalizeStringForNoneTypeToString(list_item_infos_head) :
+					target_str = list_item_infos_body.replace('.', '')
+
+				if target_str != "" :
+					new_row["speed"] = getNumberByUnitAsUnittedString(fup_unit, target_str, "GB")
+
 		elif 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
 			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_infos_body, 'Gbps')
 		elif 'MB' in list_item_infos_body and not ('Mbps' in list_item_infos_body) :
@@ -252,6 +261,26 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		elif 'TB' in list_item_infos_body and not ('Tbps' in list_item_infos_body) :
 			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_infos_body, 'Tbps')*1000.0
 		is_extra = False
+
+	#time limit zone
+	if "นาน" in list_item_infos_head or "นาน" in list_item_infos_body or "นาน" in list_item_infos_footer :
+		for time_limit_unit in possible_time_limit_units :
+			target_str = ""
+			if "นาน" in list_item_infos_head :
+				target_str = list_item_infos_head.replace(time_limit_unit+'ละ', '')
+			elif "นาน" in list_item_infos_body :
+				target_str = list_item_infos_body.replace(time_limit_unit+'ละ', '')
+			elif "นาน" in list_item_infos_footer :
+				target_str = list_item_infos_footer.replace(time_limit_unit+'ละ', '')
+
+			if target_str != "" :
+				new_row["limited_time"] = getNumberByUnitAsUnittedString(time_limit_unit, target_str)
+		is_extra = False
+
+	"""
+	#WiFi boolean zone
+	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
+		new_row["wifi"] = True
 
 	#call in minutes time zone
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
@@ -460,6 +489,11 @@ row_obj_template = {
 	"plan": "",
 	"system": -1,
 	"g_no": None,
+	"unlimited_internet_mode": 0,
+	"internet_gbs": 0.0,
+	"fair_usage_policy": None,
+	"speed": None,
+	"limited_time": None,
 	"datetime": None
 }
 
@@ -909,8 +943,6 @@ def scrape_web(request, normalize_result = False):
 									pass
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
-
-							"""
 							if new_row["internet_gbs"] == INFINITY :
 								new_row["unlimited_internet_mode"] = 1
 								new_row["fair_usage_policy"] = None
@@ -920,8 +952,6 @@ def scrape_web(request, normalize_result = False):
 								new_row["unlimited_internet_mode"] = 3
 							elif new_row["internet_gbs"] == 0.0 :
 								new_row["unlimited_internet_mode"] = 0
-
-							"""
 
 							now = datetime.now()
 							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
@@ -955,7 +985,7 @@ def scrape_web(request, normalize_result = False):
 
 		result = json.dumps(list_of_rows)
 		#print(result)
-		return result
+		return list_of_rows
 
 	except Exception as e :
 		e_type, e_object, e_traceback = sys.exc_info()
@@ -972,4 +1002,6 @@ def scrape_web(request, normalize_result = False):
 				"file_that_errored": e_filename
 			}])
 
-print(scrape_web(mock_request, normalize_result=True))
+expected_result = scrape_web(mock_request, normalize_result=True)
+for result in expected_result :
+	print(result)
