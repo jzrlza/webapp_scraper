@@ -746,6 +746,7 @@ def scrape_web(request, normalize_result = False):
 							new_row = row_obj_template.copy()
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
+							new_row["system"] = pricing_type_id
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
@@ -754,7 +755,6 @@ def scrape_web(request, normalize_result = False):
 									#print(first_block__price)
 									new_row["price"] = first_block__price
 									#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
-									new_row["system"] = pricing_type_id
 
 									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
 									second_block_raw_list = second_block.find_elements(By.XPATH, '*')
@@ -793,7 +793,6 @@ def scrape_web(request, normalize_result = False):
 									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 									new_row["price"] = first_block__price
 									#print(first_block__price)
-									new_row["system"] = pricing_type_id
 
 									second_block_list_items = web_content.find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')
 									footer_item = None
@@ -811,8 +810,6 @@ def scrape_web(request, normalize_result = False):
 							
 							elif operator_id == 1 :
 								if capture_mode_id == 0 :
-									new_row["system"] = pricing_type_id
-
 									root_block = web_content.find_elements(By.XPATH, '*')[0]
 									first_block = root_block.find_elements(By.XPATH, '*')[0]
 									first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
@@ -886,7 +883,6 @@ def scrape_web(request, normalize_result = False):
 												else :
 													new_row["extra"] += f"{micro_delimeter}{red_block_txt.replace(comma_detection, comma_replacer)}"
 								elif capture_mode_id == 1 :
-									new_row["system"] = pricing_type_id
 									raw_li = web_content.get_attribute('innerHTML').strip()
 									if re.search(target_string, raw_li, re.IGNORECASE) :
 										#li with price tag
@@ -956,7 +952,6 @@ def scrape_web(request, normalize_result = False):
 											continue
 
 								elif capture_mode_id == 2 :
-									new_row["system"] = pricing_type_id
 									root_block = web_content.find_elements(By.XPATH, '*')[0]
 									first_block = root_block.find_elements(By.XPATH, '*')[0]
 									first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
@@ -995,7 +990,6 @@ def scrape_web(request, normalize_result = False):
 
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
-									new_row["system"] = pricing_type_id
 									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
 									title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									if not re.search(plan_name, title, re.IGNORECASE) :

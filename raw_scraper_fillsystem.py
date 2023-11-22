@@ -458,6 +458,7 @@ operator_cards_container_classes = {
 row_obj_template = {
 	"operator": "",
 	"plan": "",
+	"system": -1,
 	"g_no": None,
 	"datetime": None
 }
@@ -595,6 +596,7 @@ def scrape_web(request, normalize_result = False):
 							new_row = row_obj_template.copy()
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
+							new_row["system"] = pricing_type_id
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
