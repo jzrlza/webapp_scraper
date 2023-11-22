@@ -26,4 +26,4 @@ NEXT
  - เติมเงิน pages
    - this might take until Friday
 
- - handle TRUE case in รายเดือน in case of increased plan, right now current plan input system cannot detect additional stuffs
+ - handle TRUE case in รายเดือน in case of increased plan, right now current plan input system cannot detect additional stuffs [done]
