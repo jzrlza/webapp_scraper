@@ -20,6 +20,8 @@ mock_request = """{
       "THB",
       "฿"
    ],
+   "predefined_g_no": "5G",
+   "predefined_g_no_if_free": "4G",
    "urls":[
       {
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
@@ -37,7 +39,7 @@ mock_request = """{
             {
                "plan_name":"โปร NET SIM",
                "capture_sub_names": false,
-               "capture_mode":1,
+               "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
@@ -206,9 +208,10 @@ possible_fup_units = ['Gbps', 'Mbps', 'kbps']
 
 #AIS --------------
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
-	pass
-	"""
 	is_extra = True
+
+	print(list_item_icon_img)
+	print(list_item_infos_head, list_item_infos_body)
 
 	#XG zone
 	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or re.search('3g', list_item_icon_img, re.IGNORECASE) :
@@ -233,6 +236,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["g_no"] += "/5G"
 			is_extra = False
 
+	"""
 	#WiFi boolean zone
 	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
 		new_row["wifi"] = True
@@ -452,7 +456,10 @@ operator_cards_container_classes = {
 	"TRUE" : ["my-5"]
 }
 row_obj_template = {
-	"operator": "" #...
+	"operator": "",
+	"plan": "",
+	"g_no": None,
+	"datetime": None
 }
 
 def scrape_web(request, normalize_result = False):
@@ -461,6 +468,9 @@ def scrape_web(request, normalize_result = False):
 		price_keywords = qr['price_keywords']
 		urls = qr['urls']
 		webdriver_timeout = qr['webdriver_timeout']
+
+		predefined_g_no = qr["predefined_g_no"]
+		predefined_g_no_if_free = qr["predefined_g_no_if_free"]
 
 		#print(qr)
 
@@ -599,6 +609,16 @@ def scrape_web(request, normalize_result = False):
 										new_row["plan"] = actual_plan_name
 
 									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
+									second_block__info_block_1 = second_block.find_elements(By.XPATH, '*')[0]
+									second_block__info_block_2 = second_block.find_elements(By.XPATH, '*')[1]
+									second_block__info_block_1__items = second_block__info_block_1.find_elements(By.XPATH, '*')
+									for list_item in second_block__info_block_1__items :
+										list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
+										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
+										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
+										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 									"""
 									capture_sub_names
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
