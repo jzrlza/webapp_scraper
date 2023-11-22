@@ -597,6 +597,8 @@ def scrape_web(request, normalize_result = False):
 									if capture_sub_names :
 										actual_plan_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 										new_row["plan"] = actual_plan_name
+
+									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
 									"""
 									capture_sub_names
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
