@@ -25,6 +25,7 @@ mock_request = """{
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
          "operator_id":0,
          "pricing_type":0,
+         "track_new_mega_row": true,
          "plans":[
             {
                "plan_name":"...",
@@ -38,6 +39,7 @@ mock_request = """{
          "url_link":"https://www.dtac.co.th/prepaid/simdtac.html",
          "operator_id":1,
          "pricing_type":0,
+         "track_new_mega_row": false,
          "plans":[
             {
                "plan_name":"...",
@@ -51,6 +53,7 @@ mock_request = """{
          "url_link":"https://www.true.th/truemoveh/prepaid/",
          "operator_id":2,
          "pricing_type":0,
+         "track_new_mega_row": false,
          "plans":[
             {
                "plan_name":"...",
@@ -413,9 +416,30 @@ def scrape_web(request, normalize_result = False):
 			operator_id = url["operator_id"]
 			operator_name = operators[url["operator_id"]]
 			pricing_type_id = url["pricing_type"]
+			track_new_mega_row = url["track_new_mega_row"]
+			mega_class_target = ""
 
 			need_to_scroll = False
 			scrolled = False
+
+			if track_new_mega_row :
+				#raise error when there's new row but not match any members of the plans
+				"""
+				if operator_id == 2 :
+					mega_class_target = "//*[@class='x-dlrg8z']"
+
+					root_web_contents = driver.find_elements(By.XPATH, f"{mega_class_target}")
+					for root_web_content in root_web_contents :
+						mega_root = root_web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+						title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+						this_title_is_in_planned_plan = False
+						for plan in url["plans"] :
+							plan_name = plan["plan_name"]
+							if re.search(plan_name, title, re.IGNORECASE) :
+								this_title_is_in_planned_plan = True
+						if not this_title_is_in_planned_plan :
+							raise Exception("There exists a new plan name which has not yet been checked.")
+				"""
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
