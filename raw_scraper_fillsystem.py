@@ -29,12 +29,49 @@ mock_request = """{
          "plans":[
             {
                "plan_name":"โปรแนะนำ",
+               "capture_sub_names": true,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             },
             {
                "plan_name":"โปร NET SIM",
+               "capture_sub_names": false,
+               "capture_mode":1,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      }
+   ],
+   "webdriver_timeout":15
+}"""
+
+mock_request_temp = """{
+   "price_keywords":[
+      "บาท",
+      ".-",
+      "Baht",
+      "THB",
+      "฿"
+   ],
+   "urls":[
+      {
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
+         "operator_id":0,
+         "pricing_type":0,
+         "track_new_mega_row": true,
+         "plans":[
+            {
+               "plan_name":"โปรแนะนำ",
+               "capture_sub_names": true,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"โปร NET SIM",
+               "capture_sub_names": false,
                "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
@@ -49,12 +86,14 @@ mock_request = """{
          "plans":[
             {
                "plan_name":"ซิมเติมเงินดีแทค",
+               "capture_sub_names": true,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             },
             {
                "plan_name":"ซิมดีแทคเติมเงินอื่น",
+               "capture_sub_names": true,
                "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
@@ -69,12 +108,14 @@ mock_request = """{
          "plans":[
             {
                "plan_name":"ซิมเติมเงิน",
+               "capture_sub_names": true,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             },
             {
                "plan_name":"แพ็กเกจเสริม",
+               "capture_sub_names": true,
                "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
@@ -446,14 +487,13 @@ def scrape_web(request, normalize_result = False):
 			if track_new_mega_row :
 				pass
 				#raise error when there's new row but not match any members of the plans
-				"""
-				if operator_id == 2 :
-					mega_class_target = "//*[@class='x-dlrg8z']"
+				if operator_id == 0 :
+					mega_class_target = "//*[@class='carousel-inner-content']"
 
 					root_web_contents = driver.find_elements(By.XPATH, f"{mega_class_target}")
 					for root_web_content in root_web_contents :
-						mega_root = root_web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-						title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+						mega_root = root_web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+						title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 						this_title_is_in_planned_plan = False
 						for plan in url["plans"] :
 							plan_name = plan["plan_name"]
@@ -461,13 +501,13 @@ def scrape_web(request, normalize_result = False):
 								this_title_is_in_planned_plan = True
 						if not this_title_is_in_planned_plan :
 							raise Exception("There exists a new plan name which has not yet been checked.")
-				"""
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
 				target_string = price_keywords[0]
 				plan_name = plan["plan_name"]
 				capture_mode_id = plan["capture_mode"]
+				capture_sub_names = plan["capture_sub_names"] #bool
 				#title_finder_lambda = lambda title_is_at_header : container_classes[operator] if title_is_at_header == True else operator_card_classes[operator]
 				target_class = ""#plan["css_item_class_name"]
 				requires_click = False
@@ -483,7 +523,7 @@ def scrape_web(request, normalize_result = False):
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='package-card-generic']"
 					elif capture_mode_id == 1 :
-						target_class = "//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
+						target_class = "//*[@class='package-card-generic']"#"//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
 				elif operator_id == 1 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='wrapPackages']"
@@ -500,83 +540,6 @@ def scrape_web(request, normalize_result = False):
 
 					if plan["has_extra_table"] :
 						pass
-						"""
-						tables = driver.find_elements(By.XPATH, f"{table_target_class}")
-
-						if operator_id == 1 and capture_mode_id == 0 :
-							table_body_target = None
-							for i in range(len(tables)) :
-								if "responsive" in tables[i].find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
-									table_body_target = tables[i]
-									break
-							#print(table_body_target.get_attribute('class'))
-							hunt_keyword_1 = "คุ้มครอง"
-							hunt_keyword_1_field = "ประกันชีวิตและอุบัติเหตุ"
-							hunt_keyword_2 = "แอปดัง"
-							hunt_keyword_2_field = "ความบันเทิง viu iQIYI WeTV"
-							td_array = table_body_target.find_elements(By.XPATH, '*')
-							row_span_1 = 0
-							row_span_info_1 = ""
-							row_span_2 = 0
-							row_span_info_2 = ""
-							for tr_i in range(len(td_array)) :
-								trow = td_array[tr_i]
-								trows_tds = trow.find_elements(By.XPATH, '*')
-								table_temp_arr_sub_item = {
-									"price": 0.0,
-									"extra_raw_arr": [],
-								}
-								trow_price = 0.0
-								for td_i in range(len(trows_tds)) :
-									td_elem = trows_tds[td_i]
-									td_elem_txt = td_elem.get_attribute('innerHTML').strip()
-									if td_i == 0 : #price
-										if "แนะนำ" in td_elem_txt :
-											trow_price = float(td_elem.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
-										else :
-											trow_price = float(td_elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
-										table_temp_arr_sub_item["price"] = trow_price
-
-									elif hunt_keyword_1 in td_elem_txt :
-										row_span_1 = td_elem.get_attribute('rowspan')
-										if td_elem.get_attribute('rowspan') == None :
-											row_span_1 = 1
-										else :
-											row_span_1 = int(row_span_1)
-										#print("fetching info 1... maximum "+str(webdriver_timeout)+" seconds")
-										row_span_info_1 = td_elem.find_elements(By.XPATH,"descendant::*[text()[contains(., '"+hunt_keyword_1+"')]]")
-										if row_span_info_1 != None :
-											if len(row_span_info_1) > 0 :
-												row_span_info_1 = row_span_info_1[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
-												table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_1_field+" "+row_span_info_1)
-										
-									elif hunt_keyword_2 in td_elem_txt :
-										row_span_2 = td_elem.get_attribute('rowspan')
-										if td_elem.get_attribute('rowspan') == None :
-											row_span_2 = 1
-										else :
-											row_span_2 = int(row_span_2)
-										#print("fetching info 2... maximum "+str(webdriver_timeout)+" seconds")
-										row_span_info_2 = td_elem.find_elements(By.XPATH,"descendant::*[text()[contains(., '"+hunt_keyword_2+"')]]")
-										if row_span_info_2 != None :
-											if len(row_span_info_2) > 0 :
-												row_span_info_2 = row_span_info_2[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
-												table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_2_field+" "+row_span_info_2)
-
-								if row_span_1 > 0 :
-									#print(row_span_info_1)
-									table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_1_field+" "+row_span_info_1)
-									row_span_1 -= 1
-								if row_span_2 > 0 :
-									#print(row_span_info_2)
-									if row_span_info_2 != None :
-										table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_2_field+" "+row_span_info_2)
-									row_span_2 -= 1
-								table_temp_arr_sub_item["extra_raw_arr"] = list(set(table_temp_arr_sub_item["extra_raw_arr"]))
-								table_temp_arr.append(table_temp_arr_sub_item)
-
-						#print(table_temp_arr)	
-						"""
 
 					if requires_click :
 						time.sleep(1)
@@ -625,8 +588,17 @@ def scrape_web(request, normalize_result = False):
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
-									pass
+									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									if not re.search(plan_name, title, re.IGNORECASE) :
+										continue
+
+									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
+									if capture_sub_names :
+										actual_plan_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										new_row["plan"] = actual_plan_name
 									"""
+									capture_sub_names
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
 									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 									#print(first_block__price)
