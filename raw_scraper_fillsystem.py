@@ -28,8 +28,14 @@ mock_request = """{
          "track_new_mega_row": true,
          "plans":[
             {
-               "plan_name":"...",
+               "plan_name":"โปรแนะนำ",
                "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"โปร NET SIM",
+               "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
@@ -42,8 +48,14 @@ mock_request = """{
          "track_new_mega_row": false,
          "plans":[
             {
-               "plan_name":"...",
+               "plan_name":"ซิมเติมเงินดีแทค",
                "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"ซิมดีแทคเติมเงินอื่น",
+               "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
@@ -56,8 +68,14 @@ mock_request = """{
          "track_new_mega_row": false,
          "plans":[
             {
-               "plan_name":"...",
+               "plan_name":"ซิมเติมเงิน",
                "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"แพ็กเกจเสริม",
+               "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
@@ -147,6 +165,7 @@ possible_fup_units = ['Gbps', 'Mbps', 'kbps']
 
 #AIS --------------
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
+	pass
 	"""
 	is_extra = True
 
@@ -250,6 +269,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 
 #DTAC -----------
 def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
+	pass
 	"""
 	is_extra = True
 
@@ -338,6 +358,7 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
 	"""
 
 def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
+	pass
 	"""
 	if "สิทธิ์" in list_item_full_text and re.search('card', list_item_full_text, re.IGNORECASE) and re.search('true', list_item_full_text, re.IGNORECASE) :
 		
@@ -423,6 +444,7 @@ def scrape_web(request, normalize_result = False):
 			scrolled = False
 
 			if track_new_mega_row :
+				pass
 				#raise error when there's new row but not match any members of the plans
 				"""
 				if operator_id == 2 :
@@ -461,31 +483,23 @@ def scrape_web(request, normalize_result = False):
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='package-card-generic']"
 					elif capture_mode_id == 1 :
-						requires_click = True
-						target_click_class = "//*[contains(@class, 'search-tab-btn') and contains(@class, 'MuiTab-textColorPrimary') and contains(@class, 'MuiButtonBase-root')]"
 						target_class = "//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
-						need_to_scroll = True
 				elif operator_id == 1 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='wrapPackages']"
-						if plan["has_extra_table"] :
-							table_target_class = "//tbody[contains(@class, 'table-package') and contains(@class, 'fBetterReg')]"
 					elif capture_mode_id == 1 :
-						requires_click = True
-						if plan["has_term_and_condition"] :
-							target_click_class = "//*[contains(@class, 'content')]"
 						target_class = "//li[text()[contains(., '"+target_string+"')]]"
-						need_to_scroll = True
-					elif capture_mode_id == 2 :
-						target_class = "//*[contains(@class, 'card-promotion')]"
 				elif operator_id == 2 :
 					if capture_mode_id == 0 :
+						target_class = "//*[@class='x-1iqxi85']"
+					elif capture_mode_id == 1 :
 						target_class = "//*[@class='x-1iqxi85']"
 
 				#init_web_contents_lambda = lambda title_is_at_header : driver.find_elements(By.CSS_SELECTOR, f".{target_class}")[0].find_elements(By.XPATH, f'./div[contains(@class, "{operator_card_classes[operator]}")]') if title_is_at_header == True else driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
 				if not disabled_mode :
 
 					if plan["has_extra_table"] :
+						pass
 						"""
 						tables = driver.find_elements(By.XPATH, f"{table_target_class}")
 
@@ -611,6 +625,7 @@ def scrape_web(request, normalize_result = False):
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
+									pass
 									"""
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
 									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
@@ -652,6 +667,7 @@ def scrape_web(request, normalize_result = False):
 												new_row["entertainment_contract"] = raw_str_item_duration
 									"""
 								elif capture_mode_id == 1 :
+									pass
 									"""
 									first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
 									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
@@ -676,6 +692,7 @@ def scrape_web(request, normalize_result = False):
 
 							elif operator_id == 1 :
 								if capture_mode_id == 0 :
+									pass
 									"""
 									new_row["system"] = pricing_type_id
 
@@ -753,6 +770,7 @@ def scrape_web(request, normalize_result = False):
 													new_row["extra"] += f"{micro_delimeter}{red_block_txt.replace(comma_detection, comma_replacer)}"
 									"""
 								elif capture_mode_id == 1 :
+									pass
 									"""
 									new_row["system"] = pricing_type_id
 									raw_li = web_content.get_attribute('innerHTML').strip()
@@ -824,48 +842,9 @@ def scrape_web(request, normalize_result = False):
 											continue
 									"""
 
-								elif capture_mode_id == 2 :
-									"""
-									new_row["system"] = pricing_type_id
-									root_block = web_content.find_elements(By.XPATH, '*')[0]
-									first_block = root_block.find_elements(By.XPATH, '*')[0]
-									first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
-									if not first_block__verify_plan :
-										continue
-									second_block = root_block.find_elements(By.XPATH, '*')[1]
-									second_block_contents = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-
-									if "คิดค่าบริการเป็นวินาที" in first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip() :
-										new_row["capture_in_seconds"] = True
-
-									details = second_block_contents[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									for detail in details :
-										raw_str_each = detail.get_attribute('innerHTML').strip()
-
-										if "ico-net-2" in raw_str_each :
-											if checkIsInfiniteText(raw_str_each) :
-												new_row["internet_gbs"] = INFINITY
-											elif 'GB' in raw_str_each :
-												new_row["internet_gbs"] = getNumberByUnit("GB", raw_str_each, 'Gbps')
-											elif 'MB' in raw_str_each :
-												new_row["internet_gbs"] = getNumberByUnit("MB", raw_str_each, 'Mbps')/1000.0
-											elif 'TB' in raw_str_each :
-												new_row["internet_gbs"] = getNumberByUnit("TB", raw_str_each, 'Tbps')*1000.0
-
-										elif "ico-call-all" in raw_str_each :
-											if checkIsInfiniteText(raw_str_each):
-												new_row["call_minutes"] = INFINITY
-												new_row["unlimited_call"] = True
-											else :
-												new_row["call_minutes"] = getNumberByUnit("นาที", raw_str_each, 'ชม')
-
-									price_box = second_block_contents[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
-									price_box_str = price_box.get_attribute('innerHTML').strip().replace('<span>', '').replace('</span>', '')
-									new_row["price"] = getNumberByUnit(target_string, price_box_str)
-									"""
-
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
+									pass
 									"""
 									new_row["system"] = pricing_type_id
 									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
@@ -930,6 +909,8 @@ def scrape_web(request, normalize_result = False):
 											misc_block_raw_text = sub_misc_block.get_attribute('innerHTML').strip()
 											insertRowInfoForTrueCards(new_row, capture_mode_id, misc_block_raw_text)
 									"""
+								elif capture_mode_id == 1 :
+									pass
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 
