@@ -277,7 +277,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			elif "นาน" in list_item_infos_footer :
 				target_str = list_item_infos_footer.replace(time_limit_unit+'ละ', '')
 
-			print(target_str)
+			#print(target_str)
 
 			if target_str != "" :
 				new_value = getNumberByUnitAsUnittedString(time_limit_unit, target_str, "GB", have_space=True)
