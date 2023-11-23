@@ -85,6 +85,51 @@ mock_request_temp = """{
          ]
       },
       {
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
+         "operator_id":0,
+         "pricing_type":0,
+         "track_new_mega_row": true,
+         "plans":[
+            {
+               "plan_name":"โปรแนะนำ",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+         ]
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call-internet",
+         "operator_id":0,
+         "pricing_type":0,
+         "track_new_mega_row": true,
+         "plans":[
+            {
+               "plan_name":"โปรแนะนำ",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+         ]
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/special",
+         "operator_id":0,
+         "pricing_type":0,
+         "track_new_mega_row": true,
+         "plans":[
+            {
+               "plan_name":"โปรแนะนำ",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+         ]
+      },
+      {
          "url_link":"https://www.dtac.co.th/prepaid/simdtac.html",
          "operator_id":1,
          "pricing_type":0,
@@ -118,19 +163,14 @@ mock_request_temp = """{
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
-            },
-            {
-               "plan_name":"แพ็กเกจเสริม",
-               "capture_sub_names": true,
-               "capture_mode":1,
-               "has_extra_table":false,
-               "has_term_and_condition":false
             }
          ]
       }
    ],
    "webdriver_timeout":15
 }"""
+
+#ไม่รวมย้ายค่าย
 
 INFINITY = "Unlimited"
 micro_delimeter = ", "
