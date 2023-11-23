@@ -246,16 +246,19 @@ def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
 			return numberCheckLambda(splitted)
 
-def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&") :
+def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&", have_space = False) :
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
+	space_str = ""
+	if have_space :
+		space_str = " "
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
 			float_num = numberCheckLambda(split_spaces[split_i-1])
-			return f"{float_num:.0f}{unit}"
+			return f"{float_num:.0f}{space_str}{unit}"
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
 			float_num = numberCheckLambda(splitted)
-			return f"{float_num:.0f}{unit}"
+			return f"{float_num:.0f}{space_str}{unit}"
 
 def checkSystemGetEnum(raw_txt) :
 	if "ต่อเดือน" in raw_txt :

@@ -180,16 +180,19 @@ def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
 			return numberCheckLambda(splitted)
 
-def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&") :
+def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&", have_space = False) :
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
+	space_str = ""
+	if have_space :
+		space_str = " "
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
 		if splitted == unit : #X GB
 			float_num = numberCheckLambda(split_spaces[split_i-1])
-			return f"{float_num:.0f}{unit}"
+			return f"{float_num:.0f}{space_str}{unit}"
 		elif unit in splitted and not (unwanted_unit in splitted) : #XGB
 			float_num = numberCheckLambda(splitted)
-			return f"{float_num:.0f}{unit}"
+			return f"{float_num:.0f}{space_str}{unit}"
 
 def checkSystemGetEnum(raw_txt) :
 	if "ต่อเดือน" in raw_txt :
@@ -262,6 +265,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_infos_body, 'Tbps')*1000.0
 		is_extra = False
 
+	print(list_item_infos_footer)
 	#time limit zone
 	if "นาน" in list_item_infos_head or "นาน" in list_item_infos_body or "นาน" in list_item_infos_footer :
 		for time_limit_unit in possible_time_limit_units :
@@ -273,8 +277,14 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			elif "นาน" in list_item_infos_footer :
 				target_str = list_item_infos_footer.replace(time_limit_unit+'ละ', '')
 
+			print(target_str)
+
 			if target_str != "" :
-				new_row["limited_time"] = getNumberByUnitAsUnittedString(time_limit_unit, target_str)
+				new_value = getNumberByUnitAsUnittedString(time_limit_unit, target_str, "GB", have_space=True)
+				if new_value == None :
+					continue
+				else :
+					new_row["limited_time"] = new_value
 		is_extra = False
 
 	"""
