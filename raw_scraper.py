@@ -238,6 +238,7 @@ def getNumbersWithNoCommaFromString(raw_txt) :
 numberCheckLambda = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else getNumbersWithNoCommaFromString(raw_num_txt)[0])
 
 def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
+	raw_txt = " ".join(raw_txt.split())
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
@@ -247,6 +248,7 @@ def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 			return numberCheckLambda(splitted)
 
 def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&", have_space = False) :
+	raw_txt = " ".join(raw_txt.split())
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
 	space_str = ""
 	if have_space :

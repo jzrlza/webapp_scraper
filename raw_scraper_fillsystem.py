@@ -216,6 +216,7 @@ def getNumbersWithNoCommaFromString(raw_txt) :
 numberCheckLambda = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_txt)[0] if "," in raw_num_txt else getNumbersWithNoCommaFromString(raw_num_txt)[0])
 
 def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
+	raw_txt = " ".join(raw_txt.split())
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
@@ -225,6 +226,7 @@ def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 			return numberCheckLambda(splitted)
 
 def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&", have_space = False) :
+	raw_txt = " ".join(raw_txt.split())
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
 	space_str = ""
 	if have_space :
@@ -381,45 +383,23 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 
 		is_extra = False
 
+	#vid call
+	if re.search('Video call', list_item_infos_head, re.IGNORECASE) :
+		new_row["video_call_fee_per_minute"] = getNumberByUnit(price_keywords[0]+"/นาที", list_item_infos_body)
+		is_extra = False
+
+	#sms mms
+	if re.search('SMS/MMS', list_item_infos_head, re.IGNORECASE) :
+		chunks = list_item_infos_body.strip().split(",")
+		for chunk in chunks :
+			print(chunk, price_keywords)
+			if re.search('SMS', chunk, re.IGNORECASE) :
+				new_row["sms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
+			elif re.search('MMS', chunk, re.IGNORECASE) :
+				new_row["mms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
+		is_extra = False
+
 	"""
-	#call in minutes time zone
-	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
-		#print("CALL TIME : "+list_item_infos_body)
-		if checkIsInfiniteText(list_item_infos_body):
-			new_row["call_minutes"] = INFINITY
-			new_row["unlimited_call"] = True
-		else :
-			if "(นาที)" in list_item_infos_head :
-				new_row["call_minutes"] = float(list_item_infos_body.replace('<b>', '').replace('</b>', '')) #predefined unit in header, here should be pure number
-			else :
-				new_row["call_minutes"] = getNumberByUnit("นาที", list_item_infos_body, 'ชม')
-		is_extra = False
-
-	#entertainment zone
-	entertainments = []
-	if re.search('netflix', list_item_icon_img, re.IGNORECASE) :
-		new_row["entertainment"] = True
-		new_row["entertainment_package"] = ""
-		entertainments.append(list_item_infos_body)
-		is_extra = False
-	if re.search('PLAY Premium Plus', list_item_infos_head, re.IGNORECASE) :
-		new_row["entertainment"] = True
-		new_row["entertainment_package"] = ""
-		entertainments.append(list_item_infos_head)
-		new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_infos_body)
-		is_extra = False
-	for i in range(len(entertainments)) :
-		new_row["entertainment_package"] += entertainments[i].replace(comma_detection, comma_replacer)
-		if i < len(entertainments) - 1 :
-			new_row["entertainment_package"] += micro_delimeter
-
-	#prilivedge zone
-	if "เซเรเนด" in list_item_infos_head or re.search('Serenade', list_item_infos_head, re.IGNORECASE) :
-		if list_item_infos_body != "-" :
-			new_row["priviledge"] = True
-			new_row["priviledge_exclusive"] = list_item_infos_body
-		is_extra = False
-
 	#extra zone
 	if is_extra :
 		trim_txt = list_item_infos_head.replace('<b>', '').replace('</b>', '')+" "+list_item_infos_body.replace('<b>', '').replace('</b>', '')
@@ -751,47 +731,10 @@ def scrape_web(request, normalize_result = False):
 										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer, price_keywords, sub_price_keywords)
-									"""
-									capture_sub_names
-									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
-									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
-									#print(first_block__price)
-									new_row["price"] = first_block__price
-									#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
-									new_row["system"] = pricing_type_id
+									if "ค่าเปลี่ยน" in second_block__info_block_2.get_attribute('innerHTML').strip() :
+										raw_txt = second_block__info_block_2.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										new_row["promotion_switch_fee"] = getNumberByUnit(price_keywords[0], raw_txt)
 
-									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
-									second_block_raw_list = second_block.find_elements(By.XPATH, '*')
-									second_block_has_footer = len(second_block_raw_list) > 1
-									second_block__list_items = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									for list_item in second_block__list_items :
-										list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-										list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
-										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
-										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
-										#print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
-										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
-										#entertainment zone in case it is in footer
-									if second_block_has_footer :
-										for i in range(len(second_block_raw_list)) :
-											target_item = second_block_raw_list[i]
-											#print(target_item.get_attribute('class'))
-											if i == 0 or "separator" in target_item.get_attribute('class') or "data-speed" in target_item.get_attribute('class') :
-												continue
-											
-											raw_str_item = target_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML')
-											if re.search('viu', raw_str_item, re.IGNORECASE) :
-												new_row["entertainment"] = True
-												raw_str_item_title = raw_str_item.strip().split(" ฟรี")[0]
-												raw_str_item_duration = getNumberByUnit("เดือน", raw_str_item)
-												#print(raw_str_item_title, raw_str_item_duration)
-												if new_row["entertainment_package"] == None :
-													new_row["entertainment_package"] = raw_str_item_title.replace(comma_detection, comma_replacer)
-												else :
-													new_row["entertainment_package"] += micro_delimeter+raw_str_item_title.replace(comma_detection, comma_replacer)
-												new_row["entertainment_contract"] = raw_str_item_duration
-									"""
 								elif capture_mode_id == 1 :
 									pass
 									"""
