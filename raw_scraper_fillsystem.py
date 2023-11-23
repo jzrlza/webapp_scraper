@@ -287,11 +287,11 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 					new_row["limited_time"] = new_value
 		is_extra = False
 
-	"""
 	#WiFi boolean zone
 	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
 		new_row["wifi"] = True
 
+	"""
 	#call in minutes time zone
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
 		#print("CALL TIME : "+list_item_infos_body)
