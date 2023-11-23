@@ -536,16 +536,19 @@ row_obj_template = {
 	"operator": "",
 	"plan": "",
 	"system": -1,
-	"promotion_switch_fee": 0.0,
 	"g_no": None,
 	"unlimited_internet_mode": 0,
 	"internet_gbs": 0.0,
 	"fair_usage_policy": None,
 	"speed": None,
+	"limited_time": None,
 	"internet_fee_baht_per_mb": 0.0,
 	"call_first_minute_fee_baht_per_minute": 0.0,
 	"call_next_minutes_fee_baht_per_minute": 0.0,
-	"limited_time": None,
+	"video_call_fee_per_minute": None,
+	"sms_fee_per_msg": None,
+	"mms_fee_per_msg": None,
+	"promotion_switch_fee": 0.0,
 	"datetime": None
 }
 
