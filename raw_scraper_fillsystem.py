@@ -20,6 +20,10 @@ mock_request = """{
       "THB",
       "฿"
    ],
+   "sub_price_keywords":[
+      "สต.",
+      "สตางค์"
+   ],
    "predefined_g_no": "5G",
    "predefined_g_no_if_free": "4G",
    "urls":[
@@ -211,7 +215,7 @@ possible_fup_units = ['Gbps', 'Mbps', 'kbps', 'Kbps']
 possible_time_limit_units = ['วัน', 'เดือน', 'สัปดาห์', 'ปี']
 
 #AIS --------------
-def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "", price_keywords = ["บาท"]) : #void function
+def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) : #void function
 	is_extra = True
 
 	print(list_item_icon_img)
@@ -302,6 +306,41 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/TB", list_item_infos_body, 'Tbps')*1000000.0
 		is_extra = False
 
+	#cost per minute zone
+	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) and "โทร" in list_item_infos_head :
+		if "แรก" in list_item_infos_footer :
+			raw_number = 0.0
+			if sub_price_keywords[0] in list_item_infos_footer :
+				raw_number = getNumberByUnit(sub_price_keywords[0], list_item_infos_footer)/100.0
+			else :
+				raw_number = getNumberByUnit(price_keywords[0], list_item_infos_footer)
+
+			if "วินาที" in list_item_infos_footer :
+				raw_number = raw_number/60.0
+			new_row["call_first_minute_fee_baht_per_minute"] = raw_number
+
+		price_per_freq = 0.0
+		if sub_price_keywords[0] in list_item_infos_body :
+			price_per_freq = getNumberByUnit(sub_price_keywords[0], list_item_infos_body)/100.0
+		else :
+			price_per_freq = getNumberByUnit(price_keywords[0], list_item_infos_body)
+
+		freq_time_multi = 1.0
+		freq_time_unit = "นาที"
+		freq_time_for_round = 1.0
+		if "วินาที" in list_item_infos_body :
+			freq_time_multi = 1.0/60.0
+			freq_time_unit = "วินาที"
+
+		if "ทุก" in list_item_infos_body :
+			freq_time_for_round = getNumberByUnit(freq_time_unit, list_item_infos_body)*freq_time_multi
+		else :
+			freq_time_for_round = freq_time_multi
+
+		new_row["call_next_minutes_fee_baht_per_minute"] = price_per_freq/freq_time_for_round
+
+		is_extra = False
+
 	"""
 	#call in minutes time zone
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) :
@@ -315,18 +354,6 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			else :
 				new_row["call_minutes"] = getNumberByUnit("นาที", list_item_infos_body, 'ชม')
 		is_extra = False
-
-	#fair usage policy zone
-	for fup_unit in possible_fup_units :
-		target_str = ""
-		if fup_unit in normalizeStringForNoneTypeToString(list_item_infos_footer) :
-			target_str = list_item_infos_footer
-		elif fup_unit in normalizeStringForNoneTypeToString(list_item_infos_body) :
-			target_str = list_item_infos_body
-
-		if target_str != "" :
-			new_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, target_str, "GB")
-			is_extra = False
 
 	#entertainment zone
 	entertainments = []
@@ -526,6 +553,7 @@ def scrape_web(request, normalize_result = False):
 	try :
 		qr = json.loads(request)
 		price_keywords = qr['price_keywords']
+		sub_price_keywords = qr['sub_price_keywords']
 		urls = qr['urls']
 		webdriver_timeout = qr['webdriver_timeout']
 
@@ -679,7 +707,7 @@ def scrape_web(request, normalize_result = False):
 										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
-										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer, price_keywords)
+										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer, price_keywords, sub_price_keywords)
 									"""
 									capture_sub_names
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
@@ -1020,6 +1048,8 @@ def scrape_web(request, normalize_result = False):
 		e_message = str(e)
 
 		e_line_number = e_traceback.tb_lineno
+
+		print(e)
 
 		return json.dumps([{
 				"error": e_message,
