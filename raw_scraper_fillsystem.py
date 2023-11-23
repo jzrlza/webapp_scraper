@@ -211,7 +211,7 @@ possible_fup_units = ['Gbps', 'Mbps', 'kbps', 'Kbps']
 possible_time_limit_units = ['วัน', 'เดือน', 'สัปดาห์', 'ปี']
 
 #AIS --------------
-def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
+def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "", price_keywords = ["บาท"]) : #void function
 	is_extra = True
 
 	print(list_item_icon_img)
@@ -290,6 +290,17 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	#WiFi boolean zone
 	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
 		new_row["wifi"] = True
+
+	#internet cost per byte zone
+	if (price_keywords[0]+"/" in list_item_infos_body) and ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE)) :
+		new_row["internet_fee_baht_per_mb"]
+		if price_keywords[0]+'/GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
+			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/GB", list_item_infos_body, 'Gbps')*1000
+		elif price_keywords[0]+'/MB' in list_item_infos_body and not ('Mbps' in list_item_infos_body) :
+			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/MB", list_item_infos_body, 'Mbps')
+		elif price_keywords[0]+'/TB' in list_item_infos_body and not ('Tbps' in list_item_infos_body) :
+			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/TB", list_item_infos_body, 'Tbps')*1000000.0
+		is_extra = False
 
 	"""
 	#call in minutes time zone
@@ -498,11 +509,15 @@ row_obj_template = {
 	"operator": "",
 	"plan": "",
 	"system": -1,
+	"promotion_switch_fee": 0.0,
 	"g_no": None,
 	"unlimited_internet_mode": 0,
 	"internet_gbs": 0.0,
 	"fair_usage_policy": None,
 	"speed": None,
+	"internet_fee_baht_per_mb": 0.0,
+	"call_first_minute_fee_baht_per_minute": 0.0,
+	"call_next_minutes_fee_baht_per_minute": 0.0,
 	"limited_time": None,
 	"datetime": None
 }
@@ -664,7 +679,7 @@ def scrape_web(request, normalize_result = False):
 										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
-										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
+										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer, price_keywords)
 									"""
 									capture_sub_names
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
