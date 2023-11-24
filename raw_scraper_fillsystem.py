@@ -85,7 +85,7 @@ mock_request_temp = """{
          ]
       },
       {
-         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call",
          "operator_id":0,
          "pricing_type":0,
          "track_new_mega_row": true,
@@ -556,6 +556,7 @@ row_obj_template = {
 	"operator": "",
 	"plan": "",
 	"system": -1,
+	"price": 0.0,
 	"g_no": None,
 	"unlimited_internet_mode": 0,
 	"internet_gbs": 0.0,
@@ -719,6 +720,9 @@ def scrape_web(request, normalize_result = False):
 									if capture_sub_names :
 										actual_plan_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 										new_row["plan"] = actual_plan_name
+									if re.search(price_keywords[0], first_block.get_attribute('innerHTML').strip(), re.IGNORECASE) :
+										raw_txt_thb = first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										new_row["price"] = getNumberByUnit(price_keywords[0], raw_txt_thb.replace('<b>', ' ').replace('</b>', ' '))
 
 									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
 									second_block__info_block_1 = second_block.find_elements(By.XPATH, '*')[0]
