@@ -12,6 +12,8 @@ from datetime import datetime
 import sys
 import os
 
+throw_error_to_warn_new_row = False
+
 mock_request = """{
    "price_keywords":[
       "บาท",
@@ -551,6 +553,7 @@ def scrape_web(request, normalize_result = False):
 		#print(qr)
 
 		list_of_rows = []
+		unknown_rows = []
 
 		for url in urls :
 			#print(url)
@@ -585,7 +588,13 @@ def scrape_web(request, normalize_result = False):
 							if re.search(plan_name, title, re.IGNORECASE) :
 								this_title_is_in_planned_plan = True
 						if not this_title_is_in_planned_plan :
-							raise Exception("There exists a new plan name which has not yet been checked.")
+							if throw_error_to_warn_new_row :
+								raise Exception("There exists a new plan name which has not yet been checked : "+url["url_link"])
+							else :
+								unknown_new_row = row_obj_template.copy()
+								unknown_new_row["operator"] = operator_name
+								unknown_new_row["plan"] = plan_name
+								unknown_rows.append(unknown_new_row)
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
@@ -1097,6 +1106,9 @@ def scrape_web(request, normalize_result = False):
 
 		if len(list_of_rows) <= 0 :
 			raise Exception("No data can be found.")
+
+		for unknown_new_row in unknown_rows :
+			list_of_rows.append(unknown_new_row)
 
 		result = json.dumps(list_of_rows)
 		#print(result)
