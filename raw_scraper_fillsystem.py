@@ -420,7 +420,15 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class
 
 #TRUE -----------
 def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks) :
-	print(html_blocks[0].get_attribute('innerHTML').strip())
+	head_str = html_blocks[0].get_attribute('innerHTML').strip()
+	price_blocks = html_blocks[1].find_elements(By.XPATH, '*')
+	footer_str = html_blocks[2].get_attribute('innerHTML').strip()
+
+	price_str = price_blocks[0].get_attribute('innerHTML').strip()
+	price_unit_str_1 = price_blocks[1].get_attribute('innerHTML').split('<span')[0].strip()
+	price_unit_str_2 = price_blocks[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+
+	print(head_str, price_str, price_unit_str_1, price_unit_str_2, footer_str)
 
 operators = ["AIS", "DTAC", "TRUE"]
 operator_card_classes = { #where the title is inside each cards
