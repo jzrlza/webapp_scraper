@@ -809,4 +809,4 @@ print(scrape_web(mock_request, normalize_result=True))
 expected_result = scrape_web(mock_request, normalize_result=True)
 for result in expected_result :
 	print(result)
-""""
+"""
