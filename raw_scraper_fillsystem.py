@@ -217,6 +217,8 @@ numberCheckLambda = (lambda raw_num_txt : getNumbersWithCommaFromString(raw_num_
 
 def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 	raw_txt = " ".join(raw_txt.split())
+	#print(raw_txt)
+
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
 	for split_i in range(len(split_spaces)) :
 		splitted = split_spaces[split_i]
@@ -227,6 +229,8 @@ def getNumberByUnit(unit, raw_txt, unwanted_unit = "!@#$%^&") :
 
 def getNumberByUnitAsUnittedString(unit, raw_txt, unwanted_unit = "!@#$%^&", have_space = False) :
 	raw_txt = " ".join(raw_txt.split())
+	#print(raw_txt)
+
 	split_spaces = raw_txt.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('<', ' ').replace('>', ' ').split(" ")
 	space_str = ""
 	if have_space :
@@ -742,9 +746,13 @@ def scrape_web(request, normalize_result = False):
 									if not re.search(plan_name, title, re.IGNORECASE) :
 										continue
 
-									first_blocks = root_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									price_bloock = first_blocks[2]
+									first_blocks = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									price_block = first_blocks[2]
 									details_block = first_blocks[3]
+
+									price_block_txt = price_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').replace('</span>', '').replace('/', ' ').replace('<span>', '').strip()
+									#print(price_block_txt)
+									new_row["price"] = getNumberByUnit(price_keywords[0], price_block_txt)
 
 								elif capture_mode_id == 1 :
 									root_block = web_content.find_element(By.XPATH, "..")
