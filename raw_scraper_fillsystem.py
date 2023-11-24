@@ -28,22 +28,22 @@ mock_request = """{
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
-         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
-         "operator_id":0,
+         "url_link":"https://www.dtac.co.th/prepaid/simdtac.html",
+         "operator_id":1,
          "pricing_type":0,
-         "track_new_mega_row": true,
+         "track_new_mega_row": false,
          "plans":[
             {
-               "plan_name":"โปรแนะนำ",
+               "plan_name":"ซิมเติมเงินดีแทค",
                "capture_sub_names": true,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             },
             {
-               "plan_name":"โปร NET SIM",
-               "capture_sub_names": false,
-               "capture_mode":0,
+               "plan_name":"ซิมดีแทคเติมเงินอื่น",
+               "capture_sub_names": true,
+               "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
@@ -648,9 +648,9 @@ def scrape_web(request, normalize_result = False):
 						target_class = "//*[@class='package-card-generic']"#"//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
 				elif operator_id == 1 :
 					if capture_mode_id == 0 :
-						target_class = "//*[@class='wrapPackages']"
+						target_class = "//*[@class='lg-item-sim']"
 					elif capture_mode_id == 1 :
-						target_class = "//li[text()[contains(., '"+target_string+"')]]"
+						target_class = "//*[@class='item-sim']"
 				elif operator_id == 2 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='x-1iqxi85']"
@@ -739,182 +739,26 @@ def scrape_web(request, normalize_result = False):
 										raw_txt = second_block__info_block_2.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 										new_row["promotion_switch_fee"] = getNumberByUnit(price_keywords[0], raw_txt)
 
-								elif capture_mode_id == 1 :
-									pass
-									"""
-									first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
-									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
-									new_row["price"] = first_block__price
-									#print(first_block__price)
-									new_row["system"] = pricing_type_id
-
-									second_block_list_items = web_content.find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')
-									footer_item = None
-									for list_item in second_block_list_items :
-										if "line-panel" in list_item.get_attribute('class') :
-											footer_item = list_item
-											break
-										list_item_icon_img = normalizeStringForNoneTypeToString(list_item.find_elements(By.XPATH, '*')[0].get_attribute('src')).strip()
-										#print("MODE2 IMAGE: "+str(list_item_icon_img))
-										list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
-										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
-										#print(list_item_infos_head, list_item_infos_body)
-										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
-									"""
-
 							elif operator_id == 1 :
 								if capture_mode_id == 0 :
-									pass
-									"""
-									new_row["system"] = pricing_type_id
-
-									root_block = web_content.find_elements(By.XPATH, '*')[0]
-									first_block = root_block.find_elements(By.XPATH, '*')[0]
-									first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
-									if not first_block__verify_plan :
-										#print("pass out")
+									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+									title = root_block.find_elements(By.XPATH, '*')[2].get_attribute('innerHTML').strip()
+									if not re.search(plan_name, title, re.IGNORECASE) :
 										continue
-									first_block__spans_list = first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-									if target_string in first_block__spans_list[1].get_attribute('innerHTML').strip() :
-										raw_price_txt = first_block__spans_list[0].get_attribute('innerHTML').strip()
-										new_row["price"] = numberCheckLambda(raw_price_txt)
-									#print(new_row["price"])
 
-									second_block = root_block.find_elements(By.XPATH, '*')[1]
-									second_block__center = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
-									second_block__center_items = second_block__center.find_elements(By.XPATH, '*')
+									first_blocks = root_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									price_bloock = first_blocks[2]
+									details_block = first_blocks[3]
 
-									for center_item in second_block__center_items :
-										#if not "scListSocial" in center_item.get_attribute('class') :
-										#	center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
-										#else :
-										center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
-
-										if "</i>" in center_item_raw_txt :
-											center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
-										insertRowInfoForDTACCards(new_row, capture_mode_id, center_item_raw_txt)
-
-									if plan["has_extra_table"] :
-										for table_item in table_temp_arr :
-											if new_row["price"] == table_item["price"] :
-												for extra_item_str in table_item["extra_raw_arr"] :
-													if new_row["extra"] == None :
-														new_row["extra"] = extra_item_str.replace(comma_detection, comma_replacer)
-													else :
-														new_row["extra"] += micro_delimeter+extra_item_str.replace(comma_detection, comma_replacer)
-									else :
-										second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
-										second_block__footer_items = second_block__footer.find_elements(By.XPATH, '*')
-										second_block__footer_has_more_than_one_blocks = len(second_block__footer_items) > 1
-										footerless = True
-										if second_block__footer_has_more_than_one_blocks :
-											if second_block__footer_items[1].get_attribute('innerHTML').strip() != "" :
-												#print(str(new_row["price"])+", HIDDENS: ")
-												li_block = second_block__footer_items[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
-												li_text = li_block.get_attribute('innerHTML').strip()
-												if li_text != "" :
-													footerless = False
-													li_text = li_text.split("<div")[0].strip()
-													#print(li_text+"!")
-													specific_bonuses_list = li_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-													for specific_bonus in specific_bonuses_list :
-														if not "หรือ" in specific_bonus.get_attribute('innerHTML').strip() :
-															specific_item_txt = specific_bonus.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
-															#print(specific_item_txt)
-															if "เกม" in specific_item_txt or re.search("entertainment", specific_item_txt, re.IGNORECASE) :
-																new_row["entertainment"] = True
-																if new_row["entertainment_package"] == None :
-																	new_row["entertainment_package"] = f"{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
-																else :
-																	new_row["entertainment_package"] += f"{micro_delimeter}{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
-															else :
-																if new_row["extra"] == None :
-																	new_row["extra"] = f"{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
-																else :
-																	new_row["extra"] += f"{micro_delimeter}{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
-										if footerless :
-											if "scListSocial" in second_block__center_items[len(second_block__center_items)-1].get_attribute('class') :
-												red_block = second_block__center_items[len(second_block__center_items)-1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
-												red_block_txt = red_block.get_attribute('innerHTML').strip().replace('<br>', ' ').replace('</span>', ' ').replace('<span class="fAktivB">', '').strip()
-												if new_row["extra"] == None :
-													new_row["extra"] = f"{red_block_txt.replace(comma_detection, comma_replacer)}"
-												else :
-													new_row["extra"] += f"{micro_delimeter}{red_block_txt.replace(comma_detection, comma_replacer)}"
-									"""
 								elif capture_mode_id == 1 :
-									pass
-									"""
-									new_row["system"] = pricing_type_id
-									raw_li = web_content.get_attribute('innerHTML').strip()
-									if re.search(target_string, raw_li, re.IGNORECASE) :
-										#li with price tag
-										if "promotion-wrapper" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
-											#price zone
-											new_row["price"] = getNumberByUnit(target_string, raw_li.replace('/', ' '))
-											#print(new_row["price"])
-
-											#gb zone
-											if checkIsInfiniteText(raw_li, internet_specific=True) :
-												new_row["internet_gbs"] = INFINITY
-											elif 'GB' in raw_li :
-												new_row["internet_gbs"] = getNumberByUnit("GB", raw_li, 'Gbps')
-											elif 'MB' in raw_li :
-												new_row["internet_gbs"] = getNumberByUnit("MB", raw_li, 'Mbps')/1000.0
-											elif 'TB' in raw_li :
-												new_row["internet_gbs"] = getNumberByUnit("TB", raw_li, 'Tbps')*1000.0
-
-											#wifi zone
-											if re.search('WiFi', raw_li, re.IGNORECASE) :
-												new_row["wifi"] = True
-												if checkIsInfiniteText(raw_li.split("dtac")[1]) :
-													new_row["unlimited_internet_mode"] = 1
-
-										elif plan["has_term_and_condition"] :
-											#the privacy policy part
-											if not re.search('call center', raw_li, re.IGNORECASE) and not "นาที" in raw_li and "content" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
-												#print(raw_li)
-												target_price = getNumberByUnit(target_string, raw_li.replace('/', ' '))
-												target_row = None
-												for row_obj in list_of_rows : #capture the existing
-													if row_obj["price"] == target_price and row_obj["plan"] == plan_name :
-														target_row = row_obj
-														break
-												all_li_objs = web_content.find_element(By.XPATH, "..").find_elements(By.XPATH, '*')
-												for li_obj in all_li_objs :
-													raw_li_each = li_obj.get_attribute('innerHTML').strip()
-
-													is_g_zone = False
-
-													if "3G" in raw_li_each :
-														if target_row["g_no"] == None :
-															target_row["g_no"] = "3G"
-															is_g_zone = True
-														elif not "3G" in target_row["g_no"] :
-															target_row["g_no"] += "/3G"
-															is_g_zone = True
-													if "4G" in raw_li_each :
-														if target_row["g_no"] == None :
-															target_row["g_no"] = "4G"
-															is_g_zone = True
-														elif not "4G" in target_row["g_no"] :
-															target_row["g_no"] += "/4G"
-															is_g_zone = True
-													if "5G" in raw_li_each :
-														if target_row["g_no"] == None :
-															target_row["g_no"] = "5G"
-															is_g_zone = True
-														elif not "5G" in target_row["g_no"] :
-															target_row["g_no"] += "/5G"
-															is_g_zone = True
-
-													for fup_unit in possible_fup_units :
-														if fup_unit in raw_li_each and not is_g_zone :
-															target_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, raw_li_each, "GB")
-															break
-											continue
-									"""
-
+									root_block = web_content.find_element(By.XPATH, "..")
+									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									if not re.search(plan_name, title, re.IGNORECASE) :
+										continue
+									real_blocks = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									top_details = real_block[1]
+									bottom_details = real_block[3]
+									
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
 									pass
@@ -982,8 +826,6 @@ def scrape_web(request, normalize_result = False):
 											misc_block_raw_text = sub_misc_block.get_attribute('innerHTML').strip()
 											insertRowInfoForTrueCards(new_row, capture_mode_id, misc_block_raw_text)
 									"""
-								elif capture_mode_id == 1 :
-									pass
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
