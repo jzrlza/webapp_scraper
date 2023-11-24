@@ -644,8 +644,6 @@ def scrape_web(request, normalize_result = False):
 				if operator_id == 0 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='package-card-generic']"
-					elif capture_mode_id == 1 :
-						target_class = "//*[@class='package-card-generic']"#"//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
 				elif operator_id == 1 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='lg-item-sim']"
@@ -653,9 +651,7 @@ def scrape_web(request, normalize_result = False):
 						target_class = "//*[@class='item-sim']"
 				elif operator_id == 2 :
 					if capture_mode_id == 0 :
-						target_class = "//*[@class='x-1iqxi85']"
-					elif capture_mode_id == 1 :
-						target_class = "//*[@class='x-1iqxi85']"
+						target_class = "//*[@class='x-1rtrt6h']"
 
 				#init_web_contents_lambda = lambda title_is_at_header : driver.find_elements(By.CSS_SELECTOR, f".{target_class}")[0].find_elements(By.XPATH, f'./div[contains(@class, "{operator_card_classes[operator]}")]') if title_is_at_header == True else driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
 				if not disabled_mode :
@@ -761,71 +757,19 @@ def scrape_web(request, normalize_result = False):
 									
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
-									pass
-									"""
-									new_row["system"] = pricing_type_id
-									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
 									title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									if not re.search(plan_name, title, re.IGNORECASE) :
 										continue
-									price_block = web_content.find_elements(By.XPATH, '*')[0]
-									basic_info_block_infos = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-									wifi_content = web_content.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
-									g_block = web_content.find_elements(By.XPATH, '*')[4]
-									misc_blocks = web_content.find_elements(By.XPATH, '*')[5].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 
-									new_row["price"] = numberCheckLambda(price_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
-
-									for basic_info_block in basic_info_block_infos :
-										top_sub_block_content = basic_info_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-										bottom_sub_block_divs = basic_info_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-										if "เน็ต" in top_sub_block_content :
-											if re.search('true-3g', top_sub_block_content, re.IGNORECASE) :
-												if new_row["g_no"] == None :
-													new_row["g_no"] = "3G"
-												elif not "3G" in new_row["g_no"] :
-													new_row["g_no"] += "/3G"
-											if re.search('true-4g', top_sub_block_content, re.IGNORECASE) :
-												if new_row["g_no"] == None :
-													new_row["g_no"] = "4G"
-												elif not "4G" in new_row["g_no"] :
-													new_row["g_no"] += "/4G"
-											if re.search('true-5g', top_sub_block_content, re.IGNORECASE) :
-												if new_row["g_no"] == None :
-													new_row["g_no"] = "5G"
-												elif not "5G" in new_row["g_no"] :
-													new_row["g_no"] += "/5G"
-											unit = bottom_sub_block_divs[1].get_attribute('innerHTML').strip()
-											if checkIsInfiniteText(unit):
-												new_row["internet_gbs"] = INFINITY
-											else :
-												value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
-												if 'GB' in unit and not ('Gbps' in unit) :
-													new_row["internet_gbs"] = value_num
-												elif 'MB' in unit and not ('Mbps' in unit) :
-													new_row["internet_gbs"] = value_num/1000.0
-												elif 'TB' in unit and not ('Tbps' in list_item_infos_body) :
-													new_row["internet_gbs"] = value_num*1000.0
-
-										elif "โทร" in top_sub_block_content :
-											unit = bottom_sub_block_divs[1].get_attribute('innerHTML').strip()
-											if checkIsInfiniteText(unit):
-												new_row["call_minutes"] = INFINITY
-												new_row["unlimited_call"] = True
-											else :
-												value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
-												new_row["call_minutes"] = value_num
-
-									if re.search('wifi', wifi_content, re.IGNORECASE) :
-										new_row["wifi"] = True
-
-									for misc_block in misc_blocks :
-										for sub_misc_block in misc_block.find_elements(By.XPATH, '*') :
-											if "<img" in sub_misc_block.get_attribute('innerHTML').strip() :
-												continue
-											misc_block_raw_text = sub_misc_block.get_attribute('innerHTML').strip()
-											insertRowInfoForTrueCards(new_row, capture_mode_id, misc_block_raw_text)
-									"""
+									real_items = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									top_head = real_items[0]
+									second_head = real_items[1]
+									if "ย้ายค่าย" in second_head.get_attribute('innerHTML').strip() :
+										continue
+									basic_details_block = real_items[3]
+									price_details_block = real_items[4]
+									
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
