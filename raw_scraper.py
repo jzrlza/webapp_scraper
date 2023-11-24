@@ -543,6 +543,10 @@ row_obj_template = {
 	"datetime": None
 }
 
+OperatorUnsupportedException = Exception("Unsupported Operator.")
+UntrackableException = Exception("Untrackable Page")
+CaptureModeException = Exception("No such capture mode.")
+
 def scrape_web(request, normalize_result = False):
 	try :
 		qr = json.loads(request)
@@ -595,6 +599,8 @@ def scrape_web(request, normalize_result = False):
 								unknown_new_row["operator"] = operator_name
 								unknown_new_row["plan"] = plan_name
 								unknown_rows.append(unknown_new_row)
+				else :
+					raise UntrackableException
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
@@ -620,6 +626,8 @@ def scrape_web(request, normalize_result = False):
 						target_click_class = "//*[contains(@class, 'search-tab-btn') and contains(@class, 'MuiTab-textColorPrimary') and contains(@class, 'MuiButtonBase-root')]"
 						target_class = "//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
 						need_to_scroll = True
+					else :
+						raise CaptureModeException
 				elif operator_id == 1 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='wrapPackages']"
@@ -633,9 +641,15 @@ def scrape_web(request, normalize_result = False):
 						need_to_scroll = True
 					elif capture_mode_id == 2 :
 						target_class = "//*[contains(@class, 'card-promotion')]"
+					else :
+						raise CaptureModeException
 				elif operator_id == 2 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='x-1iqxi85']"
+					else :
+						raise CaptureModeException
+				else :
+					raise OperatorUnsupportedException
 
 				#init_web_contents_lambda = lambda title_is_at_header : driver.find_elements(By.CSS_SELECTOR, f".{target_class}")[0].find_elements(By.XPATH, f'./div[contains(@class, "{operator_card_classes[operator]}")]') if title_is_at_header == True else driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
 				if not disabled_mode :

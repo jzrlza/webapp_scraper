@@ -14,7 +14,7 @@ import os
 
 throw_error_to_warn_new_row = False
 
-mock_request = """{
+mock_request_temp = """{
    "price_keywords":[
       "บาท",
       ".-",
@@ -30,22 +30,15 @@ mock_request = """{
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
-         "url_link":"https://www.dtac.co.th/prepaid/simdtac.html",
-         "operator_id":1,
+         "url_link":"https://www.true.th/truemoveh/prepaid/",
+         "operator_id":2,
          "pricing_type":0,
          "track_new_mega_row": false,
          "plans":[
             {
-               "plan_name":"ซิมเติมเงินดีแทค",
+               "plan_name":"ซิมเติมเงิน",
                "capture_sub_names": true,
                "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"ซิมดีแทคเติมเงินอื่น ๆ",
-               "capture_sub_names": true,
-               "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
@@ -55,7 +48,7 @@ mock_request = """{
    "webdriver_timeout":15
 }"""
 
-mock_request_temp = """{
+mock_request = """{
    "price_keywords":[
       "บาท",
       ".-",
@@ -86,7 +79,7 @@ mock_request_temp = """{
             {
                "plan_name":"โปร NET SIM",
                "capture_sub_names": false,
-               "capture_mode":1,
+               "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
@@ -96,7 +89,7 @@ mock_request_temp = """{
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call",
          "operator_id":0,
          "pricing_type":0,
-         "track_new_mega_row": true,
+         "track_new_mega_row": false,
          "plans":[
             {
                "plan_name":"โปรแนะนำ",
@@ -104,14 +97,14 @@ mock_request_temp = """{
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
-            },
+            }
          ]
       },
       {
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call-internet",
          "operator_id":0,
          "pricing_type":0,
-         "track_new_mega_row": true,
+         "track_new_mega_row": false,
          "plans":[
             {
                "plan_name":"โปรแนะนำ",
@@ -119,14 +112,14 @@ mock_request_temp = """{
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
-            },
+            }
          ]
       },
       {
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/special",
          "operator_id":0,
          "pricing_type":0,
-         "track_new_mega_row": true,
+         "track_new_mega_row": false,
          "plans":[
             {
                "plan_name":"โปรแนะนำ",
@@ -134,7 +127,7 @@ mock_request_temp = """{
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
-            },
+            }
          ]
       },
       {
@@ -422,7 +415,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	"""
 
 #DTAC -----------
-def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class = "") :
+def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) :
 	print(full_raw_txt)
 	print(icon_class)
 
@@ -438,7 +431,7 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class
 		print(trim_txt)
 
 #TRUE -----------
-def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks) :
+def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks, price_keywords = ["บาท"], sub_price_keywords = ["สต."]) :
 	head_str = html_blocks[0].get_attribute('innerHTML').strip()
 	price_blocks = html_blocks[1].find_elements(By.XPATH, '*')
 	footer_str = html_blocks[2].get_attribute('innerHTML').strip()
@@ -509,6 +502,10 @@ row_obj_template = {
 	"datetime": None
 }
 
+OperatorUnsupportedException = Exception("Unsupported Operator.")
+UntrackableException = Exception("Untrackable Page")
+CaptureModeException = Exception("No such capture mode.")
+
 def scrape_web(request, normalize_result = False):
 	try :
 		qr = json.loads(request)
@@ -566,6 +563,8 @@ def scrape_web(request, normalize_result = False):
 								unknown_new_row["operator"] = operator_name
 								unknown_new_row["plan"] = plan_name
 								unknown_rows.append(unknown_new_row)
+				else :
+					raise UntrackableException
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
@@ -587,14 +586,22 @@ def scrape_web(request, normalize_result = False):
 				if operator_id == 0 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='package-card-generic']"
+					else :
+						raise CaptureModeException
 				elif operator_id == 1 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='lg-item-sim']"
 					elif capture_mode_id == 1 :
 						target_class = "//*[@class='item-sim']"
+					else :
+						raise CaptureModeException
 				elif operator_id == 2 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='x-1rtrt6h']"
+					else :
+						raise CaptureModeException
+				else :
+					raise OperatorUnsupportedException
 
 				#init_web_contents_lambda = lambda title_is_at_header : driver.find_elements(By.CSS_SELECTOR, f".{target_class}")[0].find_elements(By.XPATH, f'./div[contains(@class, "{operator_card_classes[operator]}")]') if title_is_at_header == True else driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
 				if not disabled_mode :
@@ -695,11 +702,11 @@ def scrape_web(request, normalize_result = False):
 
 									details_block__top_elements = details_blocks[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									for top_elem in details_block__top_elements :
-										insertRowInfoForDTACCards(new_row, capture_mode_id, top_elem.get_attribute('innerHTML').strip(), "")
+										insertRowInfoForDTACCards(new_row, capture_mode_id, top_elem.get_attribute('innerHTML').strip(), "", price_keywords, sub_price_keywords)
 									details_block__bottom_elements = details_blocks[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									for bottom_elem in details_block__bottom_elements :
 										sub_elems = bottom_elem.find_elements(By.XPATH, '*')
-										insertRowInfoForDTACCards(new_row, capture_mode_id, sub_elems[1].get_attribute('innerHTML').strip(), sub_elems[0].get_attribute('class'))
+										insertRowInfoForDTACCards(new_row, capture_mode_id, sub_elems[1].get_attribute('innerHTML').strip(), sub_elems[0].get_attribute('class'), price_keywords, sub_price_keywords)
 
 								elif capture_mode_id == 1 :
 									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
@@ -734,8 +741,8 @@ def scrape_web(request, normalize_result = False):
 									basic_details__right_blocks = basic_details_blocks[1].find_elements(By.XPATH, '*')
 									price_details_blocks = real_items[len(real_items)-2].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									new_row["price"] = numberCheckLambda(price_details_blocks[1].get_attribute('innerHTML').strip())
-									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__left_blocks)
-									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__right_blocks)
+									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__left_blocks, price_keywords, sub_price_keywords)
+									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__right_blocks, price_keywords, sub_price_keywords)
 									
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
