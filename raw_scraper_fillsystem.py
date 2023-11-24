@@ -41,7 +41,7 @@ mock_request = """{
                "has_term_and_condition":false
             },
             {
-               "plan_name":"ซิมดีแทคเติมเงินอื่น",
+               "plan_name":"ซิมดีแทคเติมเงินอื่น ๆ",
                "capture_sub_names": true,
                "capture_mode":1,
                "has_extra_table":false,
@@ -748,21 +748,35 @@ def scrape_web(request, normalize_result = False):
 
 									first_blocks = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									price_block = first_blocks[2]
-									details_block = first_blocks[3]
+									details_blocks = first_blocks[3].find_elements(By.XPATH, '*')
 
 									price_block_txt = price_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').replace('</span>', '').replace('/', ' ').replace('<span>', '').strip()
 									#print(price_block_txt)
 									new_row["price"] = getNumberByUnit(price_keywords[0], price_block_txt)
 
+									details_block__top_elements = details_blocks[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									for top_elem in details_block__top_elements :
+										print(top_elem.get_attribute('innerHTML').strip())
+									details_block__bottom_elements = details_blocks[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									for bottom_elem in details_block__bottom_elements :
+										sub_elems = bottom_elem.find_elements(By.XPATH, '*')
+										print(sub_elems[0].get_attribute('class'))
+										print(sub_elems[1].get_attribute('innerHTML').strip())
+
 								elif capture_mode_id == 1 :
-									root_block = web_content.find_element(By.XPATH, "..")
+									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
 									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									if not re.search(plan_name, title, re.IGNORECASE) :
 										continue
+
 									real_blocks = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									top_details = real_block[1]
-									bottom_details = real_block[3]
-									
+									top_detail = real_blocks[len(real_blocks)-3]
+									bottom_details = real_blocks[len(real_blocks)-1].find_elements(By.XPATH, '*')
+
+									new_row["plan"] = bottom_details[0].get_attribute('innerHTML').strip()
+									price_block_txt = bottom_details[1].get_attribute('innerHTML').replace('</span>', '').replace('/', ' ').replace('<span>', '').strip()
+									new_row["price"] = getNumberByUnit(price_keywords[0], price_block_txt.replace('ฟรี', '0'))
+
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
 									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
