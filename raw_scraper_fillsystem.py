@@ -63,6 +63,12 @@ mock_request_temp = """{
       "THB",
       "฿"
    ],
+   "sub_price_keywords":[
+      "สต.",
+      "สตางค์"
+   ],
+   "predefined_g_no": "5G",
+   "predefined_g_no_if_free": "4G",
    "urls":[
       {
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
@@ -420,6 +426,17 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class
 	print(full_raw_txt)
 	print(icon_class)
 
+	if icon_class == "ico-call-all" :
+		new_row["call_first_minute_fee_baht_per_minute"] = numberCheckLambda(full_raw_txt)
+		new_row["call_next_minutes_fee_baht_per_minute"] = numberCheckLambda(full_raw_txt)
+	elif icon_class == "ico-sms" :
+		new_row["sms_fee_per_msg"] = numberCheckLambda(full_raw_txt)
+	elif icon_class == "ico-net" :
+		new_row["internet_fee_baht_per_mb"] = numberCheckLambda(full_raw_txt)
+	else :
+		trim_txt = full_raw_txt.replace('<br>', ' ')
+		print(trim_txt)
+
 #TRUE -----------
 def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks) :
 	head_str = html_blocks[0].get_attribute('innerHTML').strip()
@@ -431,6 +448,29 @@ def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks) :
 	price_unit_str_2 = price_blocks[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 
 	print(head_str, price_str, price_unit_str_1, price_unit_str_2, footer_str)
+
+	if "เน็ต" in head_str :
+		new_row["price"] = numberCheckLambda(price_str)
+		for fup_unit in possible_fup_units :
+			target_str = ""
+			if fup_unit in normalizeStringForNoneTypeToString(footer_str) :
+				target_str = footer_str.replace('.', '')
+
+			if target_str != "" :
+				new_row["speed"] = getNumberByUnitAsUnittedString(fup_unit, target_str, "GB")
+	elif "โทร" in head_str :
+		init_price = numberCheckLambda(price_str)
+		if "/วินาที" in price_unit_str_2 :
+			minutes = 1/60.0
+			new_row["call_next_minutes_fee_baht_per_minute"] = init_price/minutes
+		elif "วินาที" in price_unit_str_2 :
+			minutes = numberCheckLambda(price_unit_str_2)/60.0
+			new_row["call_next_minutes_fee_baht_per_minute"] = init_price/minutes
+		else :
+			new_row["call_next_minutes_fee_baht_per_minute"] = init_price
+		if footer_str != "" :
+			if "นาทีแรก" in footer_str :
+				new_row["call_first_minute_fee_baht_per_minute"] = getNumberByUnit(price_keywords[0], footer_str.strip())
 
 operators = ["AIS", "DTAC", "TRUE"]
 operator_card_classes = { #where the title is inside each cards
