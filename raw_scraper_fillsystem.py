@@ -414,131 +414,13 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	"""
 
 #DTAC -----------
-def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
-	pass
-	"""
-	is_extra = True
+def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class = "") :
+	print(full_raw_txt)
+	print(icon_class)
 
-	#internet, g, fup, and gb zone
-	if 'เน็ต' in list_item_full_text :
-		if checkIsInfiniteText(list_item_full_text) :
-			new_row["internet_gbs"] = INFINITY
-		elif 'GB' in list_item_full_text :
-			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_full_text, 'Gbps')
-		elif 'MB' in list_item_full_text :
-			new_row["internet_gbs"] = getNumberByUnit("MB", list_item_full_text, 'Mbps')/1000.0
-		elif 'TB' in list_item_full_text :
-			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_full_text, 'Tbps')*1000.0
-
-		if "3G" in list_item_full_text :
-			if new_row["g_no"] == None :
-				new_row["g_no"] = "3G"
-			elif not "3G" in new_row["g_no"] :
-				new_row["g_no"] += "/3G"
-		if "4G" in list_item_full_text :
-			if new_row["g_no"] == None :
-				new_row["g_no"] = "4G"
-			elif not "4G" in new_row["g_no"] :
-				new_row["g_no"] += "/4G"
-		if "5G" in list_item_full_text :
-			if new_row["g_no"] == None :
-				new_row["g_no"] = "5G"
-			elif not "5G" in new_row["g_no"] :
-				new_row["g_no"] += "/5G"
-
-		for fup_unit in possible_fup_units :
-			if fup_unit in list_item_full_text :
-				new_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, list_item_full_text, "GB")
-				break
-
-		is_extra = False
-
-	#call zone
-	if 'โทรฟรีทุกเครือข่าย' in list_item_full_text :
-		#print(list_item_full_text)
-		if checkIsInfiniteText(list_item_full_text.strip().split(">")[1].split("<")[0]) :
-			new_row["call_minutes"] = INFINITY
-			new_row["unlimited_call"] = True
-		else :
-			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_full_text, 'ชม')
-		is_extra = False
-
-	if "เบอร์ดีแทค" in list_item_full_text and "โทรฟรี" in list_item_full_text :
-		new_row["unlimited_call"] = True
-		is_extra = False
-
-	#priviledge zone
-	if re.search('member', list_item_full_text, re.IGNORECASE) :
-		priv_str = None
-		priv_str_chunks = list_item_full_text.replace('<br>', ' ').strip().split(">")[1].split("<")[0].split(" ")
-		for priv_str_chunk in priv_str_chunks :
-			if "สิทธิ์" in priv_str_chunk or re.search('member', priv_str_chunk, re.IGNORECASE) :
-				continue
-			else :
-				if priv_str == None :
-					priv_str = priv_str_chunk
-				else :
-					priv_str += " "+priv_str_chunk
-		new_row["priviledge"] = True
-		new_row["priviledge_exclusive"] = priv_str
-		is_extra = False
-
-	#wifi zone
-	if re.search('WiFi', list_item_full_text, re.IGNORECASE) :
-		new_row["wifi"] = True
-		is_extra = False
-
-	#entertainment zone
-	if 'ชมฟรี' in list_item_full_text or "ความบันเทิง" in list_item_full_text :
-		new_row["entertainment"] = True
-		entertainment_str = list_item_full_text.replace('<br>', ' ').replace('\n                                ', '').strip().split(">")[1].split("<")[0]
-		if new_row["entertainment_package"] == None :
-			new_row["entertainment_package"] = entertainment_str.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
-		else :
-			new_row["entertainment_package"] += micro_delimeter+entertainment_str.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
-		is_extra = False
-
-	#extra zone : this one isb too evil
-	if is_extra :
-		pass
-	"""
-
-def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
-	pass
-	"""
-	if "สิทธิ์" in list_item_full_text and re.search('card', list_item_full_text, re.IGNORECASE) and re.search('true', list_item_full_text, re.IGNORECASE) :
-		
-		priv_str = None
-		priv_str_chunks = list_item_full_text.split(" ")
-		for priv_str_chunk_i in range(len(priv_str_chunks)) :
-			priv_str_chunk = priv_str_chunks[priv_str_chunk_i]
-			if priv_str_chunk_i == 0 :
-				continue
-			else :
-				if re.search('true', priv_str_chunks[priv_str_chunk_i-1], re.IGNORECASE) and re.search('card', priv_str_chunks[priv_str_chunk_i+1], re.IGNORECASE) :
-					priv_str = priv_str_chunk
-					break
-
-		new_row["priviledge"] = True
-		new_row["priviledge_exclusive"] = priv_str
-
-		if "เดือน" in list_item_full_text :
-			new_row["contract"] = getNumberByUnit("เดือน", list_item_full_text)
-
-	elif "ความบันเทิง" in list_item_full_text or "รับชม" in list_item_full_text or "ดูหนัง" in list_item_full_text or "ฟังเพลง" in list_item_full_text :
-		new_row["entertainment"] = True
-		if new_row["entertainment_package"] == None :
-			new_row["entertainment_package"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
-		else :
-			new_row["entertainment_package"] += micro_delimeter+list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
-		if "เดือน" in list_item_full_text :
-			new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_full_text.replace('<b>', '').replace('</b>', ''))
-	else :
-		if new_row["extra"] == None :
-			new_row["extra"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
-		else :
-			new_row["extra"] += micro_delimeter+list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
-	"""
+#TRUE -----------
+def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks) :
+	print(html_blocks[0].get_attribute('innerHTML').strip())
 
 operators = ["AIS", "DTAC", "TRUE"]
 operator_card_classes = { #where the title is inside each cards
@@ -756,12 +638,11 @@ def scrape_web(request, normalize_result = False):
 
 									details_block__top_elements = details_blocks[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									for top_elem in details_block__top_elements :
-										print(top_elem.get_attribute('innerHTML').strip())
+										insertRowInfoForDTACCards(new_row, capture_mode_id, top_elem.get_attribute('innerHTML').strip(), "")
 									details_block__bottom_elements = details_blocks[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									for bottom_elem in details_block__bottom_elements :
 										sub_elems = bottom_elem.find_elements(By.XPATH, '*')
-										print(sub_elems[0].get_attribute('class'))
-										print(sub_elems[1].get_attribute('innerHTML').strip())
+										insertRowInfoForDTACCards(new_row, capture_mode_id, sub_elems[1].get_attribute('innerHTML').strip(), sub_elems[0].get_attribute('class'))
 
 								elif capture_mode_id == 1 :
 									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
@@ -787,10 +668,17 @@ def scrape_web(request, normalize_result = False):
 									real_items = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									top_head = real_items[0]
 									second_head = real_items[1]
-									if "ย้ายค่าย" in second_head.get_attribute('innerHTML').strip() :
+									head_txt = second_head.get_attribute('innerHTML').strip()
+									if "ย้ายค่าย" in head_txt :
 										continue
-									basic_details_block = real_items[3]
-									price_details_block = real_items[4]
+									new_row["plan"] = head_txt
+									basic_details_blocks = real_items[len(real_items)-3].find_elements(By.XPATH, '*')
+									basic_details__left_blocks = basic_details_blocks[0].find_elements(By.XPATH, '*')
+									basic_details__right_blocks = basic_details_blocks[1].find_elements(By.XPATH, '*')
+									price_details_blocks = real_items[len(real_items)-2].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									new_row["price"] = numberCheckLambda(price_details_blocks[1].get_attribute('innerHTML').strip())
+									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__left_blocks)
+									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__right_blocks)
 									
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
