@@ -222,207 +222,15 @@ possible_time_limit_units = ['วัน', 'เดือน', 'สัปดาห
 
 #AIS --------------
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) : #void function
-	is_extra = True
-
-	print(list_item_icon_img)
-	print(list_item_infos_head, list_item_infos_body)
-
-	#XG zone
-	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or re.search('3g', list_item_icon_img, re.IGNORECASE) :
-		if new_row["g_no"] == None :
-			new_row["g_no"] = "3G"
-			is_extra = False
-		elif not "3G" in new_row["g_no"] :
-			new_row["g_no"] += "/3G"
-			is_extra = False
-	if "4G" in list_item_infos_head or "4G" in list_item_infos_body or re.search('4g', list_item_icon_img, re.IGNORECASE) :
-		if new_row["g_no"] == None :
-			new_row["g_no"] = "4G"
-			is_extra = False
-		elif not "4G" in new_row["g_no"] :
-			new_row["g_no"] += "/4G"
-			is_extra = False
-	if "5G" in list_item_infos_head or "5G" in list_item_infos_body or re.search('5g', list_item_icon_img, re.IGNORECASE) :
-		if new_row["g_no"] == None :
-			new_row["g_no"] = "5G"
-			is_extra = False
-		elif not "5G" in new_row["g_no"] :
-			new_row["g_no"] += "/5G"
-			is_extra = False
-
-	#internet GB zone
-	if (not "ฟรี" in list_item_infos_head) and (not "/" in list_item_infos_body) and ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE) or re.search('social', list_item_infos_head, re.IGNORECASE) or checkIsLikelyGSystemIcon(list_item_icon_img) or "โซเชียล" in list_item_infos_body) and new_row["internet_gbs"] == 0.0 :
-		if checkIsInfiniteText(list_item_infos_body) or checkIsInfiniteText(list_item_infos_head):
-			new_row["internet_gbs"] = INFINITY
-			#if so, there's also speed
-			for fup_unit in possible_fup_units :
-				target_str = ""
-				if fup_unit in normalizeStringForNoneTypeToString(list_item_infos_footer) :
-					target_str = list_item_infos_footer.replace('.', '')
-				elif fup_unit in normalizeStringForNoneTypeToString(list_item_infos_body) :
-					target_str = list_item_infos_body.replace('.', '')
-				elif fup_unit in normalizeStringForNoneTypeToString(list_item_infos_head) :
-					target_str = list_item_infos_body.replace('.', '')
-
-				if target_str != "" :
-					new_row["speed"] = getNumberByUnitAsUnittedString(fup_unit, target_str, "GB")
-
-		elif 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
-			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_infos_body, 'Gbps')
-		elif 'MB' in list_item_infos_body and not ('Mbps' in list_item_infos_body) :
-			new_row["internet_gbs"] = getNumberByUnit("MB", list_item_infos_body, 'Mbps')/1000.0
-		elif 'TB' in list_item_infos_body and not ('Tbps' in list_item_infos_body) :
-			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_infos_body, 'Tbps')*1000.0
-		is_extra = False
-
-	print(list_item_infos_footer)
-	#time limit zone
-	if "นาน" in list_item_infos_head or "นาน" in list_item_infos_body or "นาน" in list_item_infos_footer :
-		for time_limit_unit in possible_time_limit_units :
-			target_str = ""
-			if "นาน" in list_item_infos_head :
-				target_str = list_item_infos_head.replace(time_limit_unit+'ละ', '')
-			elif "นาน" in list_item_infos_body :
-				target_str = list_item_infos_body.replace(time_limit_unit+'ละ', '')
-			elif "นาน" in list_item_infos_footer :
-				target_str = list_item_infos_footer.replace(time_limit_unit+'ละ', '')
-
-			#print(target_str)
-
-			if target_str != "" :
-				new_value = getNumberByUnitAsUnittedString(time_limit_unit, target_str, "GB", have_space=True)
-				if new_value == None :
-					continue
-				else :
-					new_row["limited_time"] = new_value
-		is_extra = False
-
-	#WiFi boolean zone
-	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) :
-		new_row["wifi"] = True
-
-	#internet cost per byte zone
-	if (price_keywords[0]+"/" in list_item_infos_body) and ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE)) :
-		new_row["internet_fee_baht_per_mb"]
-		if price_keywords[0]+'/GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
-			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/GB", list_item_infos_body, 'Gbps')*1000
-		elif price_keywords[0]+'/MB' in list_item_infos_body and not ('Mbps' in list_item_infos_body) :
-			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/MB", list_item_infos_body, 'Mbps')
-		elif price_keywords[0]+'/TB' in list_item_infos_body and not ('Tbps' in list_item_infos_body) :
-			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/TB", list_item_infos_body, 'Tbps')*1000000.0
-		is_extra = False
-
-	#cost per minute zone
-	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) and "โทร" in list_item_infos_head :
-		if "แรก" in list_item_infos_footer :
-			raw_number = 0.0
-			if sub_price_keywords[0] in list_item_infos_footer :
-				raw_number = getNumberByUnit(sub_price_keywords[0], list_item_infos_footer)/100.0
-			else :
-				raw_number = getNumberByUnit(price_keywords[0], list_item_infos_footer)
-
-			if "วินาที" in list_item_infos_footer :
-				raw_number = raw_number/60.0
-			new_row["call_first_minute_fee_baht_per_minute"] = raw_number
-
-		price_per_freq = 0.0
-		if sub_price_keywords[0] in list_item_infos_body :
-			price_per_freq = getNumberByUnit(sub_price_keywords[0], list_item_infos_body)/100.0
-		else :
-			price_per_freq = getNumberByUnit(price_keywords[0], list_item_infos_body)
-
-		freq_time_multi = 1.0
-		freq_time_unit = "นาที"
-		freq_time_for_round = 1.0
-		if "วินาที" in list_item_infos_body :
-			freq_time_multi = 1.0/60.0
-			freq_time_unit = "วินาที"
-
-		if "ทุก" in list_item_infos_body :
-			freq_time_for_round = getNumberByUnit(freq_time_unit, list_item_infos_body)*freq_time_multi
-		else :
-			freq_time_for_round = freq_time_multi
-
-		new_row["call_next_minutes_fee_baht_per_minute"] = price_per_freq/freq_time_for_round
-
-		is_extra = False
-
-	#vid call
-	if re.search('Video call', list_item_infos_head, re.IGNORECASE) :
-		new_row["video_call_fee_per_minute"] = getNumberByUnit(price_keywords[0]+"/นาที", list_item_infos_body)
-		is_extra = False
-
-	#sms mms
-	if re.search('SMS/MMS', list_item_infos_head, re.IGNORECASE) :
-		chunks = list_item_infos_body.strip().split(",")
-		for chunk in chunks :
-			print(chunk, price_keywords)
-			if re.search('SMS', chunk, re.IGNORECASE) :
-				new_row["sms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
-			elif re.search('MMS', chunk, re.IGNORECASE) :
-				new_row["mms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
-		is_extra = False
-
-	"""
-	#extra zone
-	if is_extra :
-		trim_txt = list_item_infos_head.replace('<b>', '').replace('</b>', '')+" "+list_item_infos_body.replace('<b>', '').replace('</b>', '')
-		if new_row["extra"] == None :
-			new_row["extra"] = trim_txt.replace(comma_detection, comma_replacer)
-		else :
-			new_row["extra"] += micro_delimeter+trim_txt.replace(comma_detection, comma_replacer)
-	"""
+	pass
 
 #DTAC -----------
 def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) :
-	print(full_raw_txt)
-	print(icon_class)
-
-	if icon_class == "ico-call-all" :
-		new_row["call_first_minute_fee_baht_per_minute"] = numberCheckLambda(full_raw_txt)
-		new_row["call_next_minutes_fee_baht_per_minute"] = numberCheckLambda(full_raw_txt)
-	elif icon_class == "ico-sms" :
-		new_row["sms_fee_per_msg"] = numberCheckLambda(full_raw_txt)
-	elif icon_class == "ico-net" :
-		new_row["internet_fee_baht_per_mb"] = numberCheckLambda(full_raw_txt)
-	else :
-		trim_txt = full_raw_txt.replace('<br>', ' ')
-		print(trim_txt)
+	pass
 
 #TRUE -----------
 def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks, price_keywords = ["บาท"], sub_price_keywords = ["สต."]) :
-	head_str = html_blocks[0].get_attribute('innerHTML').strip()
-	price_blocks = html_blocks[1].find_elements(By.XPATH, '*')
-	footer_str = html_blocks[2].get_attribute('innerHTML').strip()
-
-	price_str = price_blocks[0].get_attribute('innerHTML').strip()
-	price_unit_str_1 = price_blocks[1].get_attribute('innerHTML').split('<span')[0].strip()
-	price_unit_str_2 = price_blocks[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-
-	print(head_str, price_str, price_unit_str_1, price_unit_str_2, footer_str)
-
-	if "เน็ต" in head_str :
-		new_row["price"] = numberCheckLambda(price_str)
-		for fup_unit in possible_fup_units :
-			target_str = ""
-			if fup_unit in normalizeStringForNoneTypeToString(footer_str) :
-				target_str = footer_str.replace('.', '')
-
-			if target_str != "" :
-				new_row["speed"] = getNumberByUnitAsUnittedString(fup_unit, target_str, "GB")
-	elif "โทร" in head_str :
-		init_price = numberCheckLambda(price_str)
-		if "/วินาที" in price_unit_str_2 :
-			minutes = 1/60.0
-			new_row["call_next_minutes_fee_baht_per_minute"] = init_price/minutes
-		elif "วินาที" in price_unit_str_2 :
-			minutes = numberCheckLambda(price_unit_str_2)/60.0
-			new_row["call_next_minutes_fee_baht_per_minute"] = init_price/minutes
-		else :
-			new_row["call_next_minutes_fee_baht_per_minute"] = init_price
-		if footer_str != "" :
-			if "นาทีแรก" in footer_str :
-				new_row["call_first_minute_fee_baht_per_minute"] = getNumberByUnit(price_keywords[0], footer_str.strip())
+	pass
 
 operators = ["AIS", "DTAC", "TRUE"]
 operator_card_classes = { #where the title is inside each cards
@@ -445,19 +253,6 @@ row_obj_template = {
 	"plan": "",
 	"system": -1,
 	"price": 0.0,
-	"g_no": None,
-	"unlimited_internet_mode": 0,
-	"internet_gbs": 0.0,
-	"fair_usage_policy": None,
-	"speed": None,
-	"limited_time": None,
-	"internet_fee_baht_per_mb": 0.0,
-	"call_first_minute_fee_baht_per_minute": 0.0,
-	"call_next_minutes_fee_baht_per_minute": 0.0,
-	"video_call_fee_per_minute": None,
-	"sms_fee_per_msg": None,
-	"mms_fee_per_msg": None,
-	"promotion_switch_fee": 0.0,
 	"datetime": None
 }
 
@@ -639,8 +434,9 @@ def scrape_web(request, normalize_result = False):
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
-									pass
-
+									top_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
+									price_txt = top_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
+									new_row["price"] = numberCheckLambda(price_txt)
 
 							"""
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
