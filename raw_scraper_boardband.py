@@ -33,73 +33,17 @@ mock_request = """{
          "url_link":"https://www.ais.th/consumers/fibre/package",
          "operator_id":0,
          "pricing_type":2,
-         "track_new_mega_row": true,
+         "track_new_mega_row": false,
          "collect_sub_urls": true,
-         "plans":[
-            {
-               "plan_name":"Home FibreLAN",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"2Gbps Fibre",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"POWER4 Advance",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"Serenade",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"BYOD",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"SuperMESH WiFi",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"Entertainment",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"BROADBAND24",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"POWER4 Starter",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ]
+         "urls_class_type_id": 0,
+         "plans":[],
+         "plans_template": {
+             "plan_name":"",
+             "capture_sub_names": false,
+             "capture_mode":0,
+             "has_extra_table":false,
+             "has_term_and_condition":false
+         }
       }
    ],
    "webdriver_timeout":15
@@ -124,89 +68,33 @@ mock_request_temp = """{
          "url_link":"https://www.ais.th/consumers/fibre/package",
          "operator_id":0,
          "pricing_type":2,
-         "track_new_mega_row": true,
+         "track_new_mega_row": false,
          "collect_sub_urls": true,
-         "plans":[
-            {
-               "plan_name":"Home FibreLAN",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"2Gbps Fibre",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"POWER4 Advance",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"Serenade",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"BYOD",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"SuperMESH WiFi",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"Entertainment",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"BROADBAND24",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"POWER4 Starter",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ]
+         "urls_class_type_id": 0,
+         "plans":[],
+         "plans_template": {
+             "plan_name":"",
+             "capture_sub_names": false,
+             "capture_mode":0,
+             "has_extra_table":false,
+             "has_term_and_condition":false
+         }
       },
       {
-         "url_link":"https://www.ais.th/consumers/fibre/package",
+         "url_link":"https://www.ais.th/consumers/fibre",
          "operator_id":0,
          "pricing_type":2,
-         "track_new_mega_row": true,
+         "track_new_mega_row": false,
          "collect_sub_urls": true,
-         "plans":[
-            {
-               "plan_name":"temp",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ]
+         "urls_class_type_id": 1,
+         "plans":[],
+         "plans_template": {
+             "plan_name":"",
+             "capture_sub_names": false,
+             "capture_mode":0,
+             "has_extra_table":false,
+             "has_term_and_condition":false
+         }
       },
       {
          "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-special-ssv/",
@@ -214,6 +102,7 @@ mock_request_temp = """{
          "pricing_type":2,
          "track_new_mega_row": true,
          "collect_sub_urls": true,
+         "urls_class_type_id": 0,
          "plans":[
             {
                "plan_name":"temp",
@@ -388,13 +277,17 @@ def scrape_web(request, normalize_result = False):
 			pricing_type_id = url["pricing_type"]
 			track_new_mega_row = url["track_new_mega_row"]
 			collect_sub_urls = url["collect_sub_urls"]
+			urls_class_type_id = url["urls_class_type_id"]
 			mega_class_target = ""
 			collect_sub_urls_class = ""
 
 			need_to_scroll = False
 			scrolled = False
 
-			if track_new_mega_row :
+			if track_new_mega_row and collect_sub_urls :
+				raise Exception("track_new_mega_row and collect_sub_urls should never be both True")
+
+			if track_new_mega_row and not collect_sub_urls :
 				#raise error when there's new row but not match any members of the plans
 
 				if operator_id == 0 :
@@ -421,19 +314,37 @@ def scrape_web(request, normalize_result = False):
 					raise UntrackableException
 
 
-			if collect_sub_urls :
+			if collect_sub_urls and not track_new_mega_row :
+				plans_template = url["plans_template"]
+				plan_arr = []
 				if operator_id == 0 :
-					collect_sub_urls_class = "//*[contains(@class, 'cms-primary-button')]"
+					if urls_class_type_id == 0 :
+						collect_sub_urls_class = "//*[contains(@class, 'cms-primary-button')]"
 
-					href_targets = driver.find_elements(By.XPATH, f"{collect_sub_urls_class}")
-					for href_target in href_targets :
-						root_div = href_target.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-						title = root_div.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
-						target_url = href_target.get_attribute('href').strip()
-						for plan in url["plans"] :
-							plan_name = plan["plan_name"]
-							if re.search(plan_name, title, re.IGNORECASE) :
-								plan["sub_url"] = target_url
+						href_targets = driver.find_elements(By.XPATH, f"{collect_sub_urls_class}")
+						for href_target in href_targets :
+							root_div = href_target.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+							title = root_div.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
+							target_url = href_target.get_attribute('href').strip()
+							plan = plans_template.copy()
+							plan["plan_name"] = title
+							plan["sub_url"] = target_url
+							plan_arr.append(plan)
+					elif urls_class_type_id == 1 :
+						collect_sub_urls_class = "//*[contains(@class, 'cms-secondary-button') and contains(@class, 'cms-fullWidth-button')]"
+
+						href_targets = driver.find_elements(By.XPATH, f"{collect_sub_urls_class}")
+						for href_target in href_targets :
+							root_div = href_target.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+							title = root_div.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
+							target_url = href_target.get_attribute('href').strip()
+							plan = plans_template.copy()
+							plan["plan_name"] = title
+							plan["sub_url"] = target_url
+							plan_arr.append(plan)
+					else :
+						raise Exception("URL capture ID class invalid.")
+					url["plans"] = plan_arr
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
