@@ -516,7 +516,13 @@ def scrape_web(request, normalize_result = False):
 							for col in columns :
 								#print(col.get_attribute('innerHTML'))
 							new_row["price"] = numberCheckLambda(columns[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
+
+							now = datetime.now()
+							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
+							new_row["datetime"] = dt_string
+
 							list_of_rows.append(new_row)
+							
 					elif clicked :
 						init_web_contents = driver.find_elements(By.XPATH, f"{target_class}")
 
