@@ -11,8 +11,12 @@ import json
 from datetime import datetime
 import sys
 import os
+import threading
 
 throw_error_to_warn_new_row = False
+
+list_of_rows = []
+unknown_rows = []
 
 mock_request = """{
    "price_keywords":[
@@ -547,21 +551,9 @@ OperatorUnsupportedException = Exception("Unsupported Operator.")
 UntrackableException = Exception("Untrackable Page")
 CaptureModeException = Exception("No such capture mode.")
 
-def scrape_web(request, normalize_result = False):
-	try :
-		qr = json.loads(request)
-		price_keywords = qr['price_keywords']
-		urls = qr['urls']
-		webdriver_timeout = qr['webdriver_timeout']
-
-		#print(qr)
-
-		list_of_rows = []
-		unknown_rows = []
-
-		for url in urls :
-			#print(url)
-
+def scrape_page(url,price_keywords,webdriver_timeout) :
+	if True :
+		if True :
 			driver = webdriver.Chrome()
 			driver.implicitly_wait(webdriver_timeout)
 			action = ActionChains(driver)
@@ -1099,6 +1091,22 @@ def scrape_web(request, normalize_result = False):
 							list_of_rows.append(new_row)
 
 			driver.close()
+
+def scrape_web(request, normalize_result = False):
+	try :
+		qr = json.loads(request)
+		price_keywords = qr['price_keywords']
+		urls = qr['urls']
+		webdriver_timeout = qr['webdriver_timeout']
+
+		#print(qr)
+
+		threads = []
+
+		for url in urls :
+			thread = threading.Thread(target=scrape_page, args=(url,price_keywords,webdriver_timeout))
+			threads.append(thread)
+			thread.start()
 
 		if normalize_result :
 			for row in list_of_rows :
