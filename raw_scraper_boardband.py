@@ -707,10 +707,9 @@ def scrape_web(request, normalize_result = False):
 				"file_that_errored": e_filename
 			}])
 
-print(scrape_web(mock_request, normalize_result=True))
+#print(scrape_web(mock_request, normalize_result=True))
 
-"""
+
 expected_result = scrape_web(mock_request, normalize_result=True)
 for result in expected_result :
 	print(result)
-"""
