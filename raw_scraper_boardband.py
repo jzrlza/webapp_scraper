@@ -49,6 +49,55 @@ mock_request = """{
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
+            },
+            {
+               "plan_name":"POWER4 Advance",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"Serenade",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"BYOD",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"SuperMESH WiFi",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"Entertainment",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"BROADBAND24",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"POWER4 Starter",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
             }
          ]
       }
@@ -87,6 +136,55 @@ mock_request_temp = """{
             },
             {
                "plan_name":"2Gbps Fibre",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"POWER4 Advance",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"Serenade",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"BYOD",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"SuperMESH WiFi",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"Entertainment",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"BROADBAND24",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"POWER4 Starter",
                "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
