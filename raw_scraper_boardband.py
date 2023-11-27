@@ -37,7 +37,7 @@ mock_request = """{
          "collect_sub_urls": true,
          "plans":[
             {
-               "plan_name":"temp",
+               "plan_name":"Home FibreLAN",
                "capture_sub_names": true,
                "capture_mode":0,
                "has_extra_table":false,
@@ -488,11 +488,10 @@ def scrape_web(request, normalize_result = False):
 			scrolled = False
 
 			if track_new_mega_row :
-				pass
 				#raise error when there's new row but not match any members of the plans
-				"""
+
 				if operator_id == 0 :
-					mega_class_target = "//*[@class='carousel-inner-content']"
+					mega_class_target = "//*[contains(@class, 'cms-primary-button')]"
 
 					root_web_contents = driver.find_elements(By.XPATH, f"{mega_class_target}")
 					for root_web_content in root_web_contents :
@@ -513,7 +512,7 @@ def scrape_web(request, normalize_result = False):
 								unknown_rows.append(unknown_new_row)
 				else :
 					raise UntrackableException
-				"""
+
 
 			if collect_sub_urls :
 				if operator_id == 0 :
@@ -521,11 +520,21 @@ def scrape_web(request, normalize_result = False):
 
 					href_targets = driver.find_elements(By.XPATH, f"{collect_sub_urls_class}")
 					for href_target in href_targets :
+						root_div = href_target.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+						title = root_div.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
 						target_url = href_target.get_attribute('href').strip()
-						print(target_url)
+						for plan in url["plans"] :
+							plan_name = plan["plan_name"]
+							if re.search(plan_name, title, re.IGNORECASE) :
+								plan["sub_url"] = target_url
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
+				if collect_sub_urls :
+					if plan["sub_url"] == None or plan["sub_url"] == "" :
+						raise Exception("URL relation to plan name error.")
+					driver.get(plan["sub_url"]) 
+
 				target_string = price_keywords[0]
 				plan_name = plan["plan_name"]
 				capture_mode_id = plan["capture_mode"]
@@ -543,7 +552,7 @@ def scrape_web(request, normalize_result = False):
 				#if-else structured like this on purpose for ease of re-readability
 				if operator_id == 0 :
 					if capture_mode_id == 0 :
-						target_class = "//*[contains(@class, 'cms-primary-button')]"
+						target_class = "//*[contains(@class, 'cmp-package-card')]"
 					else :
 						raise CaptureModeException
 				elif operator_id == 1 :
