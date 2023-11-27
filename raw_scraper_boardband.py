@@ -344,6 +344,8 @@ def scrape_web(request, normalize_result = False):
 							plan_arr.append(plan)
 					else :
 						raise Exception("URL capture ID class invalid.")
+				else :
+					raise Exception("URL capture Operator ID invalid.")
 				url["plans"] = plan_arr
 
 			for plan in url["plans"] :
