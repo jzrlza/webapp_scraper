@@ -64,102 +64,46 @@ mock_request = """{
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
-         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
+         "url_link":"https://www.ais.th/consumers/fibre/package",
          "operator_id":0,
-         "pricing_type":0,
+         "pricing_type":2,
          "track_new_mega_row": true,
+         "collect_sub_urls": true
          "plans":[
             {
-               "plan_name":"โปรแนะนำ",
+               "plan_name":"temp",
                "capture_sub_names": true,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
-            },
-            {
-               "plan_name":"โปร NET SIM",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
             }
          ]
       },
       {
-         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call",
+         "url_link":"https://www.ais.th/consumers/fibre/package",
          "operator_id":0,
-         "pricing_type":0,
-         "track_new_mega_row": false,
+         "pricing_type":2,
+         "track_new_mega_row": true,
+         "collect_sub_urls": true
          "plans":[
             {
-               "plan_name":"โปรแนะนำ",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ]
-      },
-      {
-         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call-internet",
-         "operator_id":0,
-         "pricing_type":0,
-         "track_new_mega_row": false,
-         "plans":[
-            {
-               "plan_name":"โปรแนะนำ",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ]
-      },
-      {
-         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/special",
-         "operator_id":0,
-         "pricing_type":0,
-         "track_new_mega_row": false,
-         "plans":[
-            {
-               "plan_name":"โปรแนะนำ",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ]
-      },
-      {
-         "url_link":"https://www.dtac.co.th/prepaid/simdtac.html",
-         "operator_id":1,
-         "pricing_type":0,
-         "track_new_mega_row": false,
-         "plans":[
-            {
-               "plan_name":"ซิมเติมเงินดีแทค",
+               "plan_name":"temp",
                "capture_sub_names": true,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
-            },
-            {
-               "plan_name":"ซิมดีแทคเติมเงินอื่น",
-               "capture_sub_names": true,
-               "capture_mode":1,
-               "has_extra_table":false,
-               "has_term_and_condition":false
             }
          ]
       },
       {
-         "url_link":"https://www.true.th/truemoveh/prepaid/",
+         "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-special-ssv/",
          "operator_id":2,
-         "pricing_type":0,
-         "track_new_mega_row": false,
+         "pricing_type":2,
+         "track_new_mega_row": true,
+         "collect_sub_urls": true
          "plans":[
             {
-               "plan_name":"ซิมเติมเงิน",
+               "plan_name":"temp",
                "capture_sub_names": true,
                "capture_mode":0,
                "has_extra_table":false,
