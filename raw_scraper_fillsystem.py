@@ -265,8 +265,8 @@ possible_time_limit_units = ['วัน', 'เดือน', 'สัปดาห
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) : #void function
 	is_extra = True
 
-	print(list_item_icon_img)
-	print(list_item_infos_head, list_item_infos_body)
+	#print(list_item_icon_img)
+	#print(list_item_infos_head, list_item_infos_body)
 
 	#XG zone
 	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or re.search('3g', list_item_icon_img, re.IGNORECASE) :
@@ -316,7 +316,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_infos_body, 'Tbps')*1000.0
 		is_extra = False
 
-	print(list_item_infos_footer)
+	#print(list_item_infos_footer)
 	#time limit zone
 	if "นาน" in list_item_infos_head or "นาน" in list_item_infos_body or "นาน" in list_item_infos_footer :
 		for time_limit_unit in possible_time_limit_units :
@@ -397,7 +397,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	if re.search('SMS/MMS', list_item_infos_head, re.IGNORECASE) :
 		chunks = list_item_infos_body.strip().split(",")
 		for chunk in chunks :
-			print(chunk, price_keywords)
+			#print(chunk, price_keywords)
 			if re.search('SMS', chunk, re.IGNORECASE) :
 				new_row["sms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
 			elif re.search('MMS', chunk, re.IGNORECASE) :
@@ -416,8 +416,8 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 
 #DTAC -----------
 def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) :
-	print(full_raw_txt)
-	print(icon_class)
+	#print(full_raw_txt)
+	#print(icon_class)
 
 	if icon_class == "ico-call-all" :
 		new_row["call_first_minute_fee_baht_per_minute"] = numberCheckLambda(full_raw_txt)
@@ -428,7 +428,7 @@ def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class
 		new_row["internet_fee_baht_per_mb"] = numberCheckLambda(full_raw_txt)
 	else :
 		trim_txt = full_raw_txt.replace('<br>', ' ')
-		print(trim_txt)
+		#print(trim_txt)
 
 #TRUE -----------
 def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks, price_keywords = ["บาท"], sub_price_keywords = ["สต."]) :
@@ -440,7 +440,7 @@ def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks, price_keywo
 	price_unit_str_1 = price_blocks[1].get_attribute('innerHTML').split('<span')[0].strip()
 	price_unit_str_2 = price_blocks[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 
-	print(head_str, price_str, price_unit_str_1, price_unit_str_2, footer_str)
+	#print(head_str, price_str, price_unit_str_1, price_unit_str_2, footer_str)
 
 	if "เน็ต" in head_str :
 		new_row["price"] = numberCheckLambda(price_str)
@@ -802,7 +802,7 @@ def scrape_web(request, normalize_result = False):
 
 		e_line_number = e_traceback.tb_lineno
 
-		print(e)
+		#print(e)
 
 		return json.dumps([{
 				"error": e_message,
