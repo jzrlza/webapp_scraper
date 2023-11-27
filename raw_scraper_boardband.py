@@ -466,7 +466,7 @@ UntrackableException = Exception("Untrackable Page")
 CaptureModeException = Exception("No such capture mode.")
 
 def scrape_web(request, normalize_result = False):
-	try :
+	#try :
 		qr = json.loads(request)
 		price_keywords = qr['price_keywords']
 		sub_price_keywords = qr['sub_price_keywords']
@@ -548,6 +548,7 @@ def scrape_web(request, normalize_result = False):
 					if plan["sub_url"] == None or plan["sub_url"] == "" :
 						raise Exception("URL relation to plan name error.")
 					driver.get(plan["sub_url"]) 
+					driver.implicitly_wait(2)
 
 				target_string = price_keywords[0]
 				plan_name = plan["plan_name"]
@@ -566,7 +567,7 @@ def scrape_web(request, normalize_result = False):
 				#if-else structured like this on purpose for ease of re-readability
 				if operator_id == 0 :
 					if capture_mode_id == 0 :
-						target_class = "//*[contains(@class, 'cmp-package-card')]"
+						target_class = "//*[@class='package-card-generic']"
 					else :
 						raise CaptureModeException
 				elif operator_id == 1 :
@@ -688,8 +689,8 @@ def scrape_web(request, normalize_result = False):
 
 		result = json.dumps(list_of_rows)
 		#print(result)
-		return result #list_of_rows
-
+		return list_of_rows
+"""
 	except Exception as e :
 		e_type, e_object, e_traceback = sys.exc_info()
 
@@ -706,7 +707,7 @@ def scrape_web(request, normalize_result = False):
 				"line_of_error": e_line_number,
 				"file_that_errored": e_filename
 			}])
-
+"""
 #print(scrape_web(mock_request, normalize_result=True))
 
 
