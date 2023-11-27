@@ -510,7 +510,7 @@ def scrape_web(request, normalize_result = False):
 					root_web_contents = driver.find_elements(By.XPATH, f"{mega_class_target}")
 					for root_web_content in root_web_contents :
 						mega_root = root_web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-						title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+						title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
 						this_title_is_in_planned_plan = False
 						for plan in url["plans"] :
 							plan_name = plan["plan_name"]
@@ -522,7 +522,7 @@ def scrape_web(request, normalize_result = False):
 							else :
 								unknown_new_row = row_obj_template.copy()
 								unknown_new_row["operator"] = operator_name
-								unknown_new_row["plan"] = plan_name+" ****"
+								unknown_new_row["plan"] = title+" ****"
 								unknown_rows.append(unknown_new_row)
 				else :
 					raise UntrackableException
