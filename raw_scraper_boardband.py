@@ -43,7 +43,34 @@ mock_request = """{
              "capture_mode":0,
              "has_extra_table":false,
              "has_term_and_condition":false
-         }
+         },
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/fibre",
+         "operator_id":0,
+         "pricing_type":2,
+         "track_new_mega_row": false,
+         "collect_sub_urls": true,
+         "urls_class_type_id": 1,
+         "plans":[],
+         "plans_template": {
+             "plan_name":"",
+             "capture_sub_names": false,
+             "capture_mode":0,
+             "has_extra_table":true,
+             "has_term_and_condition":false
+         },
+         "special_case_plans": [
+	         {
+	             "plan_name":"Smart AI Gamer",
+	             "sub_url": "https://www.ais.th/consumers/fibre/package/smart-ai-gamer/",
+	             "capture_sub_names": false,
+	             "capture_mode":1,
+	             "has_extra_table":true,
+	             "has_term_and_condition":false
+	         }
+         ]
       }
    ],
    "webdriver_timeout":15
@@ -78,7 +105,8 @@ mock_request_temp = """{
              "capture_mode":0,
              "has_extra_table":false,
              "has_term_and_condition":false
-         }
+         },
+         "special_case_plans": []
       },
       {
          "url_link":"https://www.ais.th/consumers/fibre",
@@ -94,7 +122,17 @@ mock_request_temp = """{
              "capture_mode":0,
              "has_extra_table":false,
              "has_term_and_condition":false
-         }
+         },
+         "special_case_plans": [
+	         {
+	             "plan_name":"Smart AI Gamer",
+	             "sub_url": "https://www.ais.th/consumers/fibre/package/smart-ai-gamer/",
+	             "capture_sub_names": false,
+	             "capture_mode":1,
+	             "has_extra_table":true,
+	             "has_term_and_condition":false
+	         }
+         ]
       },
       {
          "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-special-ssv/",
@@ -111,7 +149,8 @@ mock_request_temp = """{
                "has_extra_table":false,
                "has_term_and_condition":false
             }
-         ]
+         ],
+         "special_case_plans": []
       }
    ],
    "webdriver_timeout":15
@@ -263,6 +302,8 @@ def scrape_web(request, normalize_result = False):
 		list_of_rows = []
 		unknown_rows = []
 
+		hrefs = []
+
 		for url in urls :
 			#print(url)
 
@@ -278,6 +319,7 @@ def scrape_web(request, normalize_result = False):
 			track_new_mega_row = url["track_new_mega_row"]
 			collect_sub_urls = url["collect_sub_urls"]
 			urls_class_type_id = url["urls_class_type_id"]
+			special_case_plans = url["special_case_plans"]
 			mega_class_target = ""
 			collect_sub_urls_class = ""
 
@@ -329,19 +371,38 @@ def scrape_web(request, normalize_result = False):
 							plan = plans_template.copy()
 							plan["plan_name"] = title
 							plan["sub_url"] = target_url
+							if target_url in hrefs :
+								plan["is_duplicate_url"] = True
+							else :
+								hrefs.append(target_url)
+								plan["is_duplicate_url"] = False
 							plan_arr.append(plan)
 					elif urls_class_type_id == 1 :
 						collect_sub_urls_class = "//*[contains(@class, 'cms-secondary-button') and contains(@class, 'cms-fullWidth-button')]"
 
 						href_targets = driver.find_elements(By.XPATH, f"{collect_sub_urls_class}")
 						for href_target in href_targets :
-							root_div = href_target.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-							title = root_div.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
+							#root_div = href_target.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+							#title = root_div.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
 							target_url = href_target.get_attribute('href').strip()
-							plan = plans_template.copy()
-							plan["plan_name"] = title
-							plan["sub_url"] = target_url
-							plan_arr.append(plan)
+							is_special = False
+							for special_plan in special_case_plans :
+								if target_url in special_plan["sub_url"] :
+									is_special = True
+									new_plan = special_plan.copy()
+									new_plan["is_duplicate_url"] = False
+									plan_arr.append(new_plan)
+
+							if not is_special :
+								plan = plans_template.copy()
+								#plan["plan_name"] = title
+								plan["sub_url"] = target_url
+								if target_url in hrefs :
+									plan["is_duplicate_url"] = True
+								else :
+									hrefs.append(target_url)
+									plan["is_duplicate_url"] = False
+								plan_arr.append(plan)
 					else :
 						raise Exception("URL capture ID class invalid.")
 				else :
@@ -353,6 +414,8 @@ def scrape_web(request, normalize_result = False):
 				if collect_sub_urls :
 					if plan["sub_url"] == None or plan["sub_url"] == "" :
 						raise Exception("URL relation to plan name error.")
+					if plan["is_duplicate_url"] :
+						continue
 					driver.get(plan["sub_url"]) 
 					driver.implicitly_wait(2)
 
@@ -366,14 +429,24 @@ def scrape_web(request, normalize_result = False):
 				target_click_class = ""
 				menu_to_click_class = ""
 				table_target_class = ""
+				title_class = ""
 				table_temp_arr = []
 				disabled_mode = False #temp value
 				clicked = False
+				is_special_case = False
 
 				#if-else structured like this on purpose for ease of re-readability
 				if operator_id == 0 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='package-card-generic']"
+						title_class = "//*[contains(@class, 'cms-color-kellyGreen-500')]"
+					elif capture_mode_id == 1 :
+						target_class = "//*[@class='package-card-generic']"
+						if plan["has_extra_table"] :
+							table_target_class = "//table[@class='table-style']"
+						else :
+							raise Exception("this one needs table detection")
+						is_special_case = True
 					else :
 						raise CaptureModeException
 				elif operator_id == 1 :
@@ -393,9 +466,6 @@ def scrape_web(request, normalize_result = False):
 
 				#init_web_contents_lambda = lambda title_is_at_header : driver.find_elements(By.CSS_SELECTOR, f".{target_class}")[0].find_elements(By.XPATH, f'./div[contains(@class, "{operator_card_classes[operator]}")]') if title_is_at_header == True else driver.find_elements(By.CSS_SELECTOR, f".{target_class}")
 				if not disabled_mode :
-
-					if plan["has_extra_table"] :
-						pass
 
 					if requires_click :
 						time.sleep(1)
@@ -431,7 +501,23 @@ def scrape_web(request, normalize_result = False):
 					else :
 						clicked = True
 
-					if clicked :
+					if is_special_case :
+						time.sleep(2)
+						table = driver.find_elements(By.XPATH, f"{table_target_class}")[0]
+						elements = table.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+						#print(table.get_attribute('innerHTML'))
+						for row in elements :
+							columns = row.find_elements(By.XPATH, '*')
+							#print("row")
+							new_row = row_obj_template.copy()
+							new_row["operator"] = operator_name
+							new_row["plan"] = plan_name
+							new_row["system"] = pricing_type_id
+							for col in columns :
+								#print(col.get_attribute('innerHTML'))
+							new_row["price"] = numberCheckLambda(columns[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
+							list_of_rows.append(new_row)
+					elif clicked :
 						init_web_contents = driver.find_elements(By.XPATH, f"{target_class}")
 
 						for i in range(len(init_web_contents)) :
@@ -449,6 +535,10 @@ def scrape_web(request, normalize_result = False):
 									price_txt = top_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
 									new_row["price"] = numberCheckLambda(price_txt)
 
+									if plan_name == "" or plan_name == None :
+										 title_elem = driver.find_elements(By.XPATH, f"{title_class}")[0]
+										 new_row["plan"] = title_elem.get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
+									
 							"""
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
