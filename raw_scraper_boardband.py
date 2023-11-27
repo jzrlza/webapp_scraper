@@ -479,6 +479,7 @@ def scrape_web(request, normalize_result = False):
 			operator_name = operators[url["operator_id"]]
 			pricing_type_id = url["pricing_type"]
 			track_new_mega_row = url["track_new_mega_row"]
+			collect_sub_urls = url["collect_sub_urls"]
 			mega_class_target = ""
 
 			need_to_scroll = False
@@ -487,6 +488,7 @@ def scrape_web(request, normalize_result = False):
 			if track_new_mega_row :
 				pass
 				#raise error when there's new row but not match any members of the plans
+				"""
 				if operator_id == 0 :
 					mega_class_target = "//*[@class='carousel-inner-content']"
 
@@ -509,6 +511,7 @@ def scrape_web(request, normalize_result = False):
 								unknown_rows.append(unknown_new_row)
 				else :
 					raise UntrackableException
+				"""
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
