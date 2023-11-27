@@ -14,40 +14,6 @@ import os
 
 throw_error_to_warn_new_row = False
 
-mock_request_temp = """{
-   "price_keywords":[
-      "บาท",
-      ".-",
-      "Baht",
-      "THB",
-      "฿"
-   ],
-   "sub_price_keywords":[
-      "สต.",
-      "สตางค์"
-   ],
-   "predefined_g_no": "5G",
-   "predefined_g_no_if_free": "4G",
-   "urls":[
-      {
-         "url_link":"https://www.true.th/truemoveh/prepaid/",
-         "operator_id":2,
-         "pricing_type":0,
-         "track_new_mega_row": false,
-         "plans":[
-            {
-               "plan_name":"ซิมเติมเงิน",
-               "capture_sub_names": true,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ]
-      }
-   ],
-   "webdriver_timeout":15
-}"""
-
 mock_request = """{
    "price_keywords":[
       "บาท",
@@ -68,7 +34,42 @@ mock_request = """{
          "operator_id":0,
          "pricing_type":2,
          "track_new_mega_row": true,
-         "collect_sub_urls": true
+         "collect_sub_urls": true,
+         "plans":[
+            {
+               "plan_name":"temp",
+               "capture_sub_names": true,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
+      }
+   ],
+   "webdriver_timeout":15
+}"""
+
+mock_request_temp = """{
+   "price_keywords":[
+      "บาท",
+      ".-",
+      "Baht",
+      "THB",
+      "฿"
+   ],
+   "sub_price_keywords":[
+      "สต.",
+      "สตางค์"
+   ],
+   "predefined_g_no": "5G",
+   "predefined_g_no_if_free": "4G",
+   "urls":[
+      {
+         "url_link":"https://www.ais.th/consumers/fibre/package",
+         "operator_id":0,
+         "pricing_type":2,
+         "track_new_mega_row": true,
+         "collect_sub_urls": true,
          "plans":[
             {
                "plan_name":"temp",
@@ -84,7 +85,7 @@ mock_request = """{
          "operator_id":0,
          "pricing_type":2,
          "track_new_mega_row": true,
-         "collect_sub_urls": true
+         "collect_sub_urls": true,
          "plans":[
             {
                "plan_name":"temp",
@@ -100,7 +101,7 @@ mock_request = """{
          "operator_id":2,
          "pricing_type":2,
          "track_new_mega_row": true,
-         "collect_sub_urls": true
+         "collect_sub_urls": true,
          "plans":[
             {
                "plan_name":"temp",
@@ -481,6 +482,7 @@ def scrape_web(request, normalize_result = False):
 			track_new_mega_row = url["track_new_mega_row"]
 			collect_sub_urls = url["collect_sub_urls"]
 			mega_class_target = ""
+			collect_sub_urls_class = ""
 
 			need_to_scroll = False
 			scrolled = False
@@ -513,6 +515,15 @@ def scrape_web(request, normalize_result = False):
 					raise UntrackableException
 				"""
 
+			if collect_sub_urls :
+				if operator_id == 0 :
+					collect_sub_urls_class = "//*[contains(@class, 'cms-primary-button')]"
+
+					href_targets = driver.find_elements(By.XPATH, f"{collect_sub_urls_class}")
+					for href_target in href_targets :
+						target_url = href_target.get_attribute('href').strip()
+						print(target_url)
+
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
 				target_string = price_keywords[0]
@@ -532,7 +543,7 @@ def scrape_web(request, normalize_result = False):
 				#if-else structured like this on purpose for ease of re-readability
 				if operator_id == 0 :
 					if capture_mode_id == 0 :
-						target_class = "//*[@class='package-card-generic']"
+						target_class = "//*[contains(@class, 'cms-primary-button')]"
 					else :
 						raise CaptureModeException
 				elif operator_id == 1 :
@@ -604,94 +615,10 @@ def scrape_web(request, normalize_result = False):
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
-									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-									if not re.search(plan_name, title, re.IGNORECASE) :
-										continue
+									pass
 
-									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
-									if capture_sub_names :
-										actual_plan_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-										new_row["plan"] = actual_plan_name
-									if re.search(price_keywords[0], first_block.get_attribute('innerHTML').strip(), re.IGNORECASE) :
-										raw_txt_thb = first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-										new_row["price"] = getNumberByUnit(price_keywords[0], raw_txt_thb.replace('<b>', ' ').replace('</b>', ' '))
 
-									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
-									second_block__info_block_1 = second_block.find_elements(By.XPATH, '*')[0]
-									second_block__info_block_2 = second_block.find_elements(By.XPATH, '*')[1]
-									second_block__info_block_1__items = second_block__info_block_1.find_elements(By.XPATH, '*')
-									for list_item in second_block__info_block_1__items :
-										list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-										list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
-										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
-										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
-										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer, price_keywords, sub_price_keywords)
-									if "ค่าเปลี่ยน" in second_block__info_block_2.get_attribute('innerHTML').strip() :
-										raw_txt = second_block__info_block_2.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-										new_row["promotion_switch_fee"] = getNumberByUnit(price_keywords[0], raw_txt)
-
-							elif operator_id == 1 :
-								if capture_mode_id == 0 :
-									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-									title = root_block.find_elements(By.XPATH, '*')[2].get_attribute('innerHTML').strip()
-									if not re.search(plan_name, title, re.IGNORECASE) :
-										continue
-
-									first_blocks = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									price_block = first_blocks[2]
-									details_blocks = first_blocks[3].find_elements(By.XPATH, '*')
-
-									price_block_txt = price_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').replace('</span>', '').replace('/', ' ').replace('<span>', '').strip()
-									#print(price_block_txt)
-									new_row["price"] = getNumberByUnit(price_keywords[0], price_block_txt)
-
-									details_block__top_elements = details_blocks[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									for top_elem in details_block__top_elements :
-										insertRowInfoForDTACCards(new_row, capture_mode_id, top_elem.get_attribute('innerHTML').strip(), "", price_keywords, sub_price_keywords)
-									details_block__bottom_elements = details_blocks[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									for bottom_elem in details_block__bottom_elements :
-										sub_elems = bottom_elem.find_elements(By.XPATH, '*')
-										insertRowInfoForDTACCards(new_row, capture_mode_id, sub_elems[1].get_attribute('innerHTML').strip(), sub_elems[0].get_attribute('class'), price_keywords, sub_price_keywords)
-
-								elif capture_mode_id == 1 :
-									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-									if not re.search(plan_name, title, re.IGNORECASE) :
-										continue
-
-									real_blocks = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									top_detail = real_blocks[len(real_blocks)-3]
-									bottom_details = real_blocks[len(real_blocks)-1].find_elements(By.XPATH, '*')
-
-									new_row["plan"] = bottom_details[0].get_attribute('innerHTML').strip()
-									price_block_txt = bottom_details[1].get_attribute('innerHTML').replace('</span>', '').replace('/', ' ').replace('<span>', '').strip()
-									new_row["price"] = getNumberByUnit(price_keywords[0], price_block_txt.replace('ฟรี', '0'))
-
-							elif operator_id == 2 :
-								if capture_mode_id == 0 :
-									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-									title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-									if not re.search(plan_name, title, re.IGNORECASE) :
-										continue
-
-									real_items = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									top_head = real_items[0]
-									second_head = real_items[1]
-									head_txt = second_head.get_attribute('innerHTML').strip()
-									if "ย้ายค่าย" in head_txt :
-										continue
-									new_row["plan"] = head_txt
-									basic_details_blocks = real_items[len(real_items)-3].find_elements(By.XPATH, '*')
-									basic_details__left_blocks = basic_details_blocks[0].find_elements(By.XPATH, '*')
-									basic_details__right_blocks = basic_details_blocks[1].find_elements(By.XPATH, '*')
-									price_details_blocks = real_items[len(real_items)-2].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									new_row["price"] = numberCheckLambda(price_details_blocks[1].get_attribute('innerHTML').strip())
-									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__left_blocks, price_keywords, sub_price_keywords)
-									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__right_blocks, price_keywords, sub_price_keywords)
-									
-
+							"""
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
 								new_row["unlimited_internet_mode"] = 1
@@ -702,7 +629,7 @@ def scrape_web(request, normalize_result = False):
 								new_row["unlimited_internet_mode"] = 3
 							elif new_row["internet_gbs"] == 0.0 :
 								new_row["unlimited_internet_mode"] = 0
-
+							"""
 							now = datetime.now()
 							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
 							new_row["datetime"] = dt_string
