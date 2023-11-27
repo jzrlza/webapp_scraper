@@ -344,7 +344,7 @@ def scrape_web(request, normalize_result = False):
 							plan_arr.append(plan)
 					else :
 						raise Exception("URL capture ID class invalid.")
-					url["plans"] = plan_arr
+				url["plans"] = plan_arr
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
