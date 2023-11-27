@@ -38,7 +38,14 @@ mock_request = """{
          "plans":[
             {
                "plan_name":"Home FibreLAN",
-               "capture_sub_names": true,
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"2Gbps Fibre",
+               "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
@@ -72,8 +79,15 @@ mock_request_temp = """{
          "collect_sub_urls": true,
          "plans":[
             {
-               "plan_name":"temp",
-               "capture_sub_names": true,
+               "plan_name":"Home FibreLAN",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"2Gbps Fibre",
+               "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
@@ -89,7 +103,7 @@ mock_request_temp = """{
          "plans":[
             {
                "plan_name":"temp",
-               "capture_sub_names": true,
+               "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
@@ -105,7 +119,7 @@ mock_request_temp = """{
          "plans":[
             {
                "plan_name":"temp",
-               "capture_sub_names": true,
+               "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
@@ -508,7 +522,7 @@ def scrape_web(request, normalize_result = False):
 							else :
 								unknown_new_row = row_obj_template.copy()
 								unknown_new_row["operator"] = operator_name
-								unknown_new_row["plan"] = plan_name
+								unknown_new_row["plan"] = plan_name+" ****"
 								unknown_rows.append(unknown_new_row)
 				else :
 					raise UntrackableException

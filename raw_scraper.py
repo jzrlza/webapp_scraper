@@ -597,7 +597,7 @@ def scrape_web(request, normalize_result = False):
 							else :
 								unknown_new_row = row_obj_template.copy()
 								unknown_new_row["operator"] = operator_name
-								unknown_new_row["plan"] = plan_name
+								unknown_new_row["plan"] = plan_name+" ****"
 								unknown_rows.append(unknown_new_row)
 				else :
 					raise UntrackableException
