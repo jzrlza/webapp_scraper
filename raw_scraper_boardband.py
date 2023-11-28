@@ -513,7 +513,7 @@ def scrape_web(request, normalize_result = False):
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["system"] = pricing_type_id
-							for col in columns :
+							#for col in columns :
 								#print(col.get_attribute('innerHTML'))
 							new_row["price"] = numberCheckLambda(columns[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
 
