@@ -33,12 +33,12 @@ mock_request = """{
          "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-special-ssv/",
          "operator_id":2,
          "pricing_type":2,
-         "track_new_mega_row": true,
-         "collect_sub_urls": true,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
          "urls_class_type_id": 0,
          "plans":[
             {
-               "plan_name":"temp",
+               "plan_name":"True Gigatex PRO Special",
                "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
@@ -113,12 +113,12 @@ mock_request_temp = """{
          "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-special-ssv/",
          "operator_id":2,
          "pricing_type":2,
-         "track_new_mega_row": true,
-         "collect_sub_urls": true,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
          "urls_class_type_id": 0,
          "plans":[
             {
-               "plan_name":"temp",
+               "plan_name":"True Gigatex PRO Special",
                "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
@@ -425,14 +425,12 @@ def scrape_web(request, normalize_result = False):
 						is_special_case = True
 					else :
 						raise CaptureModeException
-				elif operator_id == 1 :
+				elif operator_id == 2 :
 					if capture_mode_id == 0 :
-						target_class = "//*[@class='lg-item-sim']"
-					elif capture_mode_id == 1 :
-						target_class = "//*[@class='item-sim']"
+						target_class = "//*[@class='x-g2fj0g']"
 					else :
 						raise CaptureModeException
-				elif operator_id == 2 :
+				elif operator_id == 3 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='x-1rtrt6h']"
 					else :
@@ -520,7 +518,12 @@ def scrape_web(request, normalize_result = False):
 									if plan_name == "" or plan_name == None :
 										 title_elem = driver.find_elements(By.XPATH, f"{title_class}")[0]
 										 new_row["plan"] = title_elem.get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
-									
+							elif operator_id == 2 :
+								if capture_mode_id == 0 :
+									top_block = web_content.find_elements(By.XPATH, '*')[0]
+									bottom_block = web_content.find_elements(By.XPATH, '*')[1]
+									price_txt = bottom_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
+									new_row["price"] = numberCheckLambda(price_txt)
 							"""
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
