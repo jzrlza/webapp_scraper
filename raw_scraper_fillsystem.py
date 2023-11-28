@@ -522,10 +522,11 @@ def scrape_web(request, normalize_result = False):
 		list_of_rows = []
 		unknown_rows = []
 
+		driver = webdriver.Chrome()
+
 		for url in urls :
 			#print(url)
-
-			driver = webdriver.Chrome()
+			
 			driver.implicitly_wait(webdriver_timeout)
 			action = ActionChains(driver)
 
@@ -763,7 +764,7 @@ def scrape_web(request, normalize_result = False):
 							#print(new_row)
 							list_of_rows.append(new_row)
 
-			driver.close()
+		driver.close()
 
 		if normalize_result :
 			for row in list_of_rows :
