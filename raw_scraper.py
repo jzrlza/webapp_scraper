@@ -564,7 +564,6 @@ def scrape_web(request, normalize_result = False):
 
 		for url in urls :
 			#print(url)
-
 			
 			driver.implicitly_wait(webdriver_timeout)
 			action = ActionChains(driver)
