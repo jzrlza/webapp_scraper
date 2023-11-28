@@ -478,7 +478,7 @@ UntrackableException = Exception("Untrackable Page")
 CaptureModeException = Exception("No such capture mode.")
 
 def scrape_web(request, normalize_result = False):
-	#try :
+	try :
 		qr = json.loads(request)
 		price_keywords = qr['price_keywords']
 		sub_price_keywords = qr['sub_price_keywords']
@@ -787,8 +787,8 @@ def scrape_web(request, normalize_result = False):
 
 		result = json.dumps(list_of_rows)
 		#print(result)
-		return list_of_rows
-"""
+		return result #list_of_rows
+
 	except Exception as e :
 		e_type, e_object, e_traceback = sys.exc_info()
 
@@ -798,17 +798,18 @@ def scrape_web(request, normalize_result = False):
 
 		e_line_number = e_traceback.tb_lineno
 
-		print(e)
+		#print(e)
 
 		return json.dumps([{
 				"error": e_message,
 				"line_of_error": e_line_number,
 				"file_that_errored": e_filename
 			}])
+
+print(scrape_web(mock_request, normalize_result=True))
+
 """
-#print(scrape_web(mock_request, normalize_result=True))
-
-
 expected_result = scrape_web(mock_request, normalize_result=True)
 for result in expected_result :
 	print(result)
+"""
