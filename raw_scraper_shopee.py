@@ -188,7 +188,7 @@ UntrackableException = Exception("Untrackable Page")
 CaptureModeException = Exception("No such capture mode.")
 
 def scrape_web(request, normalize_result = False):
-	try :
+	#try :
 		qr = json.loads(request)
 		price_keywords = qr['price_keywords']
 		sub_price_keywords = qr['sub_price_keywords']
@@ -213,15 +213,31 @@ def scrape_web(request, normalize_result = False):
 
 			driver.get(url["url_link"])
 
-			#operator_id = url["operator_id"]
-			#operator_name = operators[url["operator_id"]]
-			#pricing_type_id = url["pricing_type"]
-			#track_new_mega_row = url["track_new_mega_row"]
-			#mega_class_target = ""
+			lang = {"thai": 0, "english": 1}
 
-			#need_to_scroll = False
-			#scrolled = False
+			time.sleep(1)
 
+			target_class = "//*[contains(@class, 'language-selection__list')]"
+			lang_select_btn = driver.find_elements(By.XPATH, f"{target_class}")[lang["english"]].find_elements(By.XPATH, '*')[0]
+
+			print(lang_select_btn.get_attribute('innerHTML').strip())
+
+			driver.execute_script("""
+				let target_btn = arguments[0]
+				target_btn.click()
+			""", lang_select_btn)
+
+			time.sleep(1)
+
+			driver.get(url["url_link"])
+
+			time.sleep(1)
+
+			target_class = "//*[contains(@class, 'flex') and contains(@class, 'items-center') and contains(@class, 'bR6mEk')]"
+			selectors = driver.find_elements(By.XPATH, f"{target_class}")[0].find_elements(By.XPATH, '*')
+			for selection in selectors :
+				elem_txt = selection.get_attribute('innerHTML').strip()
+				print(elem_txt)
 			
 
 		driver.close()
@@ -253,7 +269,7 @@ def scrape_web(request, normalize_result = False):
 		result = json.dumps(list_of_rows)
 		#print(result)
 		return result #list_of_rows
-
+"""
 	except Exception as e :
 		e_type, e_object, e_traceback = sys.exc_info()
 
@@ -277,4 +293,3 @@ print(scrape_web(mock_request, normalize_result=True))
 expected_result = scrape_web(mock_request, normalize_result=True)
 for result in expected_result :
 	print(result)
-"""
