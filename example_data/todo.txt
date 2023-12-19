@@ -1,34 +1,8 @@
-ui ==> minimal and simple, use modes for each type of visuals (non-programmer users)
-   each url has each algorithm predefined (update each month)
+postpaid (monthly, system 0)
 
----> urls are addable : each sub-mode must have picture example
+- new field "package" (AIS only, the rest same as "plan")
+- FUP for มหามงคล via collect link and visit each
 
----> evaluate by excel results (table in website display first at bottom of website)
+boardband
 
-[done]
-
-NEXT tomorrow the day before present
-
-ui --->
-
--tables make clean
-  -enum display text based on its number
-  -true or false may use other words to fit into "database policy" (and infinity...)
-  -field names normalization into thai
-
-[done]
-
-NEXT
-
--->
- - Add datetime field for the sake of future database comparison query [done]
-
- - เติมเงิน pages
-   - this might take until Friday
-
- - handle TRUE case in รายเดือน in case of increased plan, right now current plan input system cannot detect additional stuffs [done]
-
-
-
-==========================
-
+- translate excel format output as Python code process as usual
