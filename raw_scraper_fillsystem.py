@@ -488,6 +488,7 @@ row_obj_template = {
 	"price": 0.0,
 	"g_no": None,
 	"unlimited_internet_mode": 0,
+	"wifi": False,
 	"internet_gbs": 0.0,
 	"fair_usage_policy": None,
 	"speed": None,
