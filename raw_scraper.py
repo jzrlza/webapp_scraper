@@ -1109,9 +1109,9 @@ def scrape_web(request, normalize_result = False):
 						row[row_key] = f'{quotation}-{quotation}'
 					else :
 						if row[row_key] == True :
-							row[row_key] = f'{quotation}{1}{quotation}'
+							row[row_key] = f'{quotation}{"Yes"}{quotation}'
 						elif row[row_key] == False :
-							row[row_key] = f'{quotation}{0}{quotation}'
+							row[row_key] = f'{quotation}{"No"}{quotation}'
 						elif isinstance(row[row_key], float) :
 							if row[row_key].is_integer() :
 								row[row_key] = f'{quotation}{row[row_key]:.0f}{quotation}'
