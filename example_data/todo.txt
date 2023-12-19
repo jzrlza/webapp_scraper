@@ -3,6 +3,6 @@ postpaid (monthly, system 0)
 - new field "package" (AIS only, the rest same as "plan")
 - FUP for มหามงคล via collect link and visit each
 
-boardband
+boardband (system 2)
 
 - translate excel format output as Python code process as usual
