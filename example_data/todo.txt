@@ -1,6 +1,6 @@
 postpaid (monthly, system 0, due end of 2023)
 
-- new field "package" (AIS only, the rest same as "plan")
+- new field "package" (AIS only, the rest same as "plan") [done]
 - FUP for มหามงคล (and all packages if possible) via collect link and visit each (AIS)
 
 boardband (เน็ตบ้าน, system 2, not in a hurry, can be done later, start of 2024)
@@ -8,4 +8,4 @@ boardband (เน็ตบ้าน, system 2, not in a hurry, can be done later
 - translate excel format output as Python code process as usual
 
 
-Fix TRUE prepaid...?
+Fix TRUE prepaid...? [done]
