@@ -1041,7 +1041,11 @@ def scrape_web(request, normalize_result = False):
 									basic_info_block_infos = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 									wifi_content = web_content.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
 									g_block = web_content.find_elements(By.XPATH, '*')[4]
-									misc_blocks = web_content.find_elements(By.XPATH, '*')[5].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+									last_block = web_content.find_elements(By.XPATH, '*')[5]
+									if "ข้อกำหนดและเงื่อนไข" in last_block.get_attribute('innerHTML') :
+										misc_blocks = []
+									else :
+										misc_blocks = last_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 
 									new_row["price"] = numberCheckLambda(price_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 
