@@ -284,6 +284,9 @@ possible_fup_units = ['Gbps', 'Mbps', 'kbps']
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
 	is_extra = True
 
+	#Package name zone
+	#new_row["package"]
+
 	#XG zone
 	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or re.search('3g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
