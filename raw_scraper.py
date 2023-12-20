@@ -521,7 +521,7 @@ operator_cards_container_classes = {
 row_obj_template = {
 	"operator": "",
 	"plan": "",
-	"package_name": "",
+	"package": "",
 	"price": 0.0,
 	"system": -1,
 	"unlimited_call": False,
