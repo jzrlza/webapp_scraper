@@ -284,9 +284,6 @@ possible_fup_units = ['Gbps', 'Mbps', 'kbps']
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "") : #void function
 	is_extra = True
 
-	#Package name zone
-	#new_row["package"]
-
 	#XG zone
 	if "3G" in list_item_infos_head or "3G" in list_item_infos_body or re.search('3g', list_item_icon_img, re.IGNORECASE) :
 		if new_row["g_no"] == None :
@@ -784,9 +781,14 @@ def scrape_web(request, normalize_result = False):
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
-									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1]
-									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
+									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
+									first_block__package_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 									#print(first_block__price)
+									if first_block__package_name != "" :
+										new_row["package"] = first_block__package_name
+									else :
+										new_row["package"] = plan_name
 									new_row["price"] = first_block__price
 									#first_block__system = checkSystemGetEnum(first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
 
@@ -824,7 +826,12 @@ def scrape_web(request, normalize_result = False):
 
 								elif capture_mode_id == 1 :
 									first_block = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0]
+									first_block__package_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
+									if first_block__package_name != "" :
+										new_row["package"] = first_block__package_name
+									else :
+										new_row["package"] = plan_name
 									new_row["price"] = first_block__price
 									#print(first_block__price)
 
