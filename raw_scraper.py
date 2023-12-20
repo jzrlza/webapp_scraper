@@ -840,6 +840,7 @@ def scrape_web(request, normalize_result = False):
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
 							
 							elif operator_id == 1 :
+								new_row["package"] = plan_name
 								if capture_mode_id == 0 :
 									root_block = web_content.find_elements(By.XPATH, '*')[0]
 									first_block = root_block.find_elements(By.XPATH, '*')[0]
@@ -1020,6 +1021,7 @@ def scrape_web(request, normalize_result = False):
 									new_row["price"] = getNumberByUnit(target_string, price_box_str)
 
 							elif operator_id == 2 :
+								new_row["package"] = plan_name
 								if capture_mode_id == 0 :
 									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
 									title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
