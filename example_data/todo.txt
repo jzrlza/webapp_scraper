@@ -6,3 +6,6 @@ postpaid (monthly, system 0, due end of 2023)
 boardband (เน็ตบ้าน, system 2, not in a hurry, can be done later, start of 2024)
 
 - translate excel format output as Python code process as usual
+
+
+Fix TRUE prepaid...?

@@ -782,7 +782,7 @@ def scrape_web(request, normalize_result = False):
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
-									first_block__package_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									first_block__package_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									first_block__price = numberCheckLambda(first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 									#print(first_block__price)
 									if first_block__package_name != "" :
