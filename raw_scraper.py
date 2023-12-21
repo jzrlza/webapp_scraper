@@ -850,8 +850,8 @@ def scrape_web(request, normalize_result = False):
 										#print(list_item_infos_head, list_item_infos_body)
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
 							
-									extra_button_block = web_content.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
-									if extra_button_block :
+									extra_button_block = web_content.find_elements(By.XPATH, '*')[3]
+									if "เพิ่มเติม" in extra_button_block.get_attribute('innerHTML').strip() :
 										new_row["has_extra_info_button"] = True
 
 							elif operator_id == 1 :
