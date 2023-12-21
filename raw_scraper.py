@@ -524,6 +524,7 @@ row_obj_template = {
 	"package": "",
 	"price": 0.0,
 	"system": -1,
+	"has_extra_info_button": False,
 	"unlimited_call": False,
 	"call_minutes": 0.0,
 	"capture_in_seconds": False,
@@ -849,6 +850,10 @@ def scrape_web(request, normalize_result = False):
 										#print(list_item_infos_head, list_item_infos_body)
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
 							
+									extra_button_block = web_content.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+									if extra_button_block :
+										new_row["has_extra_info_button"] = True
+
 							elif operator_id == 1 :
 								new_row["package"] = plan_name
 								if capture_mode_id == 0 :

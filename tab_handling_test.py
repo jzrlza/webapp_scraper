@@ -360,6 +360,7 @@ def scrape_web(request, normalize_result = False):
 				table_temp_arr = []
 				disabled_mode = False #temp value
 				clicked = False
+				clickers = []
 
 				#if-else structured like this on purpose for ease of re-readability
 				if operator_id == 0 :
@@ -500,6 +501,7 @@ def scrape_web(request, normalize_result = False):
 							new_row["plan"] = plan_name
 							new_row["system"] = pricing_type_id
 
+							#new line
 							original_window = driver.current_window_handle
 							print(original_window)
 							
@@ -573,7 +575,22 @@ def scrape_web(request, normalize_result = False):
 										#print(list_item_infos_head, list_item_infos_body)
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
 
+									#new tab
 									extra_button_block = web_content.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+									clickers.append(extra_button_block)
+									# Get all attributes of the element
+									all_attributes = driver.execute_script(
+										"var items = {}; "
+										"for (index = 0; index < arguments[0].attributes.length; ++index) "
+										"{ items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; "
+										"return items;", extra_button_block)
+
+									# Print all attributes
+									for key, value in all_attributes.items():
+										print(f"{key}: {value}")
+
+							#for clicker in clickers :
+							#	clicker.click()
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
