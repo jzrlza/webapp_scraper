@@ -1045,15 +1045,19 @@ def scrape_web(request, normalize_result = False):
 									title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									if not re.search(plan_name, title, re.IGNORECASE) :
 										continue
-									price_block = web_content.find_elements(By.XPATH, '*')[0]
-									basic_info_block_infos = web_content.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-									wifi_content = web_content.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
-									g_block = web_content.find_elements(By.XPATH, '*')[4]
-									last_block = web_content.find_elements(By.XPATH, '*')[5]
-									if "ข้อกำหนดและเงื่อนไข" in last_block.get_attribute('innerHTML') :
+									root_blocks_list = web_content.find_elements(By.XPATH, '*')
+									price_block = root_blocks_list[0]
+									basic_info_block_infos = root_blocks_list[1].find_elements(By.XPATH, '*')
+									wifi_content = root_blocks_list[3].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
+									g_block = root_blocks_list[4]
+									extra_block = root_blocks_list[5]
+									if "ข้อกำหนดและเงื่อนไข" in extra_block.get_attribute('innerHTML') :
 										misc_blocks = []
 									else :
-										misc_blocks = last_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+										misc_blocks = extra_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+									final_policy_button_block = root_blocks_list[len(root_blocks_list)-1]
+									if "ข้อกำหนดและเงื่อนไข" in final_policy_button_block.get_attribute('innerHTML') :
+										new_row["has_extra_info_button"] = True
 
 									new_row["price"] = numberCheckLambda(price_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
 
