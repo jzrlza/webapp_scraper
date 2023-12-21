@@ -883,6 +883,10 @@ def scrape_web(request, normalize_result = False):
 											center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
 										insertRowInfoForDTACCards(new_row, capture_mode_id, center_item_raw_txt)
 
+									second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
+									if "เพิ่มเติม" in second_block__footer.get_attribute('innerHTML').strip() or "โบนัส" in second_block__footer.get_attribute('innerHTML').strip() :
+										new_row["has_extra_info_button"] = True
+
 									if plan["has_extra_table"] :
 										for table_item in table_temp_arr :
 											if new_row["price"] == table_item["price"] :
@@ -892,7 +896,6 @@ def scrape_web(request, normalize_result = False):
 													else :
 														new_row["extra"] += micro_delimeter+extra_item_str.replace(comma_detection, comma_replacer)
 									else :
-										second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
 										second_block__footer_items = second_block__footer.find_elements(By.XPATH, '*')
 										second_block__footer_has_more_than_one_blocks = len(second_block__footer_items) > 1
 										footerless = True
