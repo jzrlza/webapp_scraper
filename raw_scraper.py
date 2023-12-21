@@ -524,7 +524,6 @@ row_obj_template = {
 	"package": "",
 	"price": 0.0,
 	"system": -1,
-	"has_extra_info_button": False,
 	"unlimited_call": False,
 	"call_minutes": 0.0,
 	"capture_in_seconds": False,
@@ -543,7 +542,8 @@ row_obj_template = {
 	"contract": 0,
 	"extra": None,
 	"notes": None,
-	"datetime": None
+	"datetime": None,
+	"has_extra_info_button": False
 }
 
 OperatorUnsupportedException = Exception("Unsupported Operator.")
