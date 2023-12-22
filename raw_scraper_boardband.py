@@ -753,8 +753,22 @@ def scrape_web(request, normalize_result = False):
 									new_row["price"] = numberCheckLambda(price_txt)
 
 									if plan_name == "" or plan_name == None :
-										 title_elem = driver.find_elements(By.XPATH, f"{title_class}")[0]
-										 new_row["plan"] = title_elem.get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
+										title_elem = driver.find_elements(By.XPATH, f"{title_class}")[0]
+										new_row["plan"] = title_elem.get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
+
+									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
+									second_block_raw_list = second_block.find_elements(By.XPATH, '*')
+									second_block_has_footer = len(second_block_raw_list) > 1
+									second_block__list_items = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									for list_item in second_block__list_items :
+										list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
+										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
+										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
+										print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
+										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
+
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
 									top_block = web_content.find_elements(By.XPATH, '*')[0]
