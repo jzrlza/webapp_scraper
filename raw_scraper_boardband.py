@@ -451,7 +451,56 @@ def conversionMbpsDLUL(dl_or_ul_text) :
 
 #AIS --------------
 def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) : #void function
-	pass
+	is_extra = True
+
+	if "ระยะสัญญา" in list_item_infos_head :
+		new_row["contract"] = int(getNumberByUnit("เดือน", list_item_infos_body))
+		is_extra = False
+
+	#WiFi boolean zone
+	if re.search('WiFi', list_item_infos_head, re.IGNORECASE) or re.search('WiFi', list_item_infos_body, re.IGNORECASE) :
+		new_row["wifi"] = True
+		if re.search('router', list_item_infos_head, re.IGNORECASE) or re.search('router', list_item_infos_body, re.IGNORECASE):
+			new_row["wifi_router"] = True
+		if re.search('mesh', list_item_infos_head, re.IGNORECASE) or re.search('mesh', list_item_infos_body, re.IGNORECASE):
+			new_row["wifi_mesh"] = True
+
+	if "เน็ตมือถือ" in list_item_infos_head :
+		if checkIsInfiniteText(list_item_infos_body):
+			new_row["internet_gbs"] = INFINITY
+		elif 'GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
+			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_infos_body, 'Gbps')
+		elif 'MB' in list_item_infos_body and not ('Mbps' in list_item_infos_body) :
+			new_row["internet_gbs"] = getNumberByUnit("MB", list_item_infos_body, 'Mbps')/1000.0
+		elif 'TB' in list_item_infos_body and not ('Tbps' in list_item_infos_body) :
+			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_infos_body, 'Tbps')*1000.0
+		is_extra = False
+
+	#entertainment zone
+	entertainments = []
+	if re.search('netflix', list_item_icon_img, re.IGNORECASE) :
+		new_row["entertainment"] = True
+		new_row["entertainment_package"] = ""
+		entertainments.append(list_item_infos_body)
+		is_extra = False
+	if re.search('PLAY Premium Plus', list_item_infos_head, re.IGNORECASE) :
+		new_row["entertainment"] = True
+		new_row["entertainment_package"] = ""
+		entertainments.append(list_item_infos_head)
+		new_row["entertainment_contract"] = int(getNumberByUnit("เดือน", list_item_infos_body))
+		is_extra = False
+	for i in range(len(entertainments)) :
+		new_row["entertainment_package"] += entertainments[i].replace(comma_detection, comma_replacer)
+		if i < len(entertainments) - 1 :
+			new_row["entertainment_package"] += micro_delimeter
+
+	#extra zone
+	if is_extra :
+		trim_txt = list_item_infos_head.replace('<b>', '').replace('</b>', '')+" "+list_item_infos_body.replace('<b>', '').replace('</b>', '')
+		if new_row["extra"] == None :
+			new_row["extra"] = trim_txt.replace(comma_detection, comma_replacer)
+		else :
+			new_row["extra"] += micro_delimeter+trim_txt.replace(comma_detection, comma_replacer)
 
 #DTAC -----------
 def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) :
@@ -778,7 +827,7 @@ def scrape_web(request, normalize_result = False):
 										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
-										print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
+										#print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 
 									if second_block_has_footer :
@@ -820,7 +869,7 @@ def scrape_web(request, normalize_result = False):
 							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
 							new_row["datetime"] = dt_string
 
-							#print(new_row)
+							print(new_row)
 							list_of_rows.append(new_row)
 
 		driver.close()
