@@ -769,6 +769,16 @@ def scrape_web(request, normalize_result = False):
 										print(list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer)
 
+									if second_block_has_footer :
+										for i in range(len(second_block_raw_list)) :
+											target_item = second_block_raw_list[i]
+											#print(target_item.get_attribute('class'))
+											if i == 0 or "separator" in target_item.get_attribute('class') or "data-speed" in target_item.get_attribute('class') :
+												continue
+											
+											raw_str_item = target_item.get_attribute('innerHTML')
+											print(raw_str_item)
+
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
 									top_block = web_content.find_elements(By.XPATH, '*')[0]
