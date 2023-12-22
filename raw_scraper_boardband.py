@@ -14,7 +14,7 @@ import os
 
 throw_error_to_warn_new_row = False
 
-mock_request = """{
+mock_request_temp = """{
    "price_keywords":[
       "บาท",
       ".-",
@@ -159,7 +159,7 @@ mock_request = """{
    "webdriver_timeout":15
 }"""
 
-mock_request_temp = """{
+mock_request = """{
    "price_keywords":[
       "บาท",
       ".-",
@@ -470,6 +470,27 @@ row_obj_template = {
 	"plan": "",
 	"system": -1,
 	"price": 0.0,
+   "internet_gbs": 0.0,
+   "download_speed": None,
+   "upload_speed": None,
+   "fair_usage_policy": None,
+   "g_no": None,
+   "unlimited_internet_mode": 0,
+   "wifi": False,
+   "wifi_router": False,
+   "wifi_mesh": False,
+   "unlimited_call": False,
+   "call_minutes": 0.0,
+   "sms": 0,
+   "mms": 0,
+   "entertainment": False,
+   "entertainment_package": None,
+   "entertainment_contract": 0,
+   "priviledge": False,
+   "priviledge_exclusive": None,
+   "contract": 0,
+   "extra": None,
+   "notes": None,
 	"datetime": None
 }
 
