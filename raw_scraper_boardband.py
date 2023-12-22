@@ -30,130 +30,30 @@ mock_request_temp = """{
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
-         "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-special-ssv/",
-         "operator_id":2,
+         "url_link":"https://www.ais.th/consumers/fibre",
+         "operator_id":0,
          "pricing_type":2,
          "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"True Gigatex PRO Special",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro",
-         "operator_id":2,
-         "pricing_type":2,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"True Gigatex PRO",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-security",
-         "operator_id":2,
-         "pricing_type":2,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"True Gigatex PRO Security",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-gold/",
-         "operator_id":2,
-         "pricing_type":2,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"True Gigatex PRO Gold",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-cyod/",
-         "operator_id":2,
-         "pricing_type":2,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"True Gigatex PRO CYOD",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-gamer/",
-         "operator_id":2,
-         "pricing_type":2,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"True Gigatex PRO Gamer",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.true.th/en/trueonline/package-types/true-gigatex-pro-sme/",
-         "operator_id":2,
-         "pricing_type":2,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"True Gigatex PRO SME",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
+         "collect_sub_urls": true,
+         "urls_class_type_id": 1,
+         "plans":[],
+         "plans_template": {
+             "plan_name":"",
+             "capture_sub_names": false,
+             "capture_mode":0,
+             "has_extra_table":false,
+             "has_term_and_condition":false
+         },
+         "special_case_plans": [
+	         {
+	             "plan_name":"Smart AI Gamer",
+	             "sub_url": "https://www.ais.th/consumers/fibre/package/smart-ai-gamer/",
+	             "capture_sub_names": false,
+	             "capture_mode":1,
+	             "has_extra_table":true,
+	             "has_term_and_condition":false
+	         }
+         ]
       }
    ],
    "webdriver_timeout":15
@@ -776,18 +676,78 @@ def scrape_web(request, normalize_result = False):
 					if is_special_case :
 						time.sleep(2)
 						table = driver.find_elements(By.XPATH, f"{table_target_class}")[0]
+
 						elements = table.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 						#print(table.get_attribute('innerHTML'))
-						for row in elements :
+
+						dl_chunk_save = None
+						ul_chunk_save = None
+						wifi_router_save = None
+						contract_int_save = None
+						entertainment_save = None
+
+						for row_i in range(len(elements)) :
+							row = elements[row_i]
 							columns = row.find_elements(By.XPATH, '*')
 							#print("row")
 							new_row = row_obj_template.copy()
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["system"] = pricing_type_id
-							#for col in columns :
-								#print(col.get_attribute('innerHTML'))
-							new_row["price"] = numberCheckLambda(columns[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
+							for elem_i in range(len(columns)) :
+								elem = columns[elem_i]
+
+								if elem_i == 0 :
+									new_row["price"] = numberCheckLambda(elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
+								else :
+									if elem.get_attribute('rowspan') != None :
+										if int(elem.get_attribute('rowspan')) == len(elements) :
+											if elem_i == 1 : #dl ul
+												dl_ul_chunks = elem.find_elements(By.XPATH, '*')
+												dl_chunk = conversionMbpsDLUL(dl_ul_chunks[0].get_attribute('innerHTML').replace('<span class="white">', ' ').replace('</span>', ''))
+												ul_chunk = conversionMbpsDLUL(dl_ul_chunks[1].get_attribute('innerHTML').replace('<span class="white">', ' ').replace('</span>', ''))
+												new_row["download_speed"] = dl_chunk
+												new_row["upload_speed"] = ul_chunk
+												dl_chunk_save = dl_chunk
+												ul_chunk_save = ul_chunk
+											elif elem_i == 2 :
+												new_row["wifi_router"] = True
+												wifi_router_save = "obj_exists"
+											elif elem_i == 5 :
+												contract_int = int(elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
+												contract_int_save = contract_int
+												new_row["contract"] = contract_int
+
+										elif int(elem.get_attribute('rowspan')) == len(elements)-1 :
+											if elem_i == 3 :
+												new_row["entertainment"] = True
+												new_row["entertainment_package"] = "Play S"
+												new_row["entertainment_contract"] = contract_int_save
+												entertainment_save = "Play S"
+									else :
+										if row_i == 2 and elem_i == 1 :
+											raw_str = elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<span>', ' ').replace('</span>', '')
+											if checkIsInfiniteText(raw_str, internet_specific=True) :
+												new_row["internet_gbs"] = INFINITY
+											elif 'GB' in raw_str :
+												new_row["internet_gbs"] = getNumberByUnit("GB", raw_str, 'Gbps')
+											elif 'MB' in raw_str :
+												new_row["internet_gbs"] = getNumberByUnit("MB", raw_str, 'Mbps')/1000.0
+											elif 'TB' in raw_str :
+												new_row["internet_gbs"] = getNumberByUnit("TB", raw_str, 'Tbps')*1000.0
+
+								if dl_chunk_save :
+									new_row["download_speed"] = dl_chunk
+								if ul_chunk_save :
+									new_row["upload_speed"] = ul_chunk
+								if wifi_router_save :
+									new_row["wifi_router"] = True
+								if contract_int_save :
+									new_row["contract"] = contract_int_save
+								if entertainment_save :
+									new_row["entertainment"] = True
+									new_row["entertainment_package"] = entertainment_save
+									new_row["entertainment_contract"] = contract_int_save
 
 							now = datetime.now()
 							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
@@ -796,6 +756,7 @@ def scrape_web(request, normalize_result = False):
 							list_of_rows.append(new_row)
 							
 					elif clicked :
+						#continue
 						init_web_contents = driver.find_elements(By.XPATH, f"{target_class}")
 
 						for i in range(len(init_web_contents)) :
