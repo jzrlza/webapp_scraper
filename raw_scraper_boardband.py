@@ -823,7 +823,7 @@ def scrape_web(request, normalize_result = False):
 							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
 							new_row["datetime"] = dt_string
 
-							print(new_row)
+							#print(new_row)
 							list_of_rows.append(new_row)
 
 		driver.close()
