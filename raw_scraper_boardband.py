@@ -344,7 +344,7 @@ mock_request_temp = """{
          "special_case_plans": []
       }
    ],
-   "webdriver_timeout":5
+   "webdriver_timeout":15
 }"""
 
 #ไม่รวมย้ายค่าย
