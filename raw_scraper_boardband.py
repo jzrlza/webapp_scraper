@@ -552,7 +552,8 @@ row_obj_template = {
    "contract": 0,
    "extra": None,
    "notes": None,
-	"datetime": None
+	"datetime": None,
+	"has_extra_info_button": False
 }
 
 OperatorUnsupportedException = Exception("Unsupported Operator.")
@@ -726,6 +727,8 @@ def scrape_web(request, normalize_result = False):
 				elif operator_id == 2 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='x-g2fj0g']"
+						target_click_class = "//*[contains(@class, 'x-zvu66b') and contains(@class, 'btn-primary')]"
+						requires_click = True
 					else :
 						raise CaptureModeException
 				elif operator_id == 3 :
@@ -742,6 +745,8 @@ def scrape_web(request, normalize_result = False):
 					if requires_click :
 						time.sleep(1)
 						click_targets = driver.find_elements(By.XPATH, f"{target_click_class}")
+						if len(click_targets) == 0 :
+							clicked = True
 						for i in range(len(click_targets)):
 							target = click_targets[i]
 							menu_target = target.find_element(By.XPATH, "..")
@@ -914,7 +919,14 @@ def scrape_web(request, normalize_result = False):
 									bottom_block = web_content.find_elements(By.XPATH, '*')[1]
 									price_txt = bottom_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
 									new_row["price"] = numberCheckLambda(price_txt)
-							"""
+
+									package_name_block = top_block.find_elements(By.XPATH, '*')[1]
+									dl_ul_block = top_block.find_elements(By.XPATH, '*')[2]
+									extra_block = top_block.find_elements(By.XPATH, '*')[3]
+									bottom_button = bottom_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+									if "ดูรายละเอียด" in bottom_button.get_attribute('innerHTML') :
+										new_row["has_extra_info_button"] = True
+							
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
 								new_row["unlimited_internet_mode"] = 1
@@ -925,7 +937,7 @@ def scrape_web(request, normalize_result = False):
 								new_row["unlimited_internet_mode"] = 3
 							elif new_row["internet_gbs"] == 0.0 :
 								new_row["unlimited_internet_mode"] = 0
-							"""
+							
 							now = datetime.now()
 							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
 							new_row["datetime"] = dt_string
