@@ -921,8 +921,17 @@ def scrape_web(request, normalize_result = False):
 									new_row["price"] = numberCheckLambda(price_txt)
 
 									package_name_block = top_block.find_elements(By.XPATH, '*')[1]
+
 									dl_ul_block = top_block.find_elements(By.XPATH, '*')[2]
+									dl_num = dl_ul_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('/', '').strip()
+									dl_unit = dl_ul_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('/', '').strip()
+									ul_num = dl_ul_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('/', '').strip()
+									ul_unit =dl_ul_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').replace('/', '').strip()
+									new_row["download_speed"] = conversionMbpsDLUL(f"{dl_num} {dl_unit}")
+									new_row["upload_speed"] = conversionMbpsDLUL(f"{ul_num} {ul_unit}")
+
 									extra_block = top_block.find_elements(By.XPATH, '*')[3]
+									
 									bottom_button = bottom_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
 									if "ดูรายละเอียด" in bottom_button.get_attribute('innerHTML') :
 										new_row["has_extra_info_button"] = True
