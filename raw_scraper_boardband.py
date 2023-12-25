@@ -529,6 +529,7 @@ operator_cards_container_classes = {
 row_obj_template = {
 	"operator": "",
 	"plan": "",
+	"package": "",
 	"system": -1,
 	"price": 0.0,
    "internet_gbs": 0.0,
@@ -798,7 +799,9 @@ def scrape_web(request, normalize_result = False):
 							new_row = row_obj_template.copy()
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
+							new_row["package"] = plan_name
 							new_row["system"] = pricing_type_id
+
 							for elem_i in range(len(columns)) :
 								elem = columns[elem_i]
 
@@ -874,6 +877,7 @@ def scrape_web(request, normalize_result = False):
 							new_row["system"] = pricing_type_id
 							
 							if operator_id == 0 : #start at "package-card-generic"
+								new_row["package"] = plan_name
 								if capture_mode_id == 0 :
 									top_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
 									price_txt = top_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
@@ -921,17 +925,30 @@ def scrape_web(request, normalize_result = False):
 									new_row["price"] = numberCheckLambda(price_txt)
 
 									package_name_block = top_block.find_elements(By.XPATH, '*')[1]
+									new_row["package"] = package_name_block.get_attribute('innerHTML').replace('/', '').strip()
 
 									dl_ul_block = top_block.find_elements(By.XPATH, '*')[2]
 									dl_num = dl_ul_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('/', '').strip()
 									dl_unit = dl_ul_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('/', '').strip()
 									ul_num = dl_ul_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('/', '').strip()
-									ul_unit =dl_ul_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').replace('/', '').strip()
+									ul_unit = dl_ul_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').replace('/', '').strip()
 									new_row["download_speed"] = conversionMbpsDLUL(f"{dl_num} {dl_unit}")
 									new_row["upload_speed"] = conversionMbpsDLUL(f"{ul_num} {ul_unit}")
 
 									extra_blocks = top_block.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-
+									for extra_block in extra_block :
+										extra_text_to_add = ""
+										if extra_block.get_attribute('innerHTML') == "" :
+											continue
+										elif "image/webp" in extra_block.get_attribute('innerHTML') :
+											extra_text_to_add = "[image]"
+										else :
+											extra_text_to_add = extra_block.get_attribute('innerHTML').replace('<br>', ' ').replace('<span style="color:rgb(0,0,0);">', '').replace('</span>', '').strip()
+										if new_row["extra"] == None :
+											new_row["extra"] = extra_text_to_add.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+										else :
+											new_row["extra"] += micro_delimeter+extra_text_to_add.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+											
 									bottom_button = bottom_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
 									if "ดูรายละเอียด" in bottom_button.get_attribute('innerHTML') :
 										new_row["has_extra_info_button"] = True
