@@ -930,8 +930,8 @@ def scrape_web(request, normalize_result = False):
 									new_row["download_speed"] = conversionMbpsDLUL(f"{dl_num} {dl_unit}")
 									new_row["upload_speed"] = conversionMbpsDLUL(f"{ul_num} {ul_unit}")
 
-									extra_block = top_block.find_elements(By.XPATH, '*')[3]
-									
+									extra_blocks = top_block.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+
 									bottom_button = bottom_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
 									if "ดูรายละเอียด" in bottom_button.get_attribute('innerHTML') :
 										new_row["has_extra_info_button"] = True
