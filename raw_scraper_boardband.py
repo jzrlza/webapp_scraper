@@ -936,7 +936,7 @@ def scrape_web(request, normalize_result = False):
 									new_row["upload_speed"] = conversionMbpsDLUL(f"{ul_num} {ul_unit}")
 
 									extra_blocks = top_block.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									for extra_block in extra_block :
+									for extra_block in extra_blocks :
 										extra_text_to_add = ""
 										if extra_block.get_attribute('innerHTML') == "" :
 											continue
@@ -948,7 +948,7 @@ def scrape_web(request, normalize_result = False):
 											new_row["extra"] = extra_text_to_add.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
 										else :
 											new_row["extra"] += micro_delimeter+extra_text_to_add.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
-											
+
 									bottom_button = bottom_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
 									if "ดูรายละเอียด" in bottom_button.get_attribute('innerHTML') :
 										new_row["has_extra_info_button"] = True
