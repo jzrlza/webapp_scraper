@@ -44,7 +44,7 @@ test_rows = [
 		},
 		{
 			"value": "ดูฟรี 3 แอปดัง + รับชมความบันเทิงซีรีย์ดัง",
-			"row_span": 3
+			"row_span": 4
 		}
 	],
 	[
@@ -117,6 +117,16 @@ test_rows = [
 		{
 			"value": "Gold Member",
 			"row_span": 2
+		}
+	],
+	[
+		{
+			"value": "1499",
+			"row_span": 1
+		},
+		{
+			"value": "650 นาที",
+			"row_span": 1
 		}
 	],
 	[
