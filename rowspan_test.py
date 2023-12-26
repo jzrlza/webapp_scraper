@@ -172,12 +172,35 @@ for row_id in range(len(test_rows)) :
 		if column_id < len(columns) :
 			value_item = columns[column_id]
 		else :
+			#things get real mk2
+			searching_offset = True
+			while searching_offset :
+				print(column_id, id_offset, column_id+id_offset)
+				if column_rowspan_states[column_id+id_offset] > 1 :
+					print("leftover offsetting")
+					values.append(column_rowspan_value_states[column_id+id_offset])
+					column_rowspan_states[column_id+id_offset] -= 1
+					if column_id+id_offset < max_columns-1 :
+						id_offset += 1
+					else :
+						searching_offset = False
+						break
+				else :
+					print("leftover lock on")
+					if column_rowspan_bool_is_span_states[column_id+id_offset] :
+						values.append(column_rowspan_value_states[column_id+id_offset])
+						if column_rowspan_states[column_id+id_offset] <= 1 :
+							column_rowspan_bool_is_span_states[column_id+id_offset] = False
+					searching_offset = False
+					break
+			"""
 			print(column_id, id_offset, column_id+id_offset)
 			if column_rowspan_states[column_id+id_offset] > 1 :
 				print("leftover")
 				values.append(column_rowspan_value_states[column_id+id_offset])
 				column_rowspan_states[column_id+id_offset] -= 1
 			id_offset = 0
+			"""
 			break
 		if row_id == 0 :
 			print(column_id, id_offset, column_id+id_offset)
