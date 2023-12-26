@@ -24,35 +24,48 @@ mock_request = """{
    ],
    "urls":[
       {
-         "url_link":"https://www.ais.th/consumers/package/postpaid/postpaid-plans",
-         "operator_id":0,
+         "url_link":"https://www.dtac.co.th/postpaid/products/package.html",
+         "operator_id":1,
          "pricing_type":1,
          "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": -1,
          "plans":[
             {
-               "plan_name":"แพ็กเกจมหามงคล",
-               "capture_mode":1,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"5G Serenade",
-               "capture_mode":1,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"Online MAX",
-               "capture_mode":1,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            },
-            {
-               "plan_name":"Other",
-               "capture_mode":1,
-               "has_extra_table":false,
+               "plan_name":"dtac 5G Better+",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":true,
                "has_term_and_condition":false
             }
+         ],
+         "plans_template": "",
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/fibre",
+         "operator_id":0,
+         "pricing_type":2,
+         "track_new_mega_row": false,
+         "collect_sub_urls": true,
+         "urls_class_type_id": 1,
+         "plans":[],
+         "plans_template": {
+             "plan_name":"",
+             "capture_sub_names": false,
+             "capture_mode":0,
+             "has_extra_table":false,
+             "has_term_and_condition":false
+         },
+         "special_case_plans": [
+	         {
+	             "plan_name":"Smart AI Gamer",
+	             "sub_url": "https://www.ais.th/consumers/fibre/package/smart-ai-gamer/",
+	             "capture_sub_names": false,
+	             "capture_mode":1,
+	             "has_extra_table":true,
+	             "has_term_and_condition":false
+	         }
          ]
       }
    ],
@@ -371,6 +384,26 @@ def scrape_web(request, normalize_result = False):
 						target_click_class = "//*[contains(@class, 'search-tab-btn') and contains(@class, 'MuiTab-textColorPrimary') and contains(@class, 'MuiButtonBase-root')]"
 						target_class = "//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
 						need_to_scroll = True
+					else :
+						raise CaptureModeException
+				elif operator_id == 1 :
+					if capture_mode_id == 0 :
+						target_class = "//*[@class='wrapPackages']"
+						if plan["has_extra_table"] :
+							table_target_class = "//tbody[contains(@class, 'table-package') and contains(@class, 'fBetterReg')]"
+					elif capture_mode_id == 1 :
+						requires_click = True
+						if plan["has_term_and_condition"] :
+							target_click_class = "//*[contains(@class, 'content')]"
+						target_class = "//li[text()[contains(., '"+target_string+"')]]"
+						need_to_scroll = True
+					elif capture_mode_id == 2 :
+						target_class = "//*[contains(@class, 'card-promotion')]"
+					else :
+						raise CaptureModeException
+				elif operator_id == 2 :
+					if capture_mode_id == 0 :
+						target_class = "//*[@class='x-1iqxi85']"
 					else :
 						raise CaptureModeException
 				else :
