@@ -159,11 +159,11 @@ final_rows = []
 column_rowspan_states = {}
 column_rowspan_value_states = {}
 column_rowspan_bool_is_span_states = {}
+max_columns = 9999
 
 for row_id in range(len(test_rows)) :
 	columns = test_rows[row_id]
 	values = []
-	max_columns = 9999
 	if row_id == 0 :
 		max_columns = len(columns)
 	column_id = 0
