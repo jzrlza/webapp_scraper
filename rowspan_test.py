@@ -172,6 +172,7 @@ column_rowspan_bool_is_span_states = {}
 max_columns = 9999
 
 for row_id in range(len(test_rows)) :
+	print(f"row_id : {row_id}, {row_id+1} out of {len(test_rows)}")
 	columns = test_rows[row_id]
 	values = []
 	if row_id == 0 :
@@ -185,7 +186,7 @@ for row_id in range(len(test_rows)) :
 			#things get real mk2
 			searching_offset = True
 			while searching_offset :
-				print(column_id, id_offset, column_id+id_offset)
+				print(f"column_id: {column_id} | id_offset: {id_offset} | column_id+id_offset : {column_id+id_offset+1} out of {max_columns} columns")
 				if column_rowspan_states[column_id+id_offset] > 1 :
 					print("leftover offsetting")
 					values.append(column_rowspan_value_states[column_id+id_offset])
@@ -203,17 +204,9 @@ for row_id in range(len(test_rows)) :
 							column_rowspan_bool_is_span_states[column_id+id_offset] = False
 					searching_offset = False
 					break
-			"""
-			print(column_id, id_offset, column_id+id_offset)
-			if column_rowspan_states[column_id+id_offset] > 1 :
-				print("leftover")
-				values.append(column_rowspan_value_states[column_id+id_offset])
-				column_rowspan_states[column_id+id_offset] -= 1
-			id_offset = 0
-			"""
 			break
 		if row_id == 0 :
-			print(column_id, id_offset, column_id+id_offset)
+			print(f"column_id: {column_id} | id_offset: {id_offset} | column_id+id_offset : {column_id+id_offset+1} out of {max_columns} columns")
 			column_rowspan_states[column_id] = value_item['row_span']
 			column_rowspan_value_states[column_id] = value_item["value"]
 			if value_item['row_span'] > 1 :
@@ -225,7 +218,7 @@ for row_id in range(len(test_rows)) :
 			#things get real
 			searching_offset = True
 			while searching_offset :
-				print(column_id, id_offset, column_id+id_offset)
+				print(f"column_id: {column_id} | id_offset: {id_offset} | column_id+id_offset : {column_id+id_offset+1} out of {max_columns} columns")
 				if column_rowspan_states[column_id+id_offset] > 1 :
 					print("offsetting")
 					values.append(column_rowspan_value_states[column_id+id_offset])
