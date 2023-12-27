@@ -181,16 +181,16 @@ for row_id in range(len(test_rows)) :
 	id_offset = 0
 	print("Now iterating while loop with condition : column_id+id_offset < max_columns")
 	while column_id+id_offset < max_columns :
-		print("")
 		if column_id < len(columns) :
 			value_item = columns[column_id]
 		else :
 			#things get real mk2
 			searching_offset = True
 			while searching_offset :
-				print(f"column id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset} ({column_id+id_offset+1} out of {max_columns} columns)")
+				print(f"\ncolumn id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset} ({column_id+id_offset+1} out of {max_columns} columns)")
+				print(f"Rowspan num states of {column_id+id_offset} from previous row is {column_rowspan_states[column_id+id_offset]}")
 				if column_rowspan_states[column_id+id_offset] > 1 :
-					print("To do with states and vaules : Leftover Offsetting")
+					print("To do with states and values : Leftover Offsetting")
 					values.append(column_rowspan_value_states[column_id+id_offset])
 					column_rowspan_states[column_id+id_offset] -= 1
 					if column_id+id_offset < max_columns-1 :
@@ -199,7 +199,7 @@ for row_id in range(len(test_rows)) :
 						searching_offset = False
 						break
 				else :
-					print("To do with states and vaules : Leftover Lock On")
+					print("To do with states and values : Leftover Lock On")
 					if column_rowspan_bool_is_span_states[column_id+id_offset] :
 						values.append(column_rowspan_value_states[column_id+id_offset])
 						if column_rowspan_states[column_id+id_offset] <= 1 :
@@ -208,7 +208,7 @@ for row_id in range(len(test_rows)) :
 					break
 			break
 		if row_id == 0 :
-			print(f"column id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset+1} out of {max_columns} columns")
+			print(f"\ncolumn id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset+1} out of {max_columns} columns")
 			column_rowspan_states[column_id] = value_item['row_span']
 			column_rowspan_value_states[column_id] = value_item["value"]
 			if value_item['row_span'] > 1 :
@@ -220,9 +220,10 @@ for row_id in range(len(test_rows)) :
 			#things get real
 			searching_offset = True
 			while searching_offset :
-				print(f"column id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset+1} out of {max_columns} columns")
+				print(f"\ncolumn id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset+1} out of {max_columns} columns")
+				print(f"Rowspan num states of {column_id+id_offset} from previous row is {column_rowspan_states[column_id+id_offset]}")
 				if column_rowspan_states[column_id+id_offset] > 1 :
-					print("To do with states and vaules : Offsetting \n(due to previous row rowspan num storage > 1)")
+					print("To do with states and values : Offsetting")
 					values.append(column_rowspan_value_states[column_id+id_offset])
 					column_rowspan_states[column_id+id_offset] -= 1
 					if column_id+id_offset < max_columns-1 :
@@ -231,7 +232,7 @@ for row_id in range(len(test_rows)) :
 						searching_offset = False
 						break
 				else :
-					print("To do with states and vaules : Lock On \n(due to previous row rowspan num storage is 1)")
+					print("To do with states and values : Lock On")
 					column_rowspan_states[column_id+id_offset] = value_item['row_span']
 					column_rowspan_value_states[column_id+id_offset] = value_item["value"]
 					
