@@ -172,23 +172,25 @@ column_rowspan_bool_is_span_states = {}
 max_columns = 9999
 
 for row_id in range(len(test_rows)) :
-	print(f"row_id : {row_id}, {row_id+1} out of {len(test_rows)}")
+	print(f"Row ID : {row_id}, {row_id+1} out of {len(test_rows)}\n")
 	columns = test_rows[row_id]
 	values = []
 	if row_id == 0 :
 		max_columns = len(columns)
 	column_id = 0
 	id_offset = 0
+	print("Now iterating while loop with condition : column_id+id_offset < max_columns")
 	while column_id+id_offset < max_columns :
+		print("")
 		if column_id < len(columns) :
 			value_item = columns[column_id]
 		else :
 			#things get real mk2
 			searching_offset = True
 			while searching_offset :
-				print(f"column_id: {column_id} | id_offset: {id_offset} | column_id+id_offset : {column_id+id_offset+1} out of {max_columns} columns")
+				print(f"column id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset} ({column_id+id_offset+1} out of {max_columns} columns)")
 				if column_rowspan_states[column_id+id_offset] > 1 :
-					print("leftover offsetting")
+					print("To do with states and vaules : Leftover Offsetting")
 					values.append(column_rowspan_value_states[column_id+id_offset])
 					column_rowspan_states[column_id+id_offset] -= 1
 					if column_id+id_offset < max_columns-1 :
@@ -197,7 +199,7 @@ for row_id in range(len(test_rows)) :
 						searching_offset = False
 						break
 				else :
-					print("leftover lock on")
+					print("To do with states and vaules : Leftover Lock On")
 					if column_rowspan_bool_is_span_states[column_id+id_offset] :
 						values.append(column_rowspan_value_states[column_id+id_offset])
 						if column_rowspan_states[column_id+id_offset] <= 1 :
@@ -206,7 +208,7 @@ for row_id in range(len(test_rows)) :
 					break
 			break
 		if row_id == 0 :
-			print(f"column_id: {column_id} | id_offset: {id_offset} | column_id+id_offset : {column_id+id_offset+1} out of {max_columns} columns")
+			print(f"column id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset+1} out of {max_columns} columns")
 			column_rowspan_states[column_id] = value_item['row_span']
 			column_rowspan_value_states[column_id] = value_item["value"]
 			if value_item['row_span'] > 1 :
@@ -218,9 +220,9 @@ for row_id in range(len(test_rows)) :
 			#things get real
 			searching_offset = True
 			while searching_offset :
-				print(f"column_id: {column_id} | id_offset: {id_offset} | column_id+id_offset : {column_id+id_offset+1} out of {max_columns} columns")
+				print(f"column id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset+1} out of {max_columns} columns")
 				if column_rowspan_states[column_id+id_offset] > 1 :
-					print("offsetting")
+					print("To do with states and vaules : Offsetting \n(due to previous row rowspan num storage > 1)")
 					values.append(column_rowspan_value_states[column_id+id_offset])
 					column_rowspan_states[column_id+id_offset] -= 1
 					if column_id+id_offset < max_columns-1 :
@@ -229,7 +231,7 @@ for row_id in range(len(test_rows)) :
 						searching_offset = False
 						break
 				else :
-					print("lock on")
+					print("To do with states and vaules : Lock On \n(due to previous row rowspan num storage is 1)")
 					column_rowspan_states[column_id+id_offset] = value_item['row_span']
 					column_rowspan_value_states[column_id+id_offset] = value_item["value"]
 					
@@ -249,12 +251,18 @@ for row_id in range(len(test_rows)) :
 					break
 		column_id += 1
 
-	print(column_rowspan_states)
-	print(column_rowspan_value_states)
-	print(column_rowspan_bool_is_span_states)
+
+	print("\n==States storage, using 3 dict objects to fetch by indices easily==")
+	print("(These are accessed using 'column id + id offset' value)")
+	print(f"Rowspan num states : \n {column_rowspan_states}")
+	print(f"Cell values states according to previous rowspans : \n {column_rowspan_value_states}")
+	print(f"Boolean states to tell to fetch from previous rowspans or not : \n {column_rowspan_bool_is_span_states}")
+	print("====\n")
+	print("Result row below :")
 	print(values)
 	print("----")
 	final_rows.append(values)
 
+print("==== Final result ====")
 for row_values in final_rows :
 	print(row_values)
