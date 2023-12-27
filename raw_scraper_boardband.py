@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 import sys
 import os
+import rowspan_handler
 
 throw_error_to_warn_new_row = False
 
@@ -640,6 +641,7 @@ def scrape_web(request, normalize_result = False):
 
 						elements = table.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
 						#print(table.get_attribute('innerHTML'))
+						############# rowspan_handler.rowspan_handle(normalized_html_array)
 
 						dl_chunk_save = None
 						ul_chunk_save = None

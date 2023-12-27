@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 import sys
 import os
+import rowspan_handler
 
 throw_error_to_warn_new_row = False
 
@@ -667,6 +668,8 @@ def scrape_web(request, normalize_result = False):
 									table_body_target = tables[i]
 									break
 							#print(table_body_target.get_attribute('class'))
+							############# rowspan_handler.rowspan_handle(normalized_html_array)
+
 							hunt_keyword_1 = "คุ้มครอง"
 							hunt_keyword_1_field = "ประกันชีวิตและอุบัติเหตุ"
 							hunt_keyword_2 = "แอปดัง"
