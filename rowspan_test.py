@@ -209,6 +209,7 @@ for row_id in range(len(test_rows)) :
 			break
 		if row_id == 0 :
 			print(f"\ncolumn id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset+1} out of {max_columns} columns")
+			print(f"Init rowspan state of {column_id} as {value_item['row_span']}")
 			column_rowspan_states[column_id] = value_item['row_span']
 			column_rowspan_value_states[column_id] = value_item["value"]
 			if value_item['row_span'] > 1 :
