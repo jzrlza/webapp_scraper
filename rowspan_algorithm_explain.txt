@@ -4,9 +4,9 @@ States storage uses 3 dict objects to fetch by indices easily
 -Cell values states according to previous rowspans
 -Boolean states to tell to fetch from previous rowspans or not
 
-"To do with states and values" meanings :
+"To do with states and values" meanings (only if row_id > 0):
 
-Lock On => "Rowspan num states" value of previous was = 1, actions :
+Lock On => "Rowspan num states" value of previous was = 1 && 'column id' < 'total length of in-html columns', actions :
 1. update "Rowspan num states" of given 'column id + id offset' index
 2. update "Cell values states" of given 'column id + id offset' index
 3. Insert value into row data
@@ -16,9 +16,24 @@ Lock On => "Rowspan num states" value of previous was = 1, actions :
 4. set "Boolean states", if rowspan > 1, True, else False
 5. Break the while loop
 
-Offsetting => "Rowspan num states" value of previous was > 1, actions :
+Offsetting => "Rowspan num states" value of previous was > 1 && 'column id' < 'total length of in-html columns', actions :
 1. Insert value into row data using index of 'column id + id offset' rather than just 'column id'
 2. deduct "Rowspan num states" of old un-updated 'column id + id offset' index by 1
 3. Check offset until 3.1 condition is False
- 3.1 If 'column id + id offset' is < max columns minus 1, then add 'id offset' by 1
+ 3.1 If 'column id + id offset' is < max columns minus 1 , then add 'id offset' by 1
  3.2 Else, break the while loop
+
+Leftover Lock On => "Rowspan num states" value of previous was = 1 && 'column id' >= 'total length of in-html columns', actions :
+1. Insert value into row data
+ 1.1 If "Boolean states" of old un-updated 'column id + id offset' index is True, then insert the previous value
+   1.1.1 If that value of "rowspan num" by same index above is 1, set "boolean state" to false to prevent next row record this one
+ 1.2 Else, skip
+2. Break the while loop
+
+Leftover Offsetting => "Rowspan num states" value of previous was > 1 && 'column id' >= 'total length of in-html columns', actions :
+1. Insert value into row data using index of 'column id + id offset' rather than just 'column id'
+2. deduct "Rowspan num states" of old un-updated 'column id + id offset' index by 1
+3. Check offset until 3.1 condition is False
+ 3.1 If 'column id + id offset' is < max columns minus 1 , then add 'id offset' by 1
+ 3.2 Else, break the while loop
+(this one is surprisingly the same steps as "Offsetting" one, both just ignores HTML source and focus on state dicts)
