@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 import sys
 import os
+import rowspan_handler
 
 throw_error_to_warn_new_row = False
 
@@ -28,44 +29,13 @@ mock_request = """{
          "operator_id":1,
          "pricing_type":1,
          "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": -1,
          "plans":[
             {
                "plan_name":"dtac 5G Better+",
-               "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":true,
                "has_term_and_condition":false
             }
-         ],
-         "plans_template": "",
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.ais.th/consumers/fibre",
-         "operator_id":0,
-         "pricing_type":2,
-         "track_new_mega_row": false,
-         "collect_sub_urls": true,
-         "urls_class_type_id": 1,
-         "plans":[],
-         "plans_template": {
-             "plan_name":"",
-             "capture_sub_names": false,
-             "capture_mode":0,
-             "has_extra_table":false,
-             "has_term_and_condition":false
-         },
-         "special_case_plans": [
-	         {
-	             "plan_name":"Smart AI Gamer",
-	             "sub_url": "https://www.ais.th/consumers/fibre/package/smart-ai-gamer/",
-	             "capture_sub_names": false,
-	             "capture_mode":1,
-	             "has_extra_table":true,
-	             "has_term_and_condition":false
-	         }
          ]
       }
    ],
@@ -256,6 +226,127 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		else :
 			new_row["extra"] += micro_delimeter+trim_txt.replace(comma_detection, comma_replacer)
 
+#DTAC -----------
+def insertRowInfoForDTACCards(new_row, capture_mode_id, list_item_full_text) :
+	is_extra = True
+
+	#internet, g, fup, and gb zone
+	if 'เน็ต' in list_item_full_text :
+		if checkIsInfiniteText(list_item_full_text) :
+			new_row["internet_gbs"] = INFINITY
+		elif 'GB' in list_item_full_text :
+			new_row["internet_gbs"] = getNumberByUnit("GB", list_item_full_text, 'Gbps')
+		elif 'MB' in list_item_full_text :
+			new_row["internet_gbs"] = getNumberByUnit("MB", list_item_full_text, 'Mbps')/1000.0
+		elif 'TB' in list_item_full_text :
+			new_row["internet_gbs"] = getNumberByUnit("TB", list_item_full_text, 'Tbps')*1000.0
+
+		if "3G" in list_item_full_text :
+			if new_row["g_no"] == None :
+				new_row["g_no"] = "3G"
+			elif not "3G" in new_row["g_no"] :
+				new_row["g_no"] += "/3G"
+		if "4G" in list_item_full_text :
+			if new_row["g_no"] == None :
+				new_row["g_no"] = "4G"
+			elif not "4G" in new_row["g_no"] :
+				new_row["g_no"] += "/4G"
+		if "5G" in list_item_full_text :
+			if new_row["g_no"] == None :
+				new_row["g_no"] = "5G"
+			elif not "5G" in new_row["g_no"] :
+				new_row["g_no"] += "/5G"
+
+		for fup_unit in possible_fup_units :
+			if fup_unit in list_item_full_text :
+				new_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, list_item_full_text, "GB")
+				break
+
+		is_extra = False
+
+	#call zone
+	if 'โทรฟรีทุกเครือข่าย' in list_item_full_text :
+		#print(list_item_full_text)
+		if checkIsInfiniteText(list_item_full_text.strip().split(">")[1].split("<")[0]) :
+			new_row["call_minutes"] = INFINITY
+			new_row["unlimited_call"] = True
+		else :
+			new_row["call_minutes"] = getNumberByUnit("นาที", list_item_full_text, 'ชม')
+		is_extra = False
+
+	if "เบอร์ดีแทค" in list_item_full_text and "โทรฟรี" in list_item_full_text :
+		new_row["unlimited_call"] = True
+		is_extra = False
+
+	#priviledge zone
+	if re.search('member', list_item_full_text, re.IGNORECASE) :
+		priv_str = None
+		priv_str_chunks = list_item_full_text.replace('<br>', ' ').strip().split(">")[1].split("<")[0].split(" ")
+		for priv_str_chunk in priv_str_chunks :
+			if "สิทธิ์" in priv_str_chunk or re.search('member', priv_str_chunk, re.IGNORECASE) :
+				continue
+			else :
+				if priv_str == None :
+					priv_str = priv_str_chunk
+				else :
+					priv_str += " "+priv_str_chunk
+		new_row["priviledge"] = True
+		new_row["priviledge_exclusive"] = priv_str
+		is_extra = False
+
+	#wifi zone
+	if re.search('WiFi', list_item_full_text, re.IGNORECASE) :
+		new_row["wifi"] = True
+		is_extra = False
+
+	#entertainment zone
+	if 'ชมฟรี' in list_item_full_text or "ความบันเทิง" in list_item_full_text :
+		new_row["entertainment"] = True
+		entertainment_str = list_item_full_text.replace('<br>', ' ').replace('\n                                ', '').strip().split(">")[1].split("<")[0]
+		if new_row["entertainment_package"] == None :
+			new_row["entertainment_package"] = entertainment_str.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+		else :
+			new_row["entertainment_package"] += micro_delimeter+entertainment_str.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+		is_extra = False
+
+	#extra zone : this one isb too evil
+	if is_extra :
+		pass
+
+def insertRowInfoForTrueCards(new_row, capture_mode_id, list_item_full_text) :
+	if "สิทธิ์" in list_item_full_text and re.search('card', list_item_full_text, re.IGNORECASE) and re.search('true', list_item_full_text, re.IGNORECASE) :
+		
+		priv_str = None
+		priv_str_chunks = list_item_full_text.split(" ")
+		for priv_str_chunk_i in range(len(priv_str_chunks)) :
+			priv_str_chunk = priv_str_chunks[priv_str_chunk_i]
+			if priv_str_chunk_i == 0 :
+				continue
+			else :
+				if re.search('true', priv_str_chunks[priv_str_chunk_i-1], re.IGNORECASE) and re.search('card', priv_str_chunks[priv_str_chunk_i+1], re.IGNORECASE) :
+					priv_str = priv_str_chunk
+					break
+
+		new_row["priviledge"] = True
+		new_row["priviledge_exclusive"] = priv_str
+
+		if "เดือน" in list_item_full_text :
+			new_row["contract"] = getNumberByUnit("เดือน", list_item_full_text)
+
+	elif "ความบันเทิง" in list_item_full_text or "รับชม" in list_item_full_text or "ดูหนัง" in list_item_full_text or "ฟังเพลง" in list_item_full_text :
+		new_row["entertainment"] = True
+		if new_row["entertainment_package"] == None :
+			new_row["entertainment_package"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+		else :
+			new_row["entertainment_package"] += micro_delimeter+list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+		if "เดือน" in list_item_full_text :
+			new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_full_text.replace('<b>', '').replace('</b>', ''))
+	else :
+		if new_row["extra"] == None :
+			new_row["extra"] = list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+		else :
+			new_row["extra"] += micro_delimeter+list_item_full_text.replace('<b>', '').replace('</b>', '').replace(comma_detection, comma_replacer)
+
 operators = ["AIS", "DTAC", "TRUE"]
 operator_card_classes = { #where the title is inside each cards
 	"AIS" : ["package-card-generic", "MuiCardContent-root"],
@@ -296,7 +387,8 @@ row_obj_template = {
 	"contract": 0,
 	"extra": None,
 	"notes": None,
-	"datetime": None
+	"datetime": None,
+	"has_extra_info_button": False
 }
 
 OperatorUnsupportedException = Exception("Unsupported Operator.")
@@ -373,7 +465,6 @@ def scrape_web(request, normalize_result = False):
 				table_temp_arr = []
 				disabled_mode = False #temp value
 				clicked = False
-				clickers = []
 
 				#if-else structured like this on purpose for ease of re-readability
 				if operator_id == 0 :
@@ -420,12 +511,68 @@ def scrape_web(request, normalize_result = False):
 								if "responsive" in tables[i].find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
 									table_body_target = tables[i]
 									break
-							#print(table_body_target.get_attribute('class'))
+									
+							td_array = table_body_target.find_elements(By.XPATH, '*')
+
 							hunt_keyword_1 = "คุ้มครอง"
 							hunt_keyword_1_field = "ประกันชีวิตและอุบัติเหตุ"
 							hunt_keyword_2 = "แอปดัง"
 							hunt_keyword_2_field = "ความบันเทิง viu iQIYI WeTV"
-							td_array = table_body_target.find_elements(By.XPATH, '*')
+
+							normalized_html_array = []
+							for tr_i in range(len(td_array)) :
+								trow = td_array[tr_i]
+								trows_tds = trow.find_elements(By.XPATH, '*')
+								output_row = []
+								for td_i in range(len(trows_tds)) :
+									td_elem = trows_tds[td_i]
+									td_elem_value = td_elem.get_attribute('innerHTML').strip()
+									if td_i == 0 : #price
+										if "แนะนำ" in td_elem_value :
+											td_elem_value = td_elem.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
+										else :
+											td_elem_value = td_elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									elif hunt_keyword_1 in td_elem_value :
+										td_elem_value = td_elem.find_elements(By.XPATH,f"descendant::*[text()[contains(., '{hunt_keyword_1}')]]")[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
+									elif hunt_keyword_2 in td_elem_value :
+										td_elem_value = td_elem.find_elements(By.XPATH,f"descendant::*[text()[contains(., '{hunt_keyword_2}')]]")[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
+									else :
+										if len(td_elem.find_elements(By.XPATH, '*')) > 0 :
+											td_elem_value = td_elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<br>', ' ').strip()
+									rowspan_value = td_elem.get_attribute('rowspan')
+									if rowspan_value == None :
+										rowspan_value = 1
+									output_row.append({
+												"value": td_elem_value,
+												"row_span": int(rowspan_value)
+										})
+								normalized_html_array.append(output_row)
+
+							print(normalized_html_array)
+							print("----------")
+							#print(table_body_target.get_attribute('class'))
+							proper_arr = rowspan_handler.rowspan_handle(normalized_html_array)
+							print(proper_arr)
+							print("----------")
+
+							for row_id in range(len(proper_arr)) :
+								proper_columns = proper_arr[row_id]
+								table_temp_arr_sub_item = {
+									"price": 0.0,
+									"extra_raw_arr": [],
+								}
+								for col_id in range(len(proper_columns)) :
+									such_value = proper_columns[col_id]
+									if col_id == 0 : #price
+										table_temp_arr_sub_item["price"] = float(such_value)
+									elif col_id == 4 : #insurance
+										table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_1_field+" "+such_value)
+									elif col_id == 5 and hunt_keyword_2 in such_value : #3 apps
+										table_temp_arr_sub_item["extra_raw_arr"].insert(0, hunt_keyword_2_field+" "+such_value)
+								table_temp_arr_sub_item["extra_raw_arr"] = list(set(table_temp_arr_sub_item["extra_raw_arr"]))
+								table_temp_arr.append(table_temp_arr_sub_item)
+
+							"""
 							row_span_1 = 0
 							row_span_info_1 = ""
 							row_span_2 = 0
@@ -485,8 +632,10 @@ def scrape_web(request, normalize_result = False):
 									row_span_2 -= 1
 								table_temp_arr_sub_item["extra_raw_arr"] = list(set(table_temp_arr_sub_item["extra_raw_arr"]))
 								table_temp_arr.append(table_temp_arr_sub_item)
+						"""
 
-						#print(table_temp_arr)	
+						print(table_temp_arr)
+						print("----------")
 
 					if requires_click :
 						time.sleep(1)
@@ -533,10 +682,6 @@ def scrape_web(request, normalize_result = False):
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["system"] = pricing_type_id
-
-							#new line
-							original_window = driver.current_window_handle
-							print(original_window)
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :
@@ -607,23 +752,267 @@ def scrape_web(request, normalize_result = False):
 										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 										#print(list_item_infos_head, list_item_infos_body)
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
+							
+									extra_button_block = web_content.find_elements(By.XPATH, '*')[3]
+									if "เพิ่มเติม" in extra_button_block.get_attribute('innerHTML').strip() :
+										new_row["has_extra_info_button"] = True
 
-									#new tab
-									extra_button_block = web_content.find_elements(By.XPATH, '*')[3].find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
-									clickers.append(extra_button_block)
-									# Get all attributes of the element
-									all_attributes = driver.execute_script(
-										"var items = {}; "
-										"for (index = 0; index < arguments[0].attributes.length; ++index) "
-										"{ items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; "
-										"return items;", extra_button_block)
+							elif operator_id == 1 :
+								new_row["package"] = plan_name
+								if capture_mode_id == 0 :
+									root_block = web_content.find_elements(By.XPATH, '*')[0]
+									first_block = root_block.find_elements(By.XPATH, '*')[0]
+									first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
+									if not first_block__verify_plan :
+										#print("pass out")
+										continue
+									first_block__spans_list = first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+									if target_string in first_block__spans_list[1].get_attribute('innerHTML').strip() :
+										raw_price_txt = first_block__spans_list[0].get_attribute('innerHTML').strip()
+										new_row["price"] = numberCheckLambda(raw_price_txt)
+									#print(new_row["price"])
 
-									# Print all attributes
-									for key, value in all_attributes.items():
-										print(f"{key}: {value}")
+									second_block = root_block.find_elements(By.XPATH, '*')[1]
+									second_block__center = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+									second_block__center_items = second_block__center.find_elements(By.XPATH, '*')
 
-							#for clicker in clickers :
-							#	clicker.click()
+									for center_item in second_block__center_items :
+										#if not "scListSocial" in center_item.get_attribute('class') :
+										#	center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
+										#else :
+										center_item_raw_txt = center_item.get_attribute('innerHTML').strip()
+
+										if "</i>" in center_item_raw_txt :
+											center_item_raw_txt = center_item.get_attribute('innerHTML').strip().split("</i>")[1]
+										insertRowInfoForDTACCards(new_row, capture_mode_id, center_item_raw_txt)
+
+									second_block__footer = second_block.find_elements(By.XPATH, '*')[1]
+									if "เพิ่มเติม" in second_block__footer.get_attribute('innerHTML').strip() or "โบนัส" in second_block__footer.get_attribute('innerHTML').strip() :
+										new_row["has_extra_info_button"] = True
+
+									if plan["has_extra_table"] :
+										for table_item in table_temp_arr :
+											if new_row["price"] == table_item["price"] :
+												for extra_item_str in table_item["extra_raw_arr"] :
+													if new_row["extra"] == None :
+														new_row["extra"] = extra_item_str.replace(comma_detection, comma_replacer)
+													else :
+														new_row["extra"] += micro_delimeter+extra_item_str.replace(comma_detection, comma_replacer)
+									else :
+										second_block__footer_items = second_block__footer.find_elements(By.XPATH, '*')
+										second_block__footer_has_more_than_one_blocks = len(second_block__footer_items) > 1
+										footerless = True
+										if second_block__footer_has_more_than_one_blocks :
+											if second_block__footer_items[1].get_attribute('innerHTML').strip() != "" :
+												#print(str(new_row["price"])+", HIDDENS: ")
+												li_block = second_block__footer_items[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+												li_text = li_block.get_attribute('innerHTML').strip()
+												if li_text != "" :
+													footerless = False
+													li_text = li_text.split("<div")[0].strip()
+													#print(li_text+"!")
+													specific_bonuses_list = li_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+													for specific_bonus in specific_bonuses_list :
+														if not "หรือ" in specific_bonus.get_attribute('innerHTML').strip() :
+															specific_item_txt = specific_bonus.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
+															#print(specific_item_txt)
+															if "เกม" in specific_item_txt or re.search("entertainment", specific_item_txt, re.IGNORECASE) :
+																new_row["entertainment"] = True
+																if new_row["entertainment_package"] == None :
+																	new_row["entertainment_package"] = f"{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
+																else :
+																	new_row["entertainment_package"] += f"{micro_delimeter}{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
+															else :
+																if new_row["extra"] == None :
+																	new_row["extra"] = f"{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
+																else :
+																	new_row["extra"] += f"{micro_delimeter}{specific_item_txt} ({li_text.replace(comma_detection, comma_replacer)})"
+										if footerless :
+											if "scListSocial" in second_block__center_items[len(second_block__center_items)-1].get_attribute('class') :
+												red_block = second_block__center_items[len(second_block__center_items)-1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
+												red_block_txt = red_block.get_attribute('innerHTML').strip().replace('<br>', ' ').replace('</span>', ' ').replace('<span class="fAktivB">', '').strip()
+												if new_row["extra"] == None :
+													new_row["extra"] = f"{red_block_txt.replace(comma_detection, comma_replacer)}"
+												else :
+													new_row["extra"] += f"{micro_delimeter}{red_block_txt.replace(comma_detection, comma_replacer)}"
+								elif capture_mode_id == 1 :
+									raw_li = web_content.get_attribute('innerHTML').strip()
+									if re.search(target_string, raw_li, re.IGNORECASE) :
+										#li with price tag
+										if "promotion-wrapper" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
+											#price zone
+											new_row["price"] = getNumberByUnit(target_string, raw_li.replace('/', ' '))
+											#print(new_row["price"])
+
+											#gb zone
+											if checkIsInfiniteText(raw_li, internet_specific=True) :
+												new_row["internet_gbs"] = INFINITY
+											elif 'GB' in raw_li :
+												new_row["internet_gbs"] = getNumberByUnit("GB", raw_li, 'Gbps')
+											elif 'MB' in raw_li :
+												new_row["internet_gbs"] = getNumberByUnit("MB", raw_li, 'Mbps')/1000.0
+											elif 'TB' in raw_li :
+												new_row["internet_gbs"] = getNumberByUnit("TB", raw_li, 'Tbps')*1000.0
+
+											#wifi zone
+											if re.search('WiFi', raw_li, re.IGNORECASE) :
+												new_row["wifi"] = True
+												if checkIsInfiniteText(raw_li.split("dtac")[1]) :
+													new_row["unlimited_internet_mode"] = 1
+
+										elif plan["has_term_and_condition"] :
+											#the privacy policy part
+											if not re.search('call center', raw_li, re.IGNORECASE) and not "นาที" in raw_li and "content" in web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
+												#print(raw_li)
+												target_price = getNumberByUnit(target_string, raw_li.replace('/', ' '))
+												target_row = None
+												for row_obj in list_of_rows : #capture the existing
+													if row_obj["price"] == target_price and row_obj["plan"] == plan_name :
+														target_row = row_obj
+														break
+												all_li_objs = web_content.find_element(By.XPATH, "..").find_elements(By.XPATH, '*')
+												for li_obj in all_li_objs :
+													raw_li_each = li_obj.get_attribute('innerHTML').strip()
+
+													is_g_zone = False
+
+													if "3G" in raw_li_each :
+														if target_row["g_no"] == None :
+															target_row["g_no"] = "3G"
+															is_g_zone = True
+														elif not "3G" in target_row["g_no"] :
+															target_row["g_no"] += "/3G"
+															is_g_zone = True
+													if "4G" in raw_li_each :
+														if target_row["g_no"] == None :
+															target_row["g_no"] = "4G"
+															is_g_zone = True
+														elif not "4G" in target_row["g_no"] :
+															target_row["g_no"] += "/4G"
+															is_g_zone = True
+													if "5G" in raw_li_each :
+														if target_row["g_no"] == None :
+															target_row["g_no"] = "5G"
+															is_g_zone = True
+														elif not "5G" in target_row["g_no"] :
+															target_row["g_no"] += "/5G"
+															is_g_zone = True
+
+													for fup_unit in possible_fup_units :
+														if fup_unit in raw_li_each and not is_g_zone :
+															target_row["fair_usage_policy"] = getNumberByUnitAsUnittedString(fup_unit, raw_li_each, "GB")
+															break
+											continue
+
+								elif capture_mode_id == 2 :
+									root_block = web_content.find_elements(By.XPATH, '*')[0]
+									first_block = root_block.find_elements(By.XPATH, '*')[0]
+									first_block__verify_plan = re.search(plan_name, first_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip(), re.IGNORECASE)
+									if not first_block__verify_plan :
+										continue
+									second_block = root_block.find_elements(By.XPATH, '*')[1]
+									second_block_contents = second_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+
+									if "คิดค่าบริการเป็นวินาที" in first_block.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip() :
+										new_row["capture_in_seconds"] = True
+
+									details = second_block_contents[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+									for detail in details :
+										raw_str_each = detail.get_attribute('innerHTML').strip()
+
+										if "ico-net-2" in raw_str_each :
+											if checkIsInfiniteText(raw_str_each) :
+												new_row["internet_gbs"] = INFINITY
+											elif 'GB' in raw_str_each :
+												new_row["internet_gbs"] = getNumberByUnit("GB", raw_str_each, 'Gbps')
+											elif 'MB' in raw_str_each :
+												new_row["internet_gbs"] = getNumberByUnit("MB", raw_str_each, 'Mbps')/1000.0
+											elif 'TB' in raw_str_each :
+												new_row["internet_gbs"] = getNumberByUnit("TB", raw_str_each, 'Tbps')*1000.0
+
+										elif "ico-call-all" in raw_str_each :
+											if checkIsInfiniteText(raw_str_each):
+												new_row["call_minutes"] = INFINITY
+												new_row["unlimited_call"] = True
+											else :
+												new_row["call_minutes"] = getNumberByUnit("นาที", raw_str_each, 'ชม')
+
+									price_box = second_block_contents[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0]
+									price_box_str = price_box.get_attribute('innerHTML').strip().replace('<span>', '').replace('</span>', '')
+									new_row["price"] = getNumberByUnit(target_string, price_box_str)
+
+							elif operator_id == 2 :
+								new_row["package"] = plan_name
+								if capture_mode_id == 0 :
+									mega_root = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
+									title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									if not re.search(plan_name, title, re.IGNORECASE) :
+										continue
+									root_blocks_list = web_content.find_elements(By.XPATH, '*')
+									price_block = root_blocks_list[0]
+									basic_info_block_infos = root_blocks_list[1].find_elements(By.XPATH, '*')
+									wifi_content = root_blocks_list[3].find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
+									g_block = root_blocks_list[4]
+									extra_block = root_blocks_list[5]
+									if "ข้อกำหนดและเงื่อนไข" in extra_block.get_attribute('innerHTML') :
+										misc_blocks = []
+									else :
+										misc_blocks = extra_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+									final_policy_button_block = root_blocks_list[len(root_blocks_list)-1]
+									if "ข้อกำหนดและเงื่อนไข" in final_policy_button_block.get_attribute('innerHTML') :
+										new_row["has_extra_info_button"] = True
+
+									new_row["price"] = numberCheckLambda(price_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
+
+									for basic_info_block in basic_info_block_infos :
+										top_sub_block_content = basic_info_block.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										bottom_sub_block_divs = basic_info_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+										if "เน็ต" in top_sub_block_content :
+											if re.search('true-3g', top_sub_block_content, re.IGNORECASE) :
+												if new_row["g_no"] == None :
+													new_row["g_no"] = "3G"
+												elif not "3G" in new_row["g_no"] :
+													new_row["g_no"] += "/3G"
+											if re.search('true-4g', top_sub_block_content, re.IGNORECASE) :
+												if new_row["g_no"] == None :
+													new_row["g_no"] = "4G"
+												elif not "4G" in new_row["g_no"] :
+													new_row["g_no"] += "/4G"
+											if re.search('true-5g', top_sub_block_content, re.IGNORECASE) :
+												if new_row["g_no"] == None :
+													new_row["g_no"] = "5G"
+												elif not "5G" in new_row["g_no"] :
+													new_row["g_no"] += "/5G"
+											unit = bottom_sub_block_divs[1].get_attribute('innerHTML').strip()
+											if checkIsInfiniteText(unit):
+												new_row["internet_gbs"] = INFINITY
+											else :
+												value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
+												if 'GB' in unit and not ('Gbps' in unit) :
+													new_row["internet_gbs"] = value_num
+												elif 'MB' in unit and not ('Mbps' in unit) :
+													new_row["internet_gbs"] = value_num/1000.0
+												elif 'TB' in unit and not ('Tbps' in list_item_infos_body) :
+													new_row["internet_gbs"] = value_num*1000.0
+
+										elif "โทร" in top_sub_block_content :
+											unit = bottom_sub_block_divs[1].get_attribute('innerHTML').strip()
+											if checkIsInfiniteText(unit):
+												new_row["call_minutes"] = INFINITY
+												new_row["unlimited_call"] = True
+											else :
+												value_num = numberCheckLambda(bottom_sub_block_divs[0].get_attribute('innerHTML').strip())
+												new_row["call_minutes"] = value_num
+
+									if re.search('wifi', wifi_content, re.IGNORECASE) :
+										new_row["wifi"] = True
+
+									for misc_block in misc_blocks :
+										for sub_misc_block in misc_block.find_elements(By.XPATH, '*') :
+											if "<img" in sub_misc_block.get_attribute('innerHTML').strip() :
+												continue
+											misc_block_raw_text = sub_misc_block.get_attribute('innerHTML').strip()
+											insertRowInfoForTrueCards(new_row, capture_mode_id, misc_block_raw_text)
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :

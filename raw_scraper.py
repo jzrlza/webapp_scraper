@@ -667,71 +667,59 @@ def scrape_web(request, normalize_result = False):
 								if "responsive" in tables[i].find_element(By.XPATH, "..").find_element(By.XPATH, "..").get_attribute('class') :
 									table_body_target = tables[i]
 									break
-							#print(table_body_target.get_attribute('class'))
-							############# rowspan_handler.rowspan_handle(normalized_html_array)
+							
+							td_array = table_body_target.find_elements(By.XPATH, '*')
 
 							hunt_keyword_1 = "คุ้มครอง"
 							hunt_keyword_1_field = "ประกันชีวิตและอุบัติเหตุ"
 							hunt_keyword_2 = "แอปดัง"
 							hunt_keyword_2_field = "ความบันเทิง viu iQIYI WeTV"
-							td_array = table_body_target.find_elements(By.XPATH, '*')
-							row_span_1 = 0
-							row_span_info_1 = ""
-							row_span_2 = 0
-							row_span_info_2 = ""
+
+							normalized_html_array = []
 							for tr_i in range(len(td_array)) :
 								trow = td_array[tr_i]
 								trows_tds = trow.find_elements(By.XPATH, '*')
+								output_row = []
+								for td_i in range(len(trows_tds)) :
+									td_elem = trows_tds[td_i]
+									td_elem_value = td_elem.get_attribute('innerHTML').strip()
+									if td_i == 0 : #price
+										if "แนะนำ" in td_elem_value :
+											td_elem_value = td_elem.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip()
+										else :
+											td_elem_value = td_elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									elif hunt_keyword_1 in td_elem_value :
+										td_elem_value = td_elem.find_elements(By.XPATH,f"descendant::*[text()[contains(., '{hunt_keyword_1}')]]")[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
+									elif hunt_keyword_2 in td_elem_value :
+										td_elem_value = td_elem.find_elements(By.XPATH,f"descendant::*[text()[contains(., '{hunt_keyword_2}')]]")[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
+									else :
+										if len(td_elem.find_elements(By.XPATH, '*')) > 0 :
+											td_elem_value = td_elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<br>', ' ').strip()
+									rowspan_value = td_elem.get_attribute('rowspan')
+									if rowspan_value == None :
+										rowspan_value = 1
+									output_row.append({
+												"value": td_elem_value,
+												"row_span": int(rowspan_value)
+										})
+								normalized_html_array.append(output_row)
+
+							proper_arr = rowspan_handler.rowspan_handle(normalized_html_array)
+
+							for row_id in range(len(proper_arr)) :
+								proper_columns = proper_arr[row_id]
 								table_temp_arr_sub_item = {
 									"price": 0.0,
 									"extra_raw_arr": [],
 								}
-								trow_price = 0.0
-								for td_i in range(len(trows_tds)) :
-									td_elem = trows_tds[td_i]
-									td_elem_txt = td_elem.get_attribute('innerHTML').strip()
-									if td_i == 0 : #price
-										if "แนะนำ" in td_elem_txt :
-											trow_price = float(td_elem.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').strip())
-										else :
-											trow_price = float(td_elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip())
-										table_temp_arr_sub_item["price"] = trow_price
-
-									elif hunt_keyword_1 in td_elem_txt :
-										row_span_1 = td_elem.get_attribute('rowspan')
-										if td_elem.get_attribute('rowspan') == None :
-											row_span_1 = 1
-										else :
-											row_span_1 = int(row_span_1)
-										#print("fetching info 1... maximum "+str(webdriver_timeout)+" seconds")
-										row_span_info_1 = td_elem.find_elements(By.XPATH,"descendant::*[text()[contains(., '"+hunt_keyword_1+"')]]")
-										if row_span_info_1 != None :
-											if len(row_span_info_1) > 0 :
-												row_span_info_1 = row_span_info_1[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
-												table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_1_field+" "+row_span_info_1)
-										
-									elif hunt_keyword_2 in td_elem_txt :
-										row_span_2 = td_elem.get_attribute('rowspan')
-										if td_elem.get_attribute('rowspan') == None :
-											row_span_2 = 1
-										else :
-											row_span_2 = int(row_span_2)
-										#print("fetching info 2... maximum "+str(webdriver_timeout)+" seconds")
-										row_span_info_2 = td_elem.find_elements(By.XPATH,"descendant::*[text()[contains(., '"+hunt_keyword_2+"')]]")
-										if row_span_info_2 != None :
-											if len(row_span_info_2) > 0 :
-												row_span_info_2 = row_span_info_2[0].get_attribute('innerHTML').strip().split('<small>')[0].replace('<br>', '')
-												table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_2_field+" "+row_span_info_2)
-
-								if row_span_1 > 0 :
-									#print(row_span_info_1)
-									table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_1_field+" "+row_span_info_1)
-									row_span_1 -= 1
-								if row_span_2 > 0 :
-									#print(row_span_info_2)
-									if row_span_info_2 != None :
-										table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_2_field+" "+row_span_info_2)
-									row_span_2 -= 1
+								for col_id in range(len(proper_columns)) :
+									such_value = proper_columns[col_id]
+									if col_id == 0 : #price
+										table_temp_arr_sub_item["price"] = float(such_value)
+									elif col_id == 4 : #insurance
+										table_temp_arr_sub_item["extra_raw_arr"].append(hunt_keyword_1_field+" "+such_value)
+									elif col_id == 5 and hunt_keyword_2 in such_value : #3 apps
+										table_temp_arr_sub_item["extra_raw_arr"].insert(0, hunt_keyword_2_field+" "+such_value)
 								table_temp_arr_sub_item["extra_raw_arr"] = list(set(table_temp_arr_sub_item["extra_raw_arr"]))
 								table_temp_arr.append(table_temp_arr_sub_item)
 
