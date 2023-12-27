@@ -187,8 +187,10 @@ for row_id in range(len(test_rows)) :
 			#things get real mk2
 			searching_offset = True
 			while searching_offset :
-				print(f"\ncolumn id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset} ({column_id+id_offset+1} out of {max_columns} columns)")
-				print(f"Rowspan num states of {column_id+id_offset} from previous row is {column_rowspan_states[column_id+id_offset]}")
+				print(f"\ncolumn id: {column_id} ({column_id+1} out of {len(columns)} in real html ***Overflown but not over yet)| id offset: {id_offset} | column id + id offset : {column_id+id_offset} ({column_id+id_offset+1} out of {max_columns} columns)")
+				print(f"Rowspan num state of {column_id+id_offset} from previous row is {column_rowspan_states[column_id+id_offset]}")
+				print(f"Rowspan value state of {column_id+id_offset} from previous row is {column_rowspan_value_states[column_id+id_offset]}")
+				print(f"Rowspan bool state of {column_id+id_offset} from previous row is {column_rowspan_bool_is_span_states[column_id+id_offset]}")
 				if column_rowspan_states[column_id+id_offset] > 1 :
 					print("To do with states and values : Leftover Offsetting")
 					values.append(column_rowspan_value_states[column_id+id_offset])
@@ -222,7 +224,9 @@ for row_id in range(len(test_rows)) :
 			searching_offset = True
 			while searching_offset :
 				print(f"\ncolumn id: {column_id} ({column_id+1} out of {len(columns)} in real html)| id offset: {id_offset} | column id + id offset : {column_id+id_offset+1} out of {max_columns} columns")
-				print(f"Rowspan num states of {column_id+id_offset} from previous row is {column_rowspan_states[column_id+id_offset]}")
+				print(f"Rowspan num state of {column_id+id_offset} from previous row is {column_rowspan_states[column_id+id_offset]}")
+				print(f"Rowspan value state of {column_id+id_offset} from previous row is {column_rowspan_value_states[column_id+id_offset]}")
+				print(f"Rowspan bool state of {column_id+id_offset} from previous row is {column_rowspan_bool_is_span_states[column_id+id_offset]}")
 				if column_rowspan_states[column_id+id_offset] > 1 :
 					print("To do with states and values : Offsetting")
 					values.append(column_rowspan_value_states[column_id+id_offset])
