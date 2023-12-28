@@ -640,85 +640,91 @@ def scrape_web(request, normalize_result = False):
 						table = driver.find_elements(By.XPATH, f"{table_target_class}")[0]
 
 						elements = table.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-						#print(table.get_attribute('innerHTML'))
-						############# rowspan_handler.rowspan_handle(normalized_html_array)
 
-						dl_chunk_save = None
-						ul_chunk_save = None
-						wifi_router_save = None
-						contract_int_save = None
-						entertainment_save = None
-
+						normalized_html_array = []
 						for row_i in range(len(elements)) :
 							row = elements[row_i]
 							columns = row.find_elements(By.XPATH, '*')
-							#print("row")
+							output_row = []
+							for elem_i in range(len(columns)) :
+								elem = columns[elem_i]
+								rowspan_value = elem.get_attribute('rowspan')
+								if rowspan_value == None :
+									rowspan_value = 1
+
+								output_row.append({
+												"value": elem,
+												"row_span": int(rowspan_value)
+										})
+							normalized_html_array.append(output_row)
+
+						#print(normalized_html_array)
+						#print("-----")
+
+						proper_arr = rowspan_handler.rowspan_handle(normalized_html_array)
+						#print(proper_arr)
+						#print("-----")
+						for row_i in range(len(proper_arr)) :
+							elem_columns = proper_arr[row_i]
 							new_row = row_obj_template.copy()
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["package"] = plan_name
 							new_row["system"] = pricing_type_id
+							entertain_temp_bool = False
 
-							for elem_i in range(len(columns)) :
-								elem = columns[elem_i]
-
+							for elem_i in range(len(elem_columns)) :
+								elem = elem_columns[elem_i]
 								if elem_i == 0 :
 									new_row["price"] = numberCheckLambda(elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
-								else :
-									if elem.get_attribute('rowspan') != None :
-										if int(elem.get_attribute('rowspan')) == len(elements) :
-											if elem_i == 1 : #dl ul
-												dl_ul_chunks = elem.find_elements(By.XPATH, '*')
-												dl_chunk = conversionMbpsDLUL(dl_ul_chunks[0].get_attribute('innerHTML').replace('<span class="white">', ' ').replace('</span>', ''))
-												ul_chunk = conversionMbpsDLUL(dl_ul_chunks[1].get_attribute('innerHTML').replace('<span class="white">', ' ').replace('</span>', ''))
-												new_row["download_speed"] = dl_chunk
-												new_row["upload_speed"] = ul_chunk
-												dl_chunk_save = dl_chunk
-												ul_chunk_save = ul_chunk
-											elif elem_i == 2 :
-												new_row["wifi_router"] = True
-												wifi_router_save = "obj_exists"
-											elif elem_i == 5 :
-												contract_int = int(elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
-												contract_int_save = contract_int
-												new_row["contract"] = contract_int
-
-										elif int(elem.get_attribute('rowspan')) == len(elements)-1 :
-											if elem_i == 3 :
-												new_row["entertainment"] = True
-												new_row["entertainment_package"] = "Play S"
-												new_row["entertainment_contract"] = contract_int_save
-												entertainment_save = "Play S"
-									else :
-										if row_i == 2 and elem_i == 1 :
-											raw_str = elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<span>', ' ').replace('</span>', '')
-											if checkIsInfiniteText(raw_str, internet_specific=True) :
-												new_row["internet_gbs"] = INFINITY
-											elif 'GB' in raw_str :
-												new_row["internet_gbs"] = getNumberByUnit("GB", raw_str, 'Gbps')
-											elif 'MB' in raw_str :
-												new_row["internet_gbs"] = getNumberByUnit("MB", raw_str, 'Mbps')/1000.0
-											elif 'TB' in raw_str :
-												new_row["internet_gbs"] = getNumberByUnit("TB", raw_str, 'Tbps')*1000.0
-
-								if dl_chunk_save :
+								elif elem_i == 1 : #dl ul
+									dl_ul_chunks = elem.find_elements(By.XPATH, '*')
+									dl_chunk = conversionMbpsDLUL(dl_ul_chunks[0].get_attribute('innerHTML').replace('<span class="white">', ' ').replace('</span>', ''))
+									ul_chunk = conversionMbpsDLUL(dl_ul_chunks[1].get_attribute('innerHTML').replace('<span class="white">', ' ').replace('</span>', ''))
 									new_row["download_speed"] = dl_chunk
-								if ul_chunk_save :
 									new_row["upload_speed"] = ul_chunk
-								if wifi_router_save :
+								elif elem_i == 2 :
 									new_row["wifi_router"] = True
-								if contract_int_save :
-									new_row["contract"] = contract_int_save
-								if entertainment_save :
-									new_row["entertainment"] = True
-									new_row["entertainment_package"] = entertainment_save
-									new_row["entertainment_contract"] = contract_int_save
+									new_row["extra"] = elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<br>', ' ') + " " + elem.find_elements(By.XPATH, '*')[1].get_attribute('innerHTML').replace('<span>', ' ').replace('</span>', '')
+								elif elem_i == 3 :
+									if elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML') != "-" :
+										new_row["entertainment"] = True
+										new_row["entertainment_package"] = "Play S"
+										entertain_temp_bool = True
+								elif elem_i == 4 :
+									if elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML') != "-" :
+										raw_str = elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<span>', ' ').replace('</span>', '')
+										if checkIsInfiniteText(raw_str, internet_specific=True) :
+											new_row["internet_gbs"] = INFINITY
+										elif 'GB' in raw_str :
+											new_row["internet_gbs"] = getNumberByUnit("GB", raw_str, 'Gbps')
+										elif 'MB' in raw_str :
+											new_row["internet_gbs"] = getNumberByUnit("MB", raw_str, 'Mbps')/1000.0
+										elif 'TB' in raw_str :
+											new_row["internet_gbs"] = getNumberByUnit("TB", raw_str, 'Tbps')*1000.0
+								elif elem_i == 5 :
+									contract_int = int(elem.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML'))
+									if entertain_temp_bool :
+										new_row["entertainment_contract"] = contract_int
+									new_row["contract"] = contract_int
+
+							if new_row["internet_gbs"] == INFINITY :
+								new_row["unlimited_internet_mode"] = 1
+								new_row["fair_usage_policy"] = None
+							elif new_row["fair_usage_policy"] != None and new_row["internet_gbs"] > 0.0 :
+								new_row["unlimited_internet_mode"] = 2
+							elif new_row["fair_usage_policy"] == None and new_row["internet_gbs"] > 0.0 :
+								new_row["unlimited_internet_mode"] = 3
+							elif new_row["internet_gbs"] == 0.0 :
+								new_row["unlimited_internet_mode"] = 0
 
 							now = datetime.now()
 							dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
 							new_row["datetime"] = dt_string
 
 							list_of_rows.append(new_row)
+							#print(new_row)
+							#print("-----")
 							
 					elif clicked :
 						#continue
