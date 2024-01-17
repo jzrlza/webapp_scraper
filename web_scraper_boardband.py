@@ -227,7 +227,7 @@ OperatorUnsupportedException = Exception("Unsupported Operator.")
 UntrackableException = Exception("Untrackable Page")
 CaptureModeException = Exception("No such capture mode.")
 
-def scrape_web(request, normalize_result = False):
+def scrape_web(request, normalize_result = False, raw_list_result = False):
 	try :
 		qr = json.loads(request)
 		price_keywords = qr['price_keywords']
@@ -670,9 +670,10 @@ def scrape_web(request, normalize_result = False):
 		for unknown_new_row in unknown_rows :
 			list_of_rows.append(unknown_new_row)
 
-		result = json.dumps(list_of_rows)
-		#print(result)
-		return result #list_of_rows
+		if raw_list_result :
+			return list_of_rows
+		else :
+			return json.dumps(list_of_rows)
 
 	except Exception as e :
 		e_type, e_object, e_traceback = sys.exc_info()
@@ -685,8 +686,12 @@ def scrape_web(request, normalize_result = False):
 
 		#print(e)
 
-		return json.dumps([{
+		json_error = [{
 				"error": e_message,
 				"line_of_error": e_line_number,
 				"file_that_errored": e_filename
-			}])
+			}]
+		if raw_list_result :
+			return json_error
+		else :
+			return json.dumps(json_error)

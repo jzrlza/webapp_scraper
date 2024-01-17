@@ -41,4 +41,4 @@ request = """{
    "webdriver_timeout":15
 }"""
 
-print(web_scraper_prepaid.scrape_web(request, normalize_result=True))
+print(web_scraper_prepaid.scrape_web(request, normalize_result=True, raw_list_result=False))
