@@ -557,7 +557,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 											new_row["promotion_switch_fee"] = getNumberByUnit(price_keywords[0], raw_txt)
 										elif "พิเศษ" in second_block__info_block_2.get_attribute('innerHTML').strip() :
 											list_second_block_ul_elems = second_block__info_block_2.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
-											extra_str = ""
+											extra_str = second_block__info_block_2.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip().replace('<b>', '').replace('</b>', '').replace('<br>', '')+" || "
 											index_i = 0
 											for li_item in list_second_block_ul_elems :
 												extra_str += li_item.get_attribute('innerHTML').strip().replace('::marker', '').replace('&nbsp', '')

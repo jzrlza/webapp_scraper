@@ -1,11 +1,11 @@
-import boardband_true
+import prepaid_ais
 #import web_scraper_postpaid
-#import web_scraper_prepaid
-import web_scraper_boardband
+import web_scraper_prepaid
+#import web_scraper_boardband
 
-input_request = boardband_true.request
+input_request = prepaid_ais.request
 
-raw_result = web_scraper_boardband.scrape_web(input_request, normalize_result=True, raw_list_result=True)
+#raw_result = web_scraper_prepaid.scrape_web(input_request, normalize_result=True, raw_list_result=True)
 
-for row in raw_result :
-	print(row)
+#for row in raw_result :
+#	print(row)
