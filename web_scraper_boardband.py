@@ -410,7 +410,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 				if not disabled_mode :
 
 					if requires_click :
-						time.sleep(1)
+						time.sleep(5)
 						click_targets = driver.find_elements(By.XPATH, f"{target_click_class}")
 						if len(click_targets) == 0 :
 							clicked = True
