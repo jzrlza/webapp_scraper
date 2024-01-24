@@ -5,7 +5,7 @@ import web_scraper_prepaid
 
 input_request = prepaid_ais.request
 
-#raw_result = web_scraper_prepaid.scrape_web(input_request, normalize_result=True, raw_list_result=True)
+raw_result = web_scraper_prepaid.scrape_web(input_request, normalize_result=True, raw_list_result=True)
 
-#for row in raw_result :
-#	print(row)
+for row in raw_result :
+	print(row)
