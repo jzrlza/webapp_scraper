@@ -16,13 +16,13 @@ request = """{
          "track_new_mega_row": true,
          "plans":[
             {
-               "plan_name":"5G Together",
+               "plan_name":"5G Super sport & Entertainment เปิดเบอร์ใหม่",
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             },
             {
-               "plan_name":"5G Net Ultra Max Speed",
+               "plan_name":"5G Together+",
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
