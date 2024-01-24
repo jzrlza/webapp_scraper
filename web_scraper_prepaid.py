@@ -542,7 +542,6 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 
 									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
 									second_block__info_block_1 = second_block.find_elements(By.XPATH, '*')[0]
-									second_block__info_block_2 = second_block.find_elements(By.XPATH, '*')[1]
 									second_block__info_block_1__items = second_block__info_block_1.find_elements(By.XPATH, '*')
 									for list_item in second_block__info_block_1__items :
 										list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
@@ -551,9 +550,21 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
 										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer, price_keywords, sub_price_keywords)
-									if "ค่าเปลี่ยน" in second_block__info_block_2.get_attribute('innerHTML').strip() :
-										raw_txt = second_block__info_block_2.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-										new_row["promotion_switch_fee"] = getNumberByUnit(price_keywords[0], raw_txt)
+									if len(second_block.find_elements(By.XPATH, '*')) > 1 :
+										second_block__info_block_2 = second_block.find_elements(By.XPATH, '*')[1]
+										if "ค่าเปลี่ยน" in second_block__info_block_2.get_attribute('innerHTML').strip() :
+											raw_txt = second_block__info_block_2.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+											new_row["promotion_switch_fee"] = getNumberByUnit(price_keywords[0], raw_txt)
+										elif "พิเศษ" in second_block__info_block_2.get_attribute('innerHTML').strip() :
+											list_second_block_ul_elems = second_block__info_block_2.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+											extra_str = ""
+											index_i = 0
+											for li_item in list_second_block_ul_elems :
+												extra_str += li_item.get_attribute('innerHTML').strip().replace('::marker', '').replace('&nbsp', '')
+												index_i += 1
+												if index_i < len(list_second_block_ul_elems) :
+													extra_str += ", "
+											new_row["specials_extra_text"] = extra_str
 
 							elif operator_id == 1 :
 								if capture_mode_id == 0 :
