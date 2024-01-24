@@ -196,55 +196,75 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/TB", list_item_infos_body, 'Tbps')*1000000.0
 		is_extra = False
 
+	if re.search('g-signal', list_item_icon_img, re.IGNORECASE) or re.search('network-icon', list_item_icon_img, re.IGNORECASE) :
+		if list_item_infos_footer == "" or list_item_infos_footer == None :
+			new_row["internet_info_text"] = f"{list_item_infos_head} | {list_item_infos_body}"
+		else :
+			new_row["internet_info_text"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+		is_extra = False
+
 	#cost per minute zone
-	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) and "โทร" in list_item_infos_head :
-		if "แรก" in list_item_infos_footer :
-			raw_number = 0.0
-			if sub_price_keywords[0] in list_item_infos_footer :
-				raw_number = getNumberByUnit(sub_price_keywords[0], list_item_infos_footer)/100.0
+	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) or re.search('phone-icon', list_item_icon_img, re.IGNORECASE) :
+		if re.search('free-calls', list_item_icon_img, re.IGNORECASE) and "โทร" in list_item_infos_head :
+			if "แรก" in list_item_infos_footer :
+				raw_number = 0.0
+				if sub_price_keywords[0] in list_item_infos_footer :
+					raw_number = getNumberByUnit(sub_price_keywords[0], list_item_infos_footer)/100.0
+				else :
+					raw_number = getNumberByUnit(price_keywords[0], list_item_infos_footer)
+
+				if "วินาที" in list_item_infos_footer :
+					raw_number = raw_number/60.0
+				new_row["call_first_minute_fee_baht_per_minute"] = raw_number
+
+			price_per_freq = 0.0
+			if sub_price_keywords[0] in list_item_infos_body :
+				price_per_freq = getNumberByUnit(sub_price_keywords[0], list_item_infos_body)/100.0
 			else :
-				raw_number = getNumberByUnit(price_keywords[0], list_item_infos_footer)
+				price_per_freq = getNumberByUnit(price_keywords[0], list_item_infos_body)
 
-			if "วินาที" in list_item_infos_footer :
-				raw_number = raw_number/60.0
-			new_row["call_first_minute_fee_baht_per_minute"] = raw_number
+			freq_time_multi = 1.0
+			freq_time_unit = "นาที"
+			freq_time_for_round = 1.0
+			if "วินาที" in list_item_infos_body :
+				freq_time_multi = 1.0/60.0
+				freq_time_unit = "วินาที"
 
-		price_per_freq = 0.0
-		if sub_price_keywords[0] in list_item_infos_body :
-			price_per_freq = getNumberByUnit(sub_price_keywords[0], list_item_infos_body)/100.0
+			if "ทุก" in list_item_infos_body :
+				freq_time_for_round = getNumberByUnit(freq_time_unit, list_item_infos_body)*freq_time_multi
+			else :
+				freq_time_for_round = freq_time_multi
+
+			new_row["call_next_minutes_fee_baht_per_minute"] = price_per_freq/freq_time_for_round
+
+		if list_item_infos_footer == "" or list_item_infos_footer == None :
+			new_row["phone_call_info_text"] = f"{list_item_infos_head} | {list_item_infos_body}"
 		else :
-			price_per_freq = getNumberByUnit(price_keywords[0], list_item_infos_body)
-
-		freq_time_multi = 1.0
-		freq_time_unit = "นาที"
-		freq_time_for_round = 1.0
-		if "วินาที" in list_item_infos_body :
-			freq_time_multi = 1.0/60.0
-			freq_time_unit = "วินาที"
-
-		if "ทุก" in list_item_infos_body :
-			freq_time_for_round = getNumberByUnit(freq_time_unit, list_item_infos_body)*freq_time_multi
-		else :
-			freq_time_for_round = freq_time_multi
-
-		new_row["call_next_minutes_fee_baht_per_minute"] = price_per_freq/freq_time_for_round
+			new_row["phone_call_info_text"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
 
 		is_extra = False
 
 	#vid call
-	if re.search('Video call', list_item_infos_head, re.IGNORECASE) :
+	if re.search('Video call', list_item_infos_head, re.IGNORECASE) or (re.search('video', list_item_icon_img, re.IGNORECASE) and re.search('call', list_item_icon_img, re.IGNORECASE)) :
 		new_row["video_call_fee_per_minute"] = getNumberByUnit(price_keywords[0]+"/นาที", list_item_infos_body)
+		if list_item_infos_footer == "" or list_item_infos_footer == None :
+			new_row["video_call_info_text"] = f"{list_item_infos_head} | {list_item_infos_body}"
+		else :
+			new_row["video_call_info_text"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
 		is_extra = False
 
 	#sms mms
 	if re.search('SMS/MMS', list_item_infos_head, re.IGNORECASE) :
 		chunks = list_item_infos_body.strip().split(",")
-		for chunk in chunks :
-			#print(chunk, price_keywords)
-			if re.search('SMS', chunk, re.IGNORECASE) :
-				new_row["sms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
-			elif re.search('MMS', chunk, re.IGNORECASE) :
-				new_row["mms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
+		if len(chunks) > 0 :
+			for chunk in chunks :
+				#print(chunk, price_keywords)
+				if re.search('SMS', chunk, re.IGNORECASE) :
+					new_row["sms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
+				elif re.search('MMS', chunk, re.IGNORECASE) :
+					new_row["mms_fee_per_msg"] = getNumberByUnit(price_keywords[0], chunk.strip())
+		else :
+			new_row["sms_mms_info_text"] = list_item_infos_body.strip()
 		is_extra = False
 
 	"""
@@ -343,6 +363,11 @@ row_obj_template = {
 	"sms_fee_per_msg": None,
 	"mms_fee_per_msg": None,
 	"promotion_switch_fee": 0.0,
+	"internet_info_text": None,
+	"phone_call_info_text": None,
+	"video_call_info_text": None,
+	"sms_mms_info_text": None,
+	"specials_extra_text": None,
 	"datetime": None
 }
 
