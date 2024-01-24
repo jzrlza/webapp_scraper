@@ -616,9 +616,9 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 					if row[row_key] == None :
 						row[row_key] = f'{quotation}-{quotation}'
 					else :
-						if row[row_key] == True :
+						if (isinstance(row[row_key], bool) and not isinstance(row[row_key], int)) and row[row_key] == True :
 							row[row_key] = f'{quotation}{"Yes"}{quotation}'
-						elif row[row_key] == False :
+						elif (isinstance(row[row_key], bool) and not isinstance(row[row_key], int)) and row[row_key] == False :
 							row[row_key] = f'{quotation}{"No"}{quotation}'
 						elif isinstance(row[row_key], float) :
 							if row[row_key].is_integer() :

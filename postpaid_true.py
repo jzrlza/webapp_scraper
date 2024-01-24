@@ -16,7 +16,13 @@ request = """{
          "track_new_mega_row": true,
          "plans":[
             {
-               "plan_name":"5G Super sport & Entertainment เปิดเบอร์ใหม่",
+               "plan_name":"5G Super Asian",
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"5G Super sport",
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false

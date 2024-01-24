@@ -853,6 +853,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 									title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									if not re.search(plan_name, title, re.IGNORECASE) :
 										continue
+									new_row["package"] = title
 									root_blocks_list = web_content.find_elements(By.XPATH, '*')
 									price_block = root_blocks_list[0]
 									basic_info_block_infos = root_blocks_list[1].find_elements(By.XPATH, '*')
@@ -945,9 +946,9 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 					if row[row_key] == None :
 						row[row_key] = f'{quotation}-{quotation}'
 					else :
-						if row[row_key] == True :
+						if (isinstance(row[row_key], bool) and not isinstance(row[row_key], int)) and row[row_key] == True :
 							row[row_key] = f'{quotation}{"Yes"}{quotation}'
-						elif row[row_key] == False :
+						elif (isinstance(row[row_key], bool) and not isinstance(row[row_key], int)) and row[row_key] == False :
 							row[row_key] = f'{quotation}{"No"}{quotation}'
 						elif isinstance(row[row_key], float) :
 							if row[row_key].is_integer() :
