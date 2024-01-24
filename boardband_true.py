@@ -16,6 +16,24 @@ request = """{
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
+         "url_link":"https://www.true.th/trueonline/package-types/true-fiber-to-room",
+         "operator_id":2,
+         "pricing_type":2,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
+            {
+               "plan_name":"True Fiber To Room",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
+         "special_case_plans": []
+      },
+      {
          "url_link":"https://www.true.th/trueonline/package-types/true-gigatex-pro-special-ssv/",
          "operator_id":2,
          "pricing_type":2,
