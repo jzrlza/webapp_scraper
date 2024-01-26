@@ -78,6 +78,20 @@ request = """{
                "has_term_and_condition":false
             }
          ]
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/package/exclusive-plan/sim-netmarathon-max",
+         "operator_id":0,
+         "track_new_mega_row": false,
+         "plans":[
+            {
+               "plan_name":"แพ็กเกจเสริม เน็ตมาราธอน แมกซ์",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ]
       }
    ],
    "webdriver_timeout":15

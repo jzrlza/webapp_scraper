@@ -221,7 +221,8 @@ row_obj_template = {
 	"notes": None,
 	"datetime": None,
 	"has_extra_info_button": False,
-	"url": None
+	"url": None,
+	"sub_url": None
 }
 
 OperatorUnsupportedException = Exception("Unsupported Operator.")
@@ -481,6 +482,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							elem_columns = proper_arr[row_i]
 							new_row = row_obj_template.copy()
 							new_row["url"] = url["url_link"]
+							if collect_sub_urls :
+								new_row["sub_url"] = plan["sub_url"]
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["package"] = plan_name
