@@ -670,6 +670,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 
 								elif capture_mode_id == 2 :
 									list_of_info_items = web_content.find_elements(By.XPATH, '*')
+									new_row["package"] = list_of_info_items[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+									new_row["price"] = numberCheckLambda(list_of_info_items[3].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip().replace('฿', '').replace(' ', ''))
 
 							elif operator_id == 1 :
 								new_row["package"] = plan_name
