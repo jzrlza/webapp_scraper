@@ -1,6 +1,7 @@
 import web_scraper_prepaid
 import web_scraper_postpaid
 import web_scraper_boardband
+import csv
 
 request = """{
    "price_keywords":[
@@ -135,5 +136,10 @@ request = """{
 
 raw_result = web_scraper_postpaid.scrape_web(request, normalize_result=True, raw_list_result=True)
 
-for row in raw_result :
-	print(row)
+with open('output_test.csv', 'w', newline='') as file:
+	writer = csv.writer(file)
+
+	writer.writerow(raw_result[0].keys())
+
+	for row in raw_result :
+		writer.writerow(row.values())
