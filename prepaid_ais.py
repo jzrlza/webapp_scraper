@@ -12,13 +12,13 @@ request = """{
       "สต.",
       "สตางค์"
    ],
+   "service_type": 1,
    "predefined_g_no": "5G",
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
          "operator_id":0,
-         "pricing_type":0,
          "track_new_mega_row": true,
          "plans":[
             {
@@ -40,7 +40,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call",
          "operator_id":0,
-         "pricing_type":0,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -55,7 +54,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call-internet",
          "operator_id":0,
-         "pricing_type":0,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -70,7 +68,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/package/prepaid/plan/special",
          "operator_id":0,
-         "pricing_type":0,
          "track_new_mega_row": false,
          "plans":[
             {

@@ -8,11 +8,11 @@ request = """{
       "THB",
       "฿"
    ],
+   "service_type": 2,
    "urls":[
       {
          "url_link":"https://www.dtac.co.th/postpaid/products/package.html",
          "operator_id":1,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -26,7 +26,6 @@ request = """{
       {
          "url_link":"https://www.dtac.co.th/dtac-go-plus",
          "operator_id":1,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -40,7 +39,6 @@ request = """{
       {
          "url_link":"https://www.dtac.co.th/postpaid/products/net.html",
          "operator_id":1,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {

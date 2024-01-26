@@ -8,11 +8,11 @@ request = """{
       "THB",
       "฿"
    ],
+   "service_type": 2,
    "urls":[
       {
          "url_link":"https://www.true.th/truemoveh/postpaid/mass",
          "operator_id":2,
-         "pricing_type":1,
          "track_new_mega_row": true,
          "plans":[
             {

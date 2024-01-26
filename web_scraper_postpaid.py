@@ -341,7 +341,7 @@ row_obj_template = {
 	"plan": "",
 	"package": "",
 	"price": 0.0,
-	"system": -1,
+	"service_type": -1,
 	"unlimited_call": False,
 	"call_minutes": 0.0,
 	"capture_in_seconds": False,
@@ -392,7 +392,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 
 			operator_id = url["operator_id"]
 			operator_name = operators[url["operator_id"]]
-			pricing_type_id = url["pricing_type"]
+			pricing_type_id = qr["service_type"]
 			track_new_mega_row = url["track_new_mega_row"]
 			mega_class_target = ""
 
@@ -586,7 +586,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							new_row = row_obj_template.copy()
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
-							new_row["system"] = pricing_type_id
+							new_row["service_type"] = pricing_type_id
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :

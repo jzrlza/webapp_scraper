@@ -12,13 +12,13 @@ request = """{
       "สต.",
       "สตางค์"
    ],
+   "service_type": 3,
    "predefined_g_no": "5G",
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
          "url_link":"https://www.ais.th/consumers/fibre/package",
          "operator_id":0,
-         "pricing_type":2,
          "track_new_mega_row": false,
          "collect_sub_urls": true,
          "urls_class_type_id": 0,
@@ -35,7 +35,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/fibre",
          "operator_id":0,
-         "pricing_type":2,
          "track_new_mega_row": false,
          "collect_sub_urls": true,
          "urls_class_type_id": 1,

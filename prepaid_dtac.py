@@ -12,13 +12,13 @@ request = """{
       "สต.",
       "สตางค์"
    ],
+   "service_type": 1,
    "predefined_g_no": "5G",
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
          "url_link":"https://www.dtac.co.th/prepaid/simdtac.html",
          "operator_id":1,
-         "pricing_type":0,
          "track_new_mega_row": false,
          "plans":[
             {

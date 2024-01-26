@@ -347,7 +347,7 @@ operator_cards_container_classes = {
 row_obj_template = {
 	"operator": "",
 	"plan": "",
-	"system": -1,
+	"service_type": -1,
 	"price": 0.0,
 	"g_no": None,
 	"unlimited_internet_mode": 0,
@@ -403,7 +403,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 
 			operator_id = url["operator_id"]
 			operator_name = operators[url["operator_id"]]
-			pricing_type_id = url["pricing_type"]
+			pricing_type_id = qr["service_type"]
 			track_new_mega_row = url["track_new_mega_row"]
 			mega_class_target = ""
 
@@ -523,7 +523,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							new_row = row_obj_template.copy()
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
-							new_row["system"] = pricing_type_id
+							new_row["service_type"] = pricing_type_id
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								if capture_mode_id == 0 :

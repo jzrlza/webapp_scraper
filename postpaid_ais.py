@@ -8,11 +8,11 @@ request = """{
       "THB",
       "฿"
    ],
+   "service_type": 2,
    "urls":[
    	  {
          "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-max-professionals",
          "operator_id":0,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -26,7 +26,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-max-experience",
          "operator_id":0,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -40,7 +39,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/package/postpaid/postpaid-plans",
          "operator_id":0,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -72,7 +70,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-netflix",
          "operator_id":0,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -86,7 +83,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/package/exclusive-plan/5g-smart-share",
          "operator_id":0,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {
@@ -100,7 +96,6 @@ request = """{
       {
          "url_link":"https://www.ais.th/consumers/package/exclusive-plan/zeed-5g/5g-postpaid",
          "operator_id":0,
-         "pricing_type":1,
          "track_new_mega_row": false,
          "plans":[
             {

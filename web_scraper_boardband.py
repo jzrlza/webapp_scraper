@@ -196,29 +196,29 @@ row_obj_template = {
 	"operator": "",
 	"plan": "",
 	"package": "",
-	"system": -1,
+	"service_type": -1,
 	"price": 0.0,
-   "internet_gbs": 0.0,
-   "download_speed": None,
-   "upload_speed": None,
-   "fair_usage_policy": None,
-   "g_no": None,
-   "unlimited_internet_mode": 0,
-   "wifi": False,
-   "wifi_router": False,
-   "wifi_mesh": False,
-   "unlimited_call": False,
-   "call_minutes": 0.0,
-   "sms": 0,
-   "mms": 0,
-   "entertainment": False,
-   "entertainment_package": None,
-   "entertainment_contract": 0,
-   "priviledge": False,
-   "priviledge_exclusive": None,
-   "contract": 0,
-   "extra": None,
-   "notes": None,
+	"internet_gbs": 0.0,
+	"download_speed": None,
+	"upload_speed": None,
+	"fair_usage_policy": None,
+	"g_no": None,
+	"unlimited_internet_mode": 0,
+	"wifi": False,
+	"wifi_router": False,
+	"wifi_mesh": False,
+	"unlimited_call": False,
+	"call_minutes": 0.0,
+	"sms": 0,
+	"mms": 0,
+	"entertainment": False,
+	"entertainment_package": None,
+	"entertainment_contract": 0,
+	"priviledge": False,
+	"priviledge_exclusive": None,
+	"contract": 0,
+	"extra": None,
+	"notes": None,
 	"datetime": None,
 	"has_extra_info_button": False
 }
@@ -257,7 +257,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 
 			operator_id = url["operator_id"]
 			operator_name = operators[url["operator_id"]]
-			pricing_type_id = url["pricing_type"]
+			pricing_type_id = qr["service_type"]
 			track_new_mega_row = url["track_new_mega_row"]
 			collect_sub_urls = url["collect_sub_urls"]
 			urls_class_type_id = url["urls_class_type_id"]
@@ -480,7 +480,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["package"] = plan_name
-							new_row["system"] = pricing_type_id
+							new_row["service_type"] = pricing_type_id
 							entertain_temp_bool = False
 
 							for elem_i in range(len(elem_columns)) :
@@ -547,7 +547,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							new_row = row_obj_template.copy()
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
-							new_row["system"] = pricing_type_id
+							new_row["service_type"] = pricing_type_id
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								new_row["package"] = plan_name

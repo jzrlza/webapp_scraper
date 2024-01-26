@@ -12,13 +12,13 @@ request = """{
       "สต.",
       "สตางค์"
    ],
+   "service_type": 2,
    "predefined_g_no": "5G",
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
          "url_link":"https://www.true.th/trueonline/package-types/true-fiber-to-room",
          "operator_id":2,
-         "pricing_type":2,
          "track_new_mega_row": false,
          "collect_sub_urls": false,
          "urls_class_type_id": 0,
