@@ -1,8 +1,2 @@
-postpaid (monthly, system 0, due end of 2023)
-
-- new field "package" (AIS only, the rest same as "plan") [done]
-- FUP for มหามงคล (and all packages if possible) via collect link and visit each (AIS) [done, compromised]
-
-boardband (เน็ตบ้าน, system 2, not in a hurry, can be done later, start of 2024)
-
-- translate excel format output as Python code process as usual [done]
+-add url field in all 3 types as last field
+-more boardband stuffs urls
