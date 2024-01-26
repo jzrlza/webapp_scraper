@@ -179,10 +179,22 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		entertainments.append(list_item_infos_head)
 		new_row["entertainment_contract"] = getNumberByUnit("เดือน", list_item_infos_body)
 		is_extra = False
+	if "ความบันเทิง" in list_item_infos_head : #3BB, usually a year, so this one is fixed to 12 months
+		new_row["entertainment"] = True
+		new_row["entertainment_package"] = ""
+		parts = list_item_infos_body.split(" 1 ")
+		entertainments.append(parts[0])
+		new_row["entertainment_contract"] = 12
+		is_extra = False
 	for i in range(len(entertainments)) :
 		new_row["entertainment_package"] += entertainments[i].replace(comma_detection, comma_replacer)
 		if i < len(entertainments) - 1 :
 			new_row["entertainment_package"] += micro_delimeter
+
+	#contract zone
+	if re.search('Bill Cycle', list_item_infos_head, re.IGNORECASE) :
+		new_row["contract"] = getNumberByUnit("bills", list_item_infos_body)
+		is_extra = False
 
 	#prilivedge zone
 	if "เซเรเนด" in list_item_infos_head or re.search('Serenade', list_item_infos_head, re.IGNORECASE) :
@@ -672,6 +684,15 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 									list_of_info_items = web_content.find_elements(By.XPATH, '*')
 									new_row["package"] = list_of_info_items[1].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									new_row["price"] = numberCheckLambda(list_of_info_items[3].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip().replace('฿', '').replace(' ', ''))
+									main_info_items = list_of_info_items[4].find_elements(By.XPATH, '*')
+									for list_item in main_info_items :
+										focus_list_item = list_item.find_elements(By.XPATH, '*')[0]
+										list_item_icon_img = normalizeStringForNoneTypeToString(focus_list_item.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('src')).strip()
+										#print("MODE2 IMAGE: "+str(list_item_icon_img))
+										list_item_infos = focus_list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
+										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
+										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
+										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, None)
 
 							elif operator_id == 1 :
 								new_row["package"] = plan_name
