@@ -1,2 +1,5 @@
 -add url field in all 3 types as last field
 -more boardband stuffs urls
+-"system" field name into "service_type"
+-"service_type" --> postpaid [2] and prepaid [1] switch number ids (1 and 2)
+-Boolean fields fix and not conflict with 1 or 0
