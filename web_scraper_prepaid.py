@@ -368,7 +368,8 @@ row_obj_template = {
 	"video_call_info_text": None,
 	"sms_mms_info_text": None,
 	"specials_extra_text": None,
-	"datetime": None
+	"datetime": None,
+	"url": None
 }
 
 OperatorUnsupportedException = Exception("Unsupported Operator.")
@@ -430,6 +431,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 								raise Exception("There exists a new plan name which has not yet been checked : "+url["url_link"])
 							else :
 								unknown_new_row = row_obj_template.copy()
+								unknown_new_row["url"] = url["url_link"]
+								unknown_new_row["service_type"] = pricing_type_id
 								unknown_new_row["operator"] = operator_name
 								unknown_new_row["plan"] = title+" ****"
 								unknown_rows.append(unknown_new_row)
@@ -521,6 +524,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							#web_contents_ = driver.find_elements(By.XPATH,"//*[text()[contains(., '"+target_string+"')]]")
 							#print(web_content.get_attribute('class'))
 							new_row = row_obj_template.copy()
+							new_row["url"] = url["url_link"]
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["service_type"] = pricing_type_id
