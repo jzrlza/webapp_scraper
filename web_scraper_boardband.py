@@ -490,6 +490,22 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							new_row["service_type"] = pricing_type_id
 							entertain_temp_bool = False
 
+							if "3G" in plan_name :
+								if new_row["g_no"] == None :
+									new_row["g_no"] = "3G"
+								elif not "3G" in new_row["g_no"] :
+									new_row["g_no"] += "/3G"
+							if "4G" in plan_name :
+								if new_row["g_no"] == None :
+									new_row["g_no"] = "4G"
+								elif not "4G" in new_row["g_no"] :
+									new_row["g_no"] += "/4G"
+							if "5G" in plan_name :
+								if new_row["g_no"] == None :
+									new_row["g_no"] = "5G"
+								elif not "5G" in new_row["g_no"] :
+									new_row["g_no"] += "/5G"
+
 							for elem_i in range(len(elem_columns)) :
 								elem = elem_columns[elem_i]
 								if elem_i == 0 :
