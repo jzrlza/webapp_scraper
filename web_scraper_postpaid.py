@@ -451,6 +451,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 						target_click_class = "//*[contains(@class, 'search-tab-btn') and contains(@class, 'MuiTab-textColorPrimary') and contains(@class, 'MuiButtonBase-root')]"
 						target_class = "//*[contains(@class, 'card-content') and contains(@class, 'MuiCardContent-root')]"
 						need_to_scroll = True
+					elif capture_mode_id == 2 : 
+						target_class = "//*[contains(@class, 'jss43') and contains(@class, 'css-iol86l')]"
 					else :
 						raise CaptureModeException
 				elif operator_id == 1 :
@@ -665,6 +667,9 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 									extra_button_block = web_content.find_elements(By.XPATH, '*')[3]
 									if "เพิ่มเติม" in extra_button_block.get_attribute('innerHTML').strip() :
 										new_row["has_extra_info_button"] = True
+
+								elif capture_mode_id == 2 :
+									list_of_info_items = web_content.find_elements(By.XPATH, '*')
 
 							elif operator_id == 1 :
 								new_row["package"] = plan_name
