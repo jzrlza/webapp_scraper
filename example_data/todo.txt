@@ -1,8 +1,2 @@
--add url field in all 3 types as last field [[done]]
--more boardband stuffs urls
-  -postpaid
-  -prepaid
-  -boardband
--"system" field name into "service_type" [[done]]
--"service_type" --> postpaid [2] and prepaid [1] switch number ids (1 and 2) [[done]]
--Boolean fields fix and not conflict with 1 or 0 [[done]]
+- boardband turn from mother url to separate urls, remove or deprecreate the old url collecting system
+- The yellow column in excel just do as said, no more questions
