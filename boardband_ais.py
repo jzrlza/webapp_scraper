@@ -12,50 +12,162 @@ request = """{
       "สต.",
       "สตางค์"
    ],
-   "service_type": 3,
+   "service_type": 2,
    "predefined_g_no": "5G",
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
-         "url_link":"https://www.ais.th/consumers/fibre/package",
+         "url_link":"https://www.ais.th/consumers/fibre/package/home-fibre-lan",
          "operator_id":0,
          "track_new_mega_row": false,
-         "collect_sub_urls": true,
+         "collect_sub_urls": false,
          "urls_class_type_id": 0,
-         "plans":[],
-         "plans_template": {
-             "plan_name":"",
-             "capture_sub_names": false,
-             "capture_mode":0,
-             "has_extra_table":false,
-             "has_term_and_condition":false
-         },
+         "plans":[
+            {
+               "plan_name":"Home Fibre Lan",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
          "special_case_plans": []
       },
       {
-         "url_link":"https://www.ais.th/consumers/fibre",
+         "url_link":"https://www.ais.th/consumers/fibre/package/smart-ai-gamer/",
          "operator_id":0,
          "track_new_mega_row": false,
-         "collect_sub_urls": true,
-         "urls_class_type_id": 1,
-         "plans":[],
-         "plans_template": {
-             "plan_name":"",
-             "capture_sub_names": false,
-             "capture_mode":0,
-             "has_extra_table":false,
-             "has_term_and_condition":false
-         },
-         "special_case_plans": [
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
             {
-                "plan_name":"Smart AI Gamer",
-                "sub_url": "https://www.ais.th/consumers/fibre/package/smart-ai-gamer/",
-                "capture_sub_names": false,
-                "capture_mode":1,
-                "has_extra_table":true,
-                "has_term_and_condition":false
+               "plan_name":"Smart AI Gamer",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
             }
-         ]
+         ],
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/fibre/package/power4-welcome",
+         "operator_id":0,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
+            {
+               "plan_name":"Power4 Welcome",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/fibre/package/2gbps",
+         "operator_id":0,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
+            {
+               "plan_name":"2Gbps Fibre",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://olmd.azurewebsites.net/consumers/fibre/package_supermeshplus_hbo.html",
+         "operator_id":0,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
+            {
+               "plan_name":"Super Mesh Plus",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/fibre/package/netflix-lover",
+         "operator_id":0,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
+            {
+               "plan_name":"Netflix Lover",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/fibre/package/serenade",
+         "operator_id":0,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
+            {
+               "plan_name":"Serenade",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/fibre/package/byod",
+         "operator_id":0,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
+            {
+               "plan_name":"BYOD",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
+         "special_case_plans": []
+      },
+      {
+         "url_link":"https://www.ais.th/consumers/fibre/package/broadband24",
+         "operator_id":0,
+         "track_new_mega_row": false,
+         "collect_sub_urls": false,
+         "urls_class_type_id": 0,
+         "plans":[
+            {
+               "plan_name":"Broadband24",
+               "capture_sub_names": false,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            }
+         ],
+         "special_case_plans": []
       }
    ],
    "webdriver_timeout":15
