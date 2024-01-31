@@ -196,7 +196,7 @@ row_obj_template = {
 	"operator": "",
 	"plan": "",
 	"package": "",
-	"service_type": -1,
+	"system": -1,
 	"price": 0.0,
 	"internet_gbs": 0.0,
 	"download_speed": None,
@@ -305,55 +305,6 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 			if collect_sub_urls and not track_new_mega_row :
 				plans_template = url["plans_template"]
 				plan_arr = []
-				if operator_id == 0 :
-					if urls_class_type_id == 0 :
-						collect_sub_urls_class = "//*[contains(@class, 'cms-primary-button')]"
-
-						href_targets = driver.find_elements(By.XPATH, f"{collect_sub_urls_class}")
-						for href_target in href_targets :
-							root_div = href_target.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-							title = root_div.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
-							target_url = href_target.get_attribute('href').strip()
-							plan = plans_template.copy()
-							plan["plan_name"] = title
-							plan["sub_url"] = target_url
-							if target_url in hrefs :
-								plan["is_duplicate_url"] = True
-							else :
-								hrefs.append(target_url)
-								plan["is_duplicate_url"] = False
-							plan_arr.append(plan)
-					elif urls_class_type_id == 1 :
-						collect_sub_urls_class = "//*[contains(@class, 'cms-secondary-button') and contains(@class, 'cms-fullWidth-button')]"
-
-						href_targets = driver.find_elements(By.XPATH, f"{collect_sub_urls_class}")
-						for href_target in href_targets :
-							#root_div = href_target.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-							#title = root_div.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
-							target_url = href_target.get_attribute('href').strip()
-							is_special = False
-							for special_plan in special_case_plans :
-								if target_url in special_plan["sub_url"] :
-									is_special = True
-									new_plan = special_plan.copy()
-									new_plan["is_duplicate_url"] = False
-									plan_arr.append(new_plan)
-
-							if not is_special :
-								plan = plans_template.copy()
-								#plan["plan_name"] = title
-								plan["sub_url"] = target_url
-								if target_url in hrefs :
-									plan["is_duplicate_url"] = True
-								else :
-									hrefs.append(target_url)
-									plan["is_duplicate_url"] = False
-								plan_arr.append(plan)
-					else :
-						raise Exception("URL capture ID class invalid.")
-				else :
-					raise Exception("URL capture Operator ID invalid.")
-				url["plans"] = plan_arr
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
