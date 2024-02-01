@@ -186,6 +186,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		new_row["wifi"] = True
 
 	#internet cost per byte zone
+	"""
 	if (price_keywords[0]+"/" in list_item_infos_body) and ("เน็ต" in list_item_infos_head or re.search('internet', list_item_infos_head, re.IGNORECASE)) :
 		new_row["internet_fee_baht_per_mb"]
 		if price_keywords[0]+'/GB' in list_item_infos_body and not ('Gbps' in list_item_infos_body) :
@@ -195,6 +196,7 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		elif price_keywords[0]+'/TB' in list_item_infos_body and not ('Tbps' in list_item_infos_body) :
 			new_row["internet_fee_baht_per_mb"] = getNumberByUnit(price_keywords[0]+"/TB", list_item_infos_body, 'Tbps')*1000000.0
 		is_extra = False
+	"""
 
 	if re.search('g-signal', list_item_icon_img, re.IGNORECASE) or re.search('network-icon', list_item_icon_img, re.IGNORECASE) :
 		if list_item_infos_footer == "" or list_item_infos_footer == None :
@@ -204,7 +206,9 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 		is_extra = False
 
 	#cost per minute zone
+	
 	if re.search('free-calls', list_item_icon_img, re.IGNORECASE) or re.search('phone-icon', list_item_icon_img, re.IGNORECASE) :
+		"""
 		if re.search('free-calls', list_item_icon_img, re.IGNORECASE) and "โทร" in list_item_infos_head :
 			if "แรก" in list_item_infos_footer :
 				raw_number = 0.0
@@ -236,17 +240,17 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 				freq_time_for_round = freq_time_multi
 
 			new_row["call_next_minutes_fee_baht_per_minute"] = price_per_freq/freq_time_for_round
-
+		"""
 		if list_item_infos_footer == "" or list_item_infos_footer == None :
 			new_row["phone_call_info_text"] = f"{list_item_infos_head} | {list_item_infos_body}"
 		else :
 			new_row["phone_call_info_text"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
 
 		is_extra = False
-
+	
 	#vid call
 	if re.search('Video call', list_item_infos_head, re.IGNORECASE) or (re.search('video', list_item_icon_img, re.IGNORECASE) and re.search('call', list_item_icon_img, re.IGNORECASE)) :
-		new_row["video_call_fee_per_minute"] = getNumberByUnit(price_keywords[0]+"/นาที", list_item_infos_body)
+		#new_row["video_call_fee_per_minute"] = getNumberByUnit(price_keywords[0]+"/นาที", list_item_infos_body)
 		if list_item_infos_footer == "" or list_item_infos_footer == None :
 			new_row["video_call_info_text"] = f"{list_item_infos_head} | {list_item_infos_body}"
 		else :
@@ -267,7 +271,6 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["sms_mms_info_text"] = list_item_infos_body.strip()
 		is_extra = False
 
-	"""
 	#extra zone
 	if is_extra :
 		trim_txt = list_item_infos_head.replace('<b>', '').replace('</b>', '')+" "+list_item_infos_body.replace('<b>', '').replace('</b>', '')
@@ -275,7 +278,6 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 			new_row["extra"] = trim_txt.replace(comma_detection, comma_replacer)
 		else :
 			new_row["extra"] += micro_delimeter+trim_txt.replace(comma_detection, comma_replacer)
-	"""
 
 #DTAC -----------
 def insertRowInfoForDTACCards(new_row, capture_mode_id, full_raw_txt, icon_class = "", price_keywords = ["บาท"], sub_price_keywords = ["สต."]) :
@@ -349,6 +351,7 @@ row_obj_template = {
 	"plan": "",
 	"service_type": -1,
 	"price": 0.0,
+	"raw_text_from_blocks": None,
 	"g_no": None,
 	"unlimited_internet_mode": 0,
 	"wifi": False,
@@ -549,8 +552,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 								if capture_mode_id == 0 :
 									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
 									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
-									if not re.search(plan_name, title, re.IGNORECASE) :
-										continue
+									#if not re.search(plan_name, title, re.IGNORECASE) :
+									#	pass
 
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
 									if capture_sub_names :
@@ -569,7 +572,19 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
 										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
 										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
-										insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer, price_keywords, sub_price_keywords)
+
+										if new_row["raw_text_from_blocks"] == None :
+											if list_item_infos_footer != "" :
+												new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+											else :
+												new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body}"
+										else :
+											if list_item_infos_footer != "" :
+												new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+											else :
+												new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body}"
+
+										#insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_item_infos_head, list_item_infos_body, list_item_infos_footer, price_keywords, sub_price_keywords)
 									if len(second_block.find_elements(By.XPATH, '*')) > 1 :
 										second_block__info_block_2 = second_block.find_elements(By.XPATH, '*')[1]
 										if "ค่าเปลี่ยน" in second_block__info_block_2.get_attribute('innerHTML').strip() :

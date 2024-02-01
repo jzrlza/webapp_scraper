@@ -15,168 +15,92 @@ request = """{
       "สต.",
       "สตางค์"
    ],
-   "service_type": 2,
+   "service_type": 1,
    "predefined_g_no": "5G",
    "predefined_g_no_if_free": "4G",
    "urls":[
       {
-         "url_link":"https://www.ais.th/consumers/fibre/package/home-fibre-lan",
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/new",
          "operator_id":0,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
+         "track_new_mega_row": true,
          "plans":[
             {
-               "plan_name":"Home Fibre Lan",
+               "plan_name":"โปรแนะนำ",
+               "capture_sub_names": true,
+               "capture_mode":0,
+               "has_extra_table":false,
+               "has_term_and_condition":false
+            },
+            {
+               "plan_name":"โปร NET SIM",
                "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
-         ],
-         "special_case_plans": []
+         ]
       },
       {
-         "url_link":"https://www.ais.th/consumers/fibre/package/smart-ai-gamer/",
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call",
          "operator_id":0,
          "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
          "plans":[
             {
-               "plan_name":"Smart AI Gamer",
-               "capture_sub_names": false,
-               "capture_mode":1,
-               "has_extra_table":true,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.ais.th/consumers/fibre/package/power4-welcome",
-         "operator_id":0,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"Power4 Welcome",
+               "plan_name":"โปรแนะนำ",
                "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
-         ],
-         "special_case_plans": []
+         ]
       },
       {
-         "url_link":"https://www.ais.th/consumers/fibre/package/2gbps",
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/call-internet",
          "operator_id":0,
          "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
          "plans":[
             {
-               "plan_name":"2Gbps Fibre",
+               "plan_name":"โปรแนะนำ",
                "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
-         ],
-         "special_case_plans": []
+         ]
       },
       {
-         "url_link":"https://olmd.azurewebsites.net/consumers/fibre/package_supermeshplus_hbo.html",
+         "url_link":"https://www.ais.th/consumers/package/prepaid/plan/special",
          "operator_id":0,
          "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
          "plans":[
             {
-               "plan_name":"Super Mesh Plus",
-               "capture_sub_names": false,
-               "capture_mode":-999,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.ais.th/consumers/fibre/package/netflix-lover",
-         "operator_id":0,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"Netflix Lover",
+               "plan_name":"โปรแนะนำ",
                "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
-         ],
-         "special_case_plans": []
+         ]
       },
       {
-         "url_link":"https://www.ais.th/consumers/fibre/package/serenade",
+         "url_link":"https://www.ais.th/consumers/package/exclusive-plan/sim-netmarathon-max",
          "operator_id":0,
          "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
          "plans":[
             {
-               "plan_name":"Serenade",
+               "plan_name":"แพ็กเกจเสริม เน็ตมาราธอน แมกซ์",
                "capture_sub_names": false,
                "capture_mode":0,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.ais.th/consumers/fibre/package/byod",
-         "operator_id":0,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"BYOD",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
-      },
-      {
-         "url_link":"https://www.ais.th/consumers/fibre/package/broadband24",
-         "operator_id":0,
-         "track_new_mega_row": false,
-         "collect_sub_urls": false,
-         "urls_class_type_id": 0,
-         "plans":[
-            {
-               "plan_name":"Broadband24",
-               "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
-               "has_term_and_condition":false
-            }
-         ],
-         "special_case_plans": []
+         ]
       }
    ],
    "webdriver_timeout":15
 }"""
 
-raw_result = web_scraper_boardband.scrape_web(request, normalize_result=True, raw_list_result=True)
+raw_result = web_scraper_prepaid.scrape_web(request, normalize_result=True, raw_list_result=True)
 print(raw_result)
 
 with open('output_test.csv', 'w', newline='', encoding="utf-8") as file:
