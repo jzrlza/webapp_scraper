@@ -448,7 +448,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 				target_string = price_keywords[0]
 				plan_name = plan["plan_name"]
 				capture_mode_id = plan["capture_mode"]
-				capture_sub_names = plan["capture_sub_names"] #bool
+				capture_sub_names = True #bool
 				#title_finder_lambda = lambda title_is_at_header : container_classes[operator] if title_is_at_header == True else operator_card_classes[operator]
 				target_class = ""#plan["css_item_class_name"]
 				requires_click = False
