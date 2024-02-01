@@ -1,1 +1,1 @@
-- boardband turn from mother url to separate urls, remove or deprecreate the old url collecting system
+- prepaids urls
