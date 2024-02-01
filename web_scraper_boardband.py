@@ -391,7 +391,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["package"] = plan_name
-							new_row["service_type"] = pricing_type_id
+							new_row["system"] = pricing_type_id
 							entertain_temp_bool = False
 
 							if "3G" in plan_name :
@@ -475,7 +475,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							new_row["url"] = url["url_link"]
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
-							new_row["service_type"] = pricing_type_id
+							new_row["system"] = pricing_type_id
 							
 							if operator_id == 0 : #start at "package-card-generic"
 								new_row["package"] = plan_name
