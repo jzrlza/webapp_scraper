@@ -147,7 +147,10 @@ def insertRowInfoForAISCards(new_row, capture_mode_id, list_item_icon_img, list_
 	if re.search('netflix', list_item_icon_img, re.IGNORECASE) :
 		new_row["entertainment"] = True
 		new_row["entertainment_package"] = ""
-		entertainments.append(list_item_infos_body)
+		if list_item_infos_footer != "" :
+			entertainments.append(list_item_infos_body+ " " +list_item_infos_footer)
+		else :
+			entertainments.append(list_item_infos_body)
 		is_extra = False
 	if re.search('PLAY Premium Plus', list_item_infos_head, re.IGNORECASE) :
 		new_row["entertainment"] = True
@@ -286,6 +289,9 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 				disabled_mode = False #temp value
 				clicked = False
 				is_special_case = False
+
+				if capture_mode_id < 0 : #### IMAGE
+					continue
 
 				#if-else structured like this on purpose for ease of re-readability
 				if operator_id == 0 :
@@ -514,6 +520,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 											else :
 												dl_raw_str = dl_ul_items[0]
 												ul_raw_str = dl_ul_items[1]
+												if "bps" not in dl_raw_str and "BPS" not in dl_raw_str :
+													dl_raw_str += ul_raw_str[-4:]
 												#Mbps based
 												new_row["download_speed"] = conversionMbpsDLUL(dl_raw_str)
 												new_row["upload_speed"] = conversionMbpsDLUL(ul_raw_str)

@@ -94,7 +94,7 @@ request = """{
             {
                "plan_name":"Super Mesh Plus",
                "capture_sub_names": false,
-               "capture_mode":0,
+               "capture_mode":-999,
                "has_extra_table":false,
                "has_term_and_condition":false
             }
