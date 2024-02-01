@@ -349,6 +349,7 @@ operator_cards_container_classes = {
 row_obj_template = {
 	"operator": "",
 	"plan": "",
+	"package": "",
 	"service_type": -1,
 	"price": 0.0,
 	"raw_text_from_blocks": None,
@@ -554,6 +555,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									#if not re.search(plan_name, title, re.IGNORECASE) :
 									#	pass
+									new_row["package"] = title
 
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
 									if capture_sub_names :
