@@ -46,8 +46,8 @@ request = """{
             {
                "plan_name":"Smart AI Gamer",
                "capture_sub_names": false,
-               "capture_mode":0,
-               "has_extra_table":false,
+               "capture_mode":1,
+               "has_extra_table":true,
                "has_term_and_condition":false
             }
          ],
