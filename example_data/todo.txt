@@ -1,2 +1,2 @@
 - boardband turn from mother url to separate urls, remove or deprecreate the old url collecting system
-- The yellow column in excel just do as said, no more questions
+- Make the "all" files more flexible to run as separate files with minimal repeats
