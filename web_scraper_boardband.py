@@ -261,60 +261,15 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 			operator_name = operators[url["operator_id"]]
 			pricing_type_id = qr["service_type"]
 			track_new_mega_row = url["track_new_mega_row"]
-			collect_sub_urls = url["collect_sub_urls"]
 			urls_class_type_id = url["urls_class_type_id"]
 			special_case_plans = url["special_case_plans"]
 			mega_class_target = ""
-			collect_sub_urls_class = ""
 
 			need_to_scroll = False
 			scrolled = False
 
-			if track_new_mega_row and collect_sub_urls :
-				raise Exception("track_new_mega_row and collect_sub_urls should never be both True")
-
-			if track_new_mega_row and not collect_sub_urls :
-				#raise error when there's new row but not match any members of the plans
-
-				if operator_id == 0 :
-					mega_class_target = "//*[contains(@class, 'cms-primary-button')]"
-
-					root_web_contents = driver.find_elements(By.XPATH, f"{mega_class_target}")
-					for root_web_content in root_web_contents :
-						mega_root = root_web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..").find_element(By.XPATH, "..")
-						title = mega_root.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').replace('<b>', '').replace('</b>', '').strip()
-						this_title_is_in_planned_plan = False
-						for plan in url["plans"] :
-							plan_name = plan["plan_name"]
-							if re.search(plan_name, title, re.IGNORECASE) :
-								this_title_is_in_planned_plan = True
-						if not this_title_is_in_planned_plan :
-							if throw_error_to_warn_new_row :
-								raise Exception("There exists a new plan name which has not yet been checked : "+url["url_link"])
-							else :
-								unknown_new_row = row_obj_template.copy()
-								unknown_new_row["url"] = url["url_link"]
-								unknown_new_row["service_type"] = pricing_type_id
-								unknown_new_row["operator"] = operator_name
-								unknown_new_row["plan"] = title+" ****"
-								unknown_rows.append(unknown_new_row)
-				else :
-					raise UntrackableException
-
-
-			if collect_sub_urls and not track_new_mega_row :
-				plans_template = url["plans_template"]
-				plan_arr = []
-
 			for plan in url["plans"] :
-				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0]
-				if collect_sub_urls :
-					if plan["sub_url"] == None or plan["sub_url"] == "" :
-						raise Exception("URL relation to plan name error.")
-					if plan["is_duplicate_url"] :
-						continue
-					driver.get(plan["sub_url"]) 
-					driver.implicitly_wait(2)
+				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0
 
 				target_string = price_keywords[0]
 				plan_name = plan["plan_name"]
@@ -433,8 +388,6 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							elem_columns = proper_arr[row_i]
 							new_row = row_obj_template.copy()
 							new_row["url"] = url["url_link"]
-							if collect_sub_urls :
-								new_row["sub_url"] = plan["sub_url"]
 							new_row["operator"] = operator_name
 							new_row["plan"] = plan_name
 							new_row["package"] = plan_name
