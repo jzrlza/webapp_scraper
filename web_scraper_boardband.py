@@ -291,6 +291,20 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 				is_special_case = False
 
 				if capture_mode_id < 0 : #### IMAGE
+					new_row = row_obj_template.copy()
+					new_row["url"] = url["url_link"]
+					new_row["operator"] = operator_name
+					new_row["plan"] = plan_name
+					new_row["package"] = plan_name
+					new_row["system"] = pricing_type_id
+
+					new_row["extra"] = "IS IMAGE BASED INFORMATION PAGE"
+
+					now = datetime.now()
+					dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
+					new_row["datetime"] = dt_string
+
+					list_of_rows.append(new_row)
 					continue
 
 				#if-else structured like this on purpose for ease of re-readability
