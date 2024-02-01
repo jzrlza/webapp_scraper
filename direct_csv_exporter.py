@@ -179,7 +179,7 @@ request = """{
 raw_result = web_scraper_boardband.scrape_web(request, normalize_result=True, raw_list_result=True)
 print(raw_result)
 
-with open('output_test.csv', 'w', newline='') as file:
+with open('output_test.csv', 'w', newline='', encoding="utf-8") as file:
 	writer = csv.writer(file)
 
 	writer.writerow(raw_result[0].keys())
