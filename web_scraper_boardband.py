@@ -283,6 +283,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 				target_click_class = ""
 				menu_to_click_class = ""
 				table_target_class = ""
+				btn_click_code = ""
 				title_class = ""
 				table_temp_arr = []
 				disabled_mode = False #temp value
@@ -322,8 +323,9 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 						raise CaptureModeException
 				elif operator_id == 2 :
 					if capture_mode_id == 0 :
+						btn_click_code = "x-zvu66b"
 						target_class = "//*[@class='x-g2fj0g']"
-						target_click_class = "//*[contains(@class, 'x-zvu66b') and contains(@class, 'btn-primary')]"
+						target_click_class = f"//*[contains(@class, '{btn_click_code}') and contains(@class, 'btn-primary')]"
 						requires_click = True
 					else :
 						raise CaptureModeException
@@ -347,7 +349,7 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 							target = click_targets[i]
 							menu_target = target.find_element(By.XPATH, "..")
 							#print(target.get_attribute('class'), target.get_attribute('innerHTML'))
-							if "x-zvu66b" in target.get_attribute('class') :
+							if btn_click_code in target.get_attribute('class') :
 								#print(target.get_attribute('class'), target.get_attribute('innerHTML'))
 								if need_to_scroll and not scrolled :
 									driver.execute_script("""
