@@ -273,7 +273,6 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 
 			for plan in url["plans"] :
 				#target_string_lambda = lambda plan_name_is_text : plan["plan_name"] if title_is_at_header == True else price_keywords[0
-
 				target_string = price_keywords[0]
 				plan_name = plan["plan_name"]
 				capture_mode_id = plan["capture_mode"]
@@ -347,8 +346,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 						for i in range(len(click_targets)):
 							target = click_targets[i]
 							menu_target = target.find_element(By.XPATH, "..")
-							##print(target.get_attribute('class'), target.get_attribute('innerHTML'))
-							if plan_name in target.get_attribute('innerHTML') :
+							#print(target.get_attribute('class'), target.get_attribute('innerHTML'))
+							if "x-zvu66b" in target.get_attribute('class') :
 								#print(target.get_attribute('class'), target.get_attribute('innerHTML'))
 								if need_to_scroll and not scrolled :
 									driver.execute_script("""
@@ -372,6 +371,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 								##print(target.get_attribute('class'))
 								clicked = True
 								break
+							else :
+								continue
 					else :
 						clicked = True
 
