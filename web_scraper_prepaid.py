@@ -555,7 +555,10 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
 									#if not re.search(plan_name, title, re.IGNORECASE) :
 									#	pass
-									new_row["package"] = title
+									if not "<div" in title :
+										new_row["package"] = title
+									else :
+										new_row["package"] = plan_name
 
 									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
 									if capture_sub_names :

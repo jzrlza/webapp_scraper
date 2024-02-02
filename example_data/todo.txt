@@ -1,1 +1,2 @@
-...
+- boardband fix true gigatex link
+- prepaid get rid of html raw blocks in "package"
