@@ -1,2 +1,1 @@
-- boardband fix true gigatex link
 - prepaid fix missing links
