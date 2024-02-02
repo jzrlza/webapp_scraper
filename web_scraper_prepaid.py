@@ -629,6 +629,19 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 										sub_elems = bottom_elem.find_elements(By.XPATH, '*')
 										insertRowInfoForDTACCards(new_row, capture_mode_id, sub_elems[1].get_attribute('innerHTML').strip(), sub_elems[0].get_attribute('class'), price_keywords, sub_price_keywords)
 
+									"""
+									if new_row["raw_text_from_blocks"] == None :
+										if list_item_infos_footer != "" :
+											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+										else :
+											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body}"
+									else :
+										if list_item_infos_footer != "" :
+											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+										else :
+											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body}"
+									"""
+
 								elif capture_mode_id == 1 :
 									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
 									title = root_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
@@ -642,6 +655,19 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 									new_row["plan"] = bottom_details[0].get_attribute('innerHTML').strip()
 									price_block_txt = bottom_details[1].get_attribute('innerHTML').replace('</span>', '').replace('/', ' ').replace('<span>', '').strip()
 									new_row["price"] = getNumberByUnit(price_keywords[0], price_block_txt.replace('ฟรี', '0'))
+
+									"""
+									if new_row["raw_text_from_blocks"] == None :
+										if list_item_infos_footer != "" :
+											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+										else :
+											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body}"
+									else :
+										if list_item_infos_footer != "" :
+											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+										else :
+											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body}"
+									"""
 
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
@@ -665,6 +691,18 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__left_blocks, price_keywords, sub_price_keywords)
 									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__right_blocks, price_keywords, sub_price_keywords)
 									
+									"""
+									if new_row["raw_text_from_blocks"] == None :
+										if list_item_infos_footer != "" :
+											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+										else :
+											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body}"
+									else :
+										if list_item_infos_footer != "" :
+											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+										else :
+											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body}"
+									"""
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
