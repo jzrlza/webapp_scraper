@@ -87,7 +87,7 @@ request = """{
             {
                "plan_name":"แพ็กเกจเสริม เน็ตมาราธอน แมกซ์",
                "capture_sub_names": false,
-               "capture_mode":0,
+               "capture_mode":1,
                "has_extra_table":false,
                "has_term_and_condition":false
             }

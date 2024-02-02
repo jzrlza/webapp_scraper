@@ -470,6 +470,8 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 				if operator_id == 0 :
 					if capture_mode_id == 0 :
 						target_class = "//*[@class='package-card-generic']"
+					elif capture_mode_id == 1 :
+						target_class = "//*[contains(@class, 'package-card-generic') and contains(@class, 'package-card-header-heightalign') and contains(@class, 'mob-full-width-button')]"
 					else :
 						raise CaptureModeException
 				elif operator_id == 1 :
@@ -612,6 +614,36 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 												if index_i < len(list_second_block_ul_elems) :
 													extra_str += ", "
 											new_row["specials_extra_text"] = extra_str
+								elif capture_mode_id == 1 :
+									new_row["plan"] = plan_name
+									first_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[1]
+									if capture_sub_names :
+										actual_plan_name = first_block.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										new_row["package"] = actual_plan_name
+									if re.search(price_keywords[0], first_block.get_attribute('innerHTML').strip(), re.IGNORECASE) :
+										raw_txt_thb = first_block.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										new_row["price"] = getNumberByUnit(price_keywords[0], raw_txt_thb.replace('<b>', ' ').replace('</b>', ' '))
+
+									second_block = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')[2].find_elements(By.XPATH, '*')[0]
+									second_block__info_block_1 = second_block.find_elements(By.XPATH, '*')[0]
+									second_block__info_block_1__items = second_block__info_block_1.find_elements(By.XPATH, '*')
+									for list_item in second_block__info_block_1__items :
+										list_item_icon_img = list_item.find_elements(By.XPATH, '*')[0].get_attribute('innerHTML').strip()
+										list_item_infos = list_item.find_elements(By.XPATH, '*')[1].find_elements(By.XPATH, '*')
+										list_item_infos_head = list_item_infos[0].get_attribute('innerHTML').strip()
+										list_item_infos_body = list_item_infos[1].get_attribute('innerHTML').strip()
+										list_item_infos_footer = list_item_infos[2].get_attribute('innerHTML').strip()
+
+										if new_row["raw_text_from_blocks"] == None :
+											if list_item_infos_footer != "" :
+												new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+											else :
+												new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body}"
+										else :
+											if list_item_infos_footer != "" :
+												new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+											else :
+												new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body}"
 
 							elif operator_id == 1 :
 								if capture_mode_id == 0 :
