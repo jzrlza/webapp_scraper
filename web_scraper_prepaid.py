@@ -307,6 +307,12 @@ def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks, price_keywo
 
 	#print(head_str, price_str, price_unit_str_1, price_unit_str_2, footer_str)
 
+	if new_row["raw_text_from_blocks"] == None :
+		new_row["raw_text_from_blocks"] = f"{head_str} | {footer_str} | {price_str} | {price_unit_str_1} | {price_unit_str_2}"
+	else :
+		new_row["raw_text_from_blocks"] += f", {head_str} | {footer_str} | {price_str} | {price_unit_str_1} | {price_unit_str_2}"
+
+	"""
 	if "เน็ต" in head_str :
 		new_row["price"] = numberCheckLambda(price_str)
 		for fup_unit in possible_fup_units :
@@ -329,6 +335,7 @@ def insertRowInfoForTrueCards(new_row, capture_mode_id, html_blocks, price_keywo
 		if footer_str != "" :
 			if "นาทีแรก" in footer_str :
 				new_row["call_first_minute_fee_baht_per_minute"] = getNumberByUnit(price_keywords[0], footer_str.strip())
+	"""
 
 operators = ["AIS", "DTAC", "TRUE"]
 operator_card_classes = { #where the title is inside each cards
@@ -623,24 +630,22 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 
 									details_block__top_elements = details_blocks[0].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									for top_elem in details_block__top_elements :
-										insertRowInfoForDTACCards(new_row, capture_mode_id, top_elem.get_attribute('innerHTML').strip(), "", price_keywords, sub_price_keywords)
+										raw_txt = top_elem.get_attribute('innerHTML').strip()
+										if new_row["raw_text_from_blocks"] == None :
+											new_row["raw_text_from_blocks"] = f"{raw_txt}"
+										else :
+											new_row["raw_text_from_blocks"] += f", {raw_txt}"
+										#insertRowInfoForDTACCards(new_row, capture_mode_id, top_elem.get_attribute('innerHTML').strip(), "", price_keywords, sub_price_keywords)
 									details_block__bottom_elements = details_blocks[1].find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
 									for bottom_elem in details_block__bottom_elements :
 										sub_elems = bottom_elem.find_elements(By.XPATH, '*')
-										insertRowInfoForDTACCards(new_row, capture_mode_id, sub_elems[1].get_attribute('innerHTML').strip(), sub_elems[0].get_attribute('class'), price_keywords, sub_price_keywords)
-
-									"""
-									if new_row["raw_text_from_blocks"] == None :
-										if list_item_infos_footer != "" :
-											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
+										class_name = sub_elems[0].get_attribute('class')
+										raw_txt = sub_elems[1].get_attribute('innerHTML').strip()
+										if new_row["raw_text_from_blocks"] == None :
+											new_row["raw_text_from_blocks"] = f"{class_name} | {raw_txt}"
 										else :
-											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body}"
-									else :
-										if list_item_infos_footer != "" :
-											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
-										else :
-											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body}"
-									"""
+											new_row["raw_text_from_blocks"] += f", {class_name} | {raw_txt}"
+										#insertRowInfoForDTACCards(new_row, capture_mode_id, sub_elems[1].get_attribute('innerHTML').strip(), sub_elems[0].get_attribute('class'), price_keywords, sub_price_keywords)
 
 								elif capture_mode_id == 1 :
 									root_block = web_content.find_element(By.XPATH, "..").find_element(By.XPATH, "..")
@@ -649,25 +654,17 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 										continue
 
 									real_blocks = web_content.find_elements(By.XPATH, '*')[0].find_elements(By.XPATH, '*')
-									top_detail = real_blocks[len(real_blocks)-3]
+									top_detail = real_blocks[len(real_blocks)-3].get_attribute('innerHTML').replace('</b>', '').replace('<b>', '').replace('<br>', ' ').strip()
 									bottom_details = real_blocks[len(real_blocks)-1].find_elements(By.XPATH, '*')
 
 									new_row["plan"] = bottom_details[0].get_attribute('innerHTML').strip()
 									price_block_txt = bottom_details[1].get_attribute('innerHTML').replace('</span>', '').replace('/', ' ').replace('<span>', '').strip()
 									new_row["price"] = getNumberByUnit(price_keywords[0], price_block_txt.replace('ฟรี', '0'))
 
-									"""
 									if new_row["raw_text_from_blocks"] == None :
-										if list_item_infos_footer != "" :
-											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
-										else :
-											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body}"
+										new_row["raw_text_from_blocks"] = f"{top_detail}"
 									else :
-										if list_item_infos_footer != "" :
-											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
-										else :
-											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body}"
-									"""
+										new_row["raw_text_from_blocks"] += f", {top_detail}"
 
 							elif operator_id == 2 :
 								if capture_mode_id == 0 :
@@ -690,19 +687,6 @@ def scrape_web(request, normalize_result = False, raw_list_result = False):
 									new_row["price"] = numberCheckLambda(price_details_blocks[1].get_attribute('innerHTML').strip())
 									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__left_blocks, price_keywords, sub_price_keywords)
 									insertRowInfoForTrueCards(new_row, capture_mode_id, basic_details__right_blocks, price_keywords, sub_price_keywords)
-									
-									"""
-									if new_row["raw_text_from_blocks"] == None :
-										if list_item_infos_footer != "" :
-											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
-										else :
-											new_row["raw_text_from_blocks"] = f"{list_item_infos_head} | {list_item_infos_body}"
-									else :
-										if list_item_infos_footer != "" :
-											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body} | {list_item_infos_footer}"
-										else :
-											new_row["raw_text_from_blocks"] += f", {list_item_infos_head} | {list_item_infos_body}"
-									"""
 
 							#LASTLY unlimited internet mode: 0 = no internet, 1 = unlimited, 2 = limited by speed, 3 = limited then stop
 							if new_row["internet_gbs"] == INFINITY :
